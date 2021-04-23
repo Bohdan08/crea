@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // mock data
-import data from "../../data";
+import { data } from "../../../../data";
 
 // style
 import styles from "./post.module.scss";

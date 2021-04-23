@@ -1,4 +1,4 @@
-const data = [
+export const data = [
   {
     packageId: "BILLS-117sres99rs",
     title: "Observing the 10th anniversary of the uprising in Syria.",
@@ -553,5 +553,3 @@ const data = [
   //     dateIssued: "2021-01-30T12:00:00Z",
   //   },
 ];
-
-export default data;

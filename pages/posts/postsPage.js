@@ -5,7 +5,7 @@ import Link from "next/link";
 import styles from "./postPage.module.scss";
 
 // mock data
-import data from "./data";
+import { data } from "../../data";
 
 const Posts = () => {
   return (
