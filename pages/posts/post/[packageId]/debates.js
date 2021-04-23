@@ -1,4 +1,8 @@
+import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
+import ArticleLink from "../../../../components/articleLink";
+import PollLink from "../../../../components/pollLink";
 
 // style
 import styles from "./post.module.scss";
@@ -86,13 +90,11 @@ const UserCommentBlock = ({ id, user, text, likes, dislikes }) => (
   </div>
 );
 
-const ArgumentButton = ({ positive, negative }) => (
-  <button className="w-54  mt-3 rounded w-5/6 text-lg bg-blue-500 text-white py-1">
-    Post Argument
-  </button>
-);
-
 export default function Debates() {
+  const router = useRouter();
+
+  const { packageId } = router.query;
+
   const [negativeCommentsData, setNegativeCommentsData] = useState(
     negativeComments
   );
@@ -107,10 +109,15 @@ export default function Debates() {
   });
 
   return (
-    <div className="mt-10  border-0">
+    <div className="mt-10 mb-10  border-0">
       <p className="text-4xl text-center"> Do you support this bill? </p>
       <div className="flex flex-row mt-5">
-        <div className="w-2/12 border-0 border-red-400"></div>
+        <div className="w-2/12 border-0 border-red-400">
+          <PollLink pollState={false} packageId={packageId} />
+          <div className="absolute">
+            <ArticleLink packageId={packageId} />
+          </div>
+        </div>
         <div className="w-8/12 border-0 border-blue-400">
           {/* <div className="flex flex-row justify-center items-center">
             <div className="w-48 px-2 py-2 bg-green-200 border-2 border-green-600 text-right text-xl text-green-800 rounded">
@@ -132,7 +139,7 @@ export default function Debates() {
               </div>
               <div className="pt-4 flex flex-col  items-center border-r-0 border-gray-500 mt-2">
                 {positiveCommentsData.map((obj) => (
-                  <UserCommentBlock {...obj} />
+                  <UserCommentBlock {...obj} key={obj.id} />
                 ))}
                 <textarea
                   placeholder='New Argument for "Yes"...'
@@ -146,19 +153,21 @@ export default function Debates() {
                   }
                 />
                 <button
-                  className="w-54  mt-3 rounded w-5/6 text-lg bg-blue-500 text-white py-1"
+                  className="w-54  mt-3 rounded w-5/6 text-lg bg-blue-600 text-white py-1"
                   onClick={() => {
-                    setPositiveCommentsData(
-                      positiveCommentsData.concat({
-                        ...currentUser,
-                        text: textareaContent.positive,
-                        id: Math.random().toString(36).substring(7),
-                      })
-                    );
-                    setTextareaContent({
-                      ...textareaContent,
-                      positive: "",
-                    });
+                    if (textareaContent.positive.trim() !== "") {
+                      setPositiveCommentsData(
+                        positiveCommentsData.concat({
+                          ...currentUser,
+                          text: textareaContent.positive,
+                          id: Math.random().toString(36).substring(7),
+                        })
+                      );
+                      setTextareaContent({
+                        ...textareaContent,
+                        positive: "",
+                      });
+                    }
                   }}
                 >
                   Post Argument
@@ -171,9 +180,9 @@ export default function Debates() {
               <div className="py-2 bg-red-200 border-2 border-l-0 border-red-600 text-center text-xl text-red-800 rounded-r">
                 No
               </div>
-              <div className="pt-4 flex flex-col  items-center border-r-0 border-gray-500 mt-2">
+              <div className="pt-4 flex flex-col  items-center border-r-0 border-gray-500 mt-2 ">
                 {negativeCommentsData.map((obj) => (
-                  <UserCommentBlock {...obj} />
+                  <UserCommentBlock {...obj} key={obj.id} />
                 ))}
                 <textarea
                   placeholder='New Argument for "No"...'
@@ -187,19 +196,21 @@ export default function Debates() {
                   }
                 />
                 <button
-                  className="w-54  mt-3 rounded w-5/6 text-lg bg-blue-500 text-white py-1"
+                  className="w-54 mt-3 rounded w-5/6 text-lg bg-blue-600 text-white py-1"
                   onClick={() => {
-                    setNegativeCommentsData(
-                      negativeCommentsData.concat({
-                        ...currentUser,
-                        text: textareaContent.negative,
-                        id: Math.random().toString(36).substring(7),
-                      })
-                    );
-                    setTextareaContent({
-                      ...textareaContent,
-                      negative: "",
-                    });
+                    if (textareaContent.negative.trim() !== "") {
+                      setNegativeCommentsData(
+                        negativeCommentsData.concat({
+                          ...currentUser,
+                          text: textareaContent.negative,
+                          id: Math.random().toString(36).substring(7),
+                        })
+                      );
+                      setTextareaContent({
+                        ...textareaContent,
+                        negative: "",
+                      });
+                    }
                   }}
                 >
                   Post Argument

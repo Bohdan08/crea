@@ -7,25 +7,24 @@ import data from "../../data";
 
 // style
 import styles from "./post.module.scss";
+import PollLink from "../../../../components/pollLink";
+import DebatesLink from "../../../../components/debatesLink";
 
 const Post = () => {
   const router = useRouter();
 
   const [pollState, setPollState] = useState(false);
 
-  console.log(router, "router.query");
   const { packageId, pollCompleted = false } = router.query;
 
   const contentInfo = data.find((obj) => obj.packageId === packageId);
-  console.log(contentInfo, "contentInfo");
 
-  // useEffect(() => {
-  //   if (pollCompleted != pollState) {
-  //     setPollState(pollCompleted);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (pollCompleted != pollState) {
+      setPollState(pollCompleted);
+    }
+  }, []);
 
-  console.log(pollState, "pollState");
   return (
     <div>
       <div className="flex flex-row">
@@ -34,67 +33,9 @@ const Post = () => {
         <div className="w-2/12">
           <div className="flex flex-col">
             <div className="mt-24">
-              <Link
-                href={`/posts/post/[packageId]/${
-                  pollState ? "content" : "poll"
-                }`}
-                as={`/posts/post/${packageId}/${
-                  pollState ? "content" : "poll"
-                }`}
-              >
-                <a
-                  className={`w-36 text-center flex justify-center py-2 rounded-lg text-white text-xl fixed ${
-                    pollState
-                      ? "bg-purple-500 cursor-not-allowed hidden"
-                      : "bg-purple-700 hover:bg-purple-800"
-                  }`}
-                >
-                  <span> Poll </span>
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 pt-1"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </span>
-                </a>
-              </Link>
+              <PollLink packageId={packageId} pollState={false} />
             </div>
-            <div className="mt-16">
-              <Link
-                href="/posts/post/[packageId]/debates"
-                as={`/posts/post/${packageId}/debates`}
-              >
-                <a className="w-36 text-center flex justify-center py-2 bg-pink-700  hover:bg-pink-800 rounded-lg text-white text-xl fixed">
-                  <span>Debates </span>
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 pt-1"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
-                      />
-                    </svg>
-                  </span>
-                </a>
-              </Link>
-            </div>
+            <DebatesLink packageId={packageId} />
           </div>
         </div>
         <div className="w-8/12 m-auto">
