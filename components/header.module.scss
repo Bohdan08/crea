@@ -1,0 +1,13 @@
+@import "../styles/variables.scss";
+
+.navbar {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  background: $white;
+
+  li:not(:last-child) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}

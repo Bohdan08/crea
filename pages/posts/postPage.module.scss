@@ -1,0 +1,14 @@
+.post-container:hover {
+  border-color: lightseagreen;
+}
+
+.post-arrow {
+  top: 8px;
+  right: 5px;
+  position: absolute;
+  color: transparent;
+}
+
+.post-container:hover .post-arrow {
+  color: lightseagreen;
+}

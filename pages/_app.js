@@ -1,7 +1,16 @@
-import '../styles/globals.css'
+import "../styles/globals.scss";
+import "tailwindcss/tailwind.css";
+import Header from "../components/header";
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+  return (
+    <div className="min-h-screen">
+      <Header />
+      <div className="px-10">
+        <Component {...pageProps} />
+      </div>
+    </div>
+  );
 }
 
-export default MyApp
+export default MyApp;
