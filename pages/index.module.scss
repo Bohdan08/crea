@@ -1,0 +1,9 @@
+.banner {
+  height: 800px;
+}
+
+@media screen and  (max-width: 1500px) {
+  .banner {
+    height: 600px;
+  }
+}

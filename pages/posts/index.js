@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 
 // styles
-import styles from "./postPage.module.scss";
+import styles from "./posts.module.scss";
 
 // mock data
 import { data } from "../../data";

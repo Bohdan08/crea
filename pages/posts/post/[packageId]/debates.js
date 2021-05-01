@@ -95,9 +95,9 @@ export default function Debates() {
 
   const { packageId } = router.query;
 
-  const [negativeCommentsData, setNegativeCommentsData] = useState(
-    negativeComments
-  );
+  // const [negativeCommentsData, setNegativeCommentsData] = useState(
+  //   negativeComments
+  // );
 
   const [positiveCommentsData, setPositiveCommentsData] = useState(
     positiveComments
@@ -176,7 +176,7 @@ export default function Debates() {
             </div>
             <div className="border border-gray-200  z-0 relative -left-0.5"></div>
 
-            <div className="w-1/2 relative right-1">
+            {/* <div className="w-1/2 relative right-1">
               <div className="py-2 bg-red-200 border-2 border-l-0 border-red-600 text-center text-xl text-red-800 rounded-r">
                 No
               </div>
@@ -216,7 +216,7 @@ export default function Debates() {
                   Post Argument
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="w-2/12 border-0 border-green-400"></div>

@@ -5,18 +5,44 @@ import Image from "next/image";
 import styles from "./header.module.scss";
 
 const Header = () => (
-  <header className="header py-2 px-10 flex justify-between bg-white shadow">
-    <Image src="/images/logo.jpeg" alt="Logo" width={100} height={100} />
-    <ul className={styles.navbar}>
-      <li className="cursor-not-allowed">
-        <a>About</a>
+  <header className="header py-2 px-10 flex  bg-white shadow">
+    <Link href="/" as="/">
+      <a>
+        <Image
+          src="/images/logo.jpeg"
+          alt="Logo"
+          width={100}
+          height={100}
+          className="cursor-pointer"
+        />
+      </a>
+    </Link>
+    <ul
+      className={`${styles.navbar} block m-auto text-2xl font-light pl-10 w-full`}
+    >
+      <li>
+        <Link href="/" as="/">
+          <a>Home</a>
+        </Link>
       </li>
 
       <li>
-        <Link href="/" as="/">
+        <Link href="/posts/" as="/posts/">
           <a>Bills and Statutes</a>
         </Link>
       </li>
+      <div className="float-right">
+        <li className="float-right">
+          <Link href="/posts/" as="/posts/">
+            <a>Sign in</a>
+          </Link>
+        </li>
+        <li className="float-right">
+          <Link href="/posts/" as="/posts/">
+            <a>Sign up</a>
+          </Link>
+        </li>
+      </div>
     </ul>
   </header>
 );
