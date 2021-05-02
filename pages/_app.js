@@ -1,17 +1,17 @@
-import { Provider } from "next-auth/client";
 import Header from "../components/header";
+import { UserProvider } from "@auth0/nextjs-auth0";
 
 // styles
 import "../styles/globals.scss";
 import "tailwindcss/tailwind.css";
 
 const App = ({ Component, pageProps }) => (
-  <Provider session={pageProps.session}>
+  <UserProvider>
     <div className="min-h-screen">
       <Header />
       <Component {...pageProps} />
     </div>
-  </Provider>
+  </UserProvider>
 );
 
 export default App;

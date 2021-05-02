@@ -1,12 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
-import { signIn, signOut, useSession } from "next-auth/client";
 
 // style scss
 import styles from "./header.module.scss";
-const Header = () => {
-  const [session] = useSession();
 
+const Header = () => {
   return (
     <header className="header py-2 px-10 flex  bg-white shadow">
       <Link href="/" as="/">
@@ -35,27 +33,17 @@ const Header = () => {
           </Link>
         </li>
         <div className="float-right">
-          {!session ? (
-            <>
-              <li className="float-right">
-                <Link href="/auth" as="/auth">
-                  <button onClick={() => signIn()}>Sign in</button>
-                </Link>
-              </li>
-              <button>
-                <Link href="/secret">To the secret</Link>
-              </button>
-            </>
-          ) : (
-            <>
-              <button>
-                <Link href="/secret">To the secret</Link>
-              </button>
-              <li className="float-right">
-                <button onClick={() => signOut()}>Sign out</button>
-              </li>
-            </>
-          )}
+          <li className="float-right">
+            <Link href="/api/auth/login">
+              <a>Sign in</a>
+            </Link>
+          </li>
+
+          <li className="float-right">
+            <Link href="/api/auth/logout">
+              <a>Sign out</a>
+            </Link>
+          </li>
         </div>
       </ul>
     </header>
