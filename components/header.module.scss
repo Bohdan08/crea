@@ -1,0 +1,12 @@
+@import "../styles/variables.scss";
+
+.navbar {
+  li:not(:last-child) {
+    float: left;
+  }
+
+  li {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
