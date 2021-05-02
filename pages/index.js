@@ -2,7 +2,6 @@ import Head from "next/head";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import swal from "sweetalert2";
-import US from "./us";
 
 // style
 import styles from "./index.module.scss";
@@ -52,7 +51,9 @@ const Home = () => {
 
         <main>
           <div
-            className={`w-full bg-cover bg-${currentRegion}-banner bg-no-repeat bg-top ${styles.banner}`}
+            className={`${
+              styles[`${currentRegion}-banner`]
+            } w-full bg-cover bg-no-repeat bg-top ${styles.banner}`}
           >
             <div className="text-white p-8">
               <p className="text-3xl text-white">

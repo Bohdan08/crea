@@ -2,7 +2,15 @@
   height: 800px;
 }
 
-@media screen and  (max-width: 1500px) {
+.uk-banner {
+  background-image: url("../public/images/uk/banner.jpeg");
+}
+
+.us-banner {
+  background-image: url("../public/images/us/banner1.jpeg");
+}
+
+@media screen and (max-width: 1500px) {
   .banner {
     height: 600px;
   }
