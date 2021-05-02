@@ -95,7 +95,7 @@ const Post = () => {
 
   return (
     <div>
-      <div className="flex flex-row my-10">
+      <div className="flex flex-row my-10  px-10">
         <hr />
 
         <div className="w-3/12 ">

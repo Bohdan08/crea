@@ -1,89 +1,87 @@
 import Head from "next/head";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import swal from "sweetalert2";
+import Link from "next/link";
+import Slider from "react-slick";
+import { useDispatch } from "react-redux";
+import { setRegion } from "../redux/slices/regionSlice";
 
 // style
 import styles from "./index.module.scss";
 
-const Home = () => {
-  const [currentRegion, setCurrentRegion] = useState(null);
+const Container = ({ backgroundSelector }) => {
+  const dispatch = useDispatch();
+  return (
+    <div className={`h-screen bg-cover flex flex-row ${backgroundSelector}`}>
+      <div className="h-screen w-7/12"></div>
+      <div className="h-screen w-4/12 p-2 bg-white flex justify-center">
+        <div
+          className={`${styles["welcome-container"]} text-center font-light`}
+        >
+          <p className="text-4xl font-light">Welcome to Welobby! </p>
+          <p className="pt-5 text-2xl">
+            {" "}
+            We make politics more open and accessible.
+          </p>
+          <p className="pt-5 text-lg">
+            {" "}
+            Please choose the region you want to read news about.
+          </p>
+          <div className="pt-12 w-80 m-auto flex justify-around">
+            <Link href="/home/" as="/home/">
+              <button
+                className="bg-blue-500 text-white text-lg py-3 w-36 rounded"
+                onClick={() => {
+                  dispatch(setRegion("us"));
+                  localStorage.setItem("region", "us");
+                }}
+              >
+                <a>United States</a>
+              </button>
+            </Link>
+            <Link href="/home/" as="/home/" className="mr-2">
+              <button
+                className="bg-gray-500 text-white text-lg py-3 w-36 rounded"
+                onClick={() => {
+                  dispatch(setRegion("uk"));
+                  localStorage.setItem("region", "uk");
+                }}
+              >
+                {" "}
+                <a>United Kingdom</a>
+              </button>
+            </Link>
+          </div>
 
-  const [regionModal, setRegionModal] = useState(false);
-
-  useEffect(() => {
-    const currentRegion = localStorage.getItem("selectedRegion");
-    setCurrentRegion(currentRegion);
-
-    window.Swal = swal;
-
-    if (!currentRegion || regionModal) {
-      Swal.fire({
-        icon: "question",
-        title: "Choose Region",
-        allowOutsideClick: false,
-        showConfirmButton: false,
-        html: `
-        <div class="swal2-html-container"> Please choose the region you want to read news about.  </div>
-        <div id="swal-button-group" class="mt-5"> 
-          <button id="swal-region-us" name="region" type="submit" value="us" class="swal2-confirm swal2-styled" onclick="Swal.clickConfirm()"> United States </button>
-          <button id="swal-region-uk" name="region" type="submit" value="uk" class="swal2-cancel swal2-styled" onclick="Swal.clickConfirm()"> United Kingdom </button>
+          <div></div>
         </div>
-        `,
-        preConfirm: () => document.getElementById("swal-button-group"),
-        focusConfirm: false,
-      }).then(({ value }) =>
-        value.addEventListener("click", (event) => {
-          localStorage.setItem("selectedRegion", event.target.value);
-          setCurrentRegion(event.target.value);
-          setRegionModal(false);
-        })
-      );
-    }
-  }, [regionModal]);
+      </div>
+    </div>
+  );
+};
+
+const Home = () => {
+  const sliderSettings = {
+    autoplay: true,
+    fade: true,
+    speed: 1500,
+    autoplaySpeed: 8000,
+    cssEase: "linear",
+    infinite: true,
+    pauseOnHover: false,
+  };
+
   return (
     <>
       <div>
         <Head>
-          <title>CREA</title>
+          <title>Welobby</title>
+          <script src="https://cdn.auth0.com/js/auth0/9.11/auth0.min.js"></script>
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <main>
-          <div
-            className={`${
-              styles[`${currentRegion}-banner`]
-            } w-full bg-cover bg-no-repeat bg-top ${styles.banner}`}
-          >
-            <div className="text-white p-8">
-              <p className="text-3xl text-white">
-                {" "}
-                Discover {currentRegion?.toUpperCase()} Government Information
-              </p>
-              <p className="pt-2 text-xl">
-                We make {currentRegion?.toUpperCase()} Congress more open and
-                accessible.
-              </p>
-              <button
-                className="mt-5 py-2 w-44 bg-white text-black rounded cursor-pointer focus:outline-none"
-                onClick={() => setRegionModal(true)}
-              >
-                Change Region{" "}
-              </button>
-            </div>
-          </div>
-        </main>
-
-        {/* <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer> */}
+        <Slider {...sliderSettings}>
+          <Container backgroundSelector="us-banner" />
+          <Container backgroundSelector="uk-banner" />
+        </Slider>
       </div>
     </>
   );

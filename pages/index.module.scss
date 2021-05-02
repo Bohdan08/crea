@@ -10,6 +10,10 @@
   background-image: url("../public/images/us/banner1.jpeg");
 }
 
+.welcome-container {
+  margin-top: 50%;
+}
+
 @media screen and (max-width: 1500px) {
   .banner {
     height: 600px;
