@@ -4,6 +4,7 @@ import { useState } from "react";
 function Profile() {
   const { user, isLoading } = useUser();
 
+  
   // console.log(user, "user");
   return (
     <>
