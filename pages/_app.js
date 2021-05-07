@@ -10,17 +10,25 @@ import "tailwindcss/tailwind.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-const App = ({ Component, pageProps }) => (
-  <UserProvider>
-    <Provider store={store}>
-      <div className="min-h-screen">
-        <>
-          <Header />
-          <Component {...pageProps} />
-        </>
-      </div>
-    </Provider>
-  </UserProvider>
-);
+// aws
+import Amplify from "aws-amplify";
+import config from "../src/aws-exports";
+Amplify.configure(config);
+
+const App = ({ Component, pageProps }) => {
+  console.log(config, "config");
+  return (
+    <UserProvider>
+      <Provider store={store}>
+        <div className="min-h-screen">
+          <>
+            <Header />
+            <Component {...pageProps} />
+          </>
+        </div>
+      </Provider>
+    </UserProvider>
+  );
+};
 
 export default App;
