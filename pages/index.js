@@ -86,6 +86,7 @@ function Home({ users }) {
   return (
     <div>
       Home
+      <p> google </p>
       <p> Add or Update My Info </p>
       <button
         onClick={() => {

@@ -23,7 +23,9 @@
         }
       },
       "auth": {
-        "funccrea7ae69e527ae69e52": {}
+        "funccrea7ae69e527ae69e52": {
+          "googleClientId": "305091933593-v2pfte5is5sa94rt8jq2p3lbo42tun7n.apps.googleusercontent.com"
+        }
       }
     }
   }
