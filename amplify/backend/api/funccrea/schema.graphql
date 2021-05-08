@@ -1,7 +1,8 @@
 type User @model
   @auth(rules: [
     { allow: groups, groups: ["Admin"] },
-    { allow: owner, ownerField: "username", operations: [read] }
+    { allow: owner, ownerField: "username"}
+    
   ]) {
   id: ID!
   username: String!

@@ -1,5 +1,10 @@
 {
   "function": {
+    "funccrea7ae69e527ae69e52PostAuthentication": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "funccrea7ae69e527ae69e52PostConfirmation": {
       "build": true,
       "providerPlugin": "awscloudformation",
@@ -27,6 +32,15 @@
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [
+        {
+          "category": "function",
+          "resourceName": "funccrea7ae69e527ae69e52PostAuthentication",
+          "triggerProvider": "Cognito",
+          "attributes": [
+            "Arn",
+            "Name"
+          ]
+        },
         {
           "category": "function",
           "resourceName": "funccrea7ae69e527ae69e52PostConfirmation",

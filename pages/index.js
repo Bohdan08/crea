@@ -1,25 +1,108 @@
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Slider from "react-slick";
+import { Auth } from "aws-amplify";
+import { API } from "aws-amplify";
+
 import { useDispatch } from "react-redux";
 import { setRegion } from "../redux/slices/regionSlice";
-
 // style
 import styles from "./index.module.scss";
 
 import { withAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
+import { listUsers } from "../src/graphql/queries";
+import { createUser, updateUser } from "../src/graphql/mutations";
 
-function Home() {
+function Home({ users }) {
+  const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
+  useEffect(() => {
+    //
+    // updateUser();
+    checkUser();
+  }, []);
+
+  async function checkUser() {
+    const user = await Auth.currentAuthenticatedUser();
+    setUser(user);
+  }
+
+  async function updateUserFunc() {
+    console.log("confirmSignUp");
+    const user = await Auth.currentAuthenticatedUser();
+    await Auth.updateUserAttributes(user, {
+      address: "Brand new Adress ",
+      email: "bodya.martynyuck@yandex.com",
+      ["custom:Example"]: "Example",
+    });
+
+    // console.log("success");
+
+    console.log(user, "useruser");
+    modifiyUser();
+    console.log("updated");
+  }
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  async function fetchPosts() {
+    const postData = await API.graphql({
+      query: listUsers,
+    });
+    setPosts(postData.data.listUsers);
+  }
+
+  async function modifiyUser() {
+    // console.log(updateUser, "updateUser");
+    // const postData = await API.graphql({
+    //   query: updateUser,
+    // });
+    console.log("update success");
+    // console.log("USER UPDATE");
+    const updateUserConst = await API.graphql({
+      query: updateUser,
+      variables: {
+        // createdAt: "Some Date",
+        input: {
+          id: "716ab367-c737-4521-bb1b-fe32c00901fe",
+          username: "username",
+          email: "bodya.martynyuck@yandex.com",
+          // createdAt: "created",
+          // updatedAt: "2021-05-08T17:21:42.104Z",
+        },
+      },
+      authMode: "AMAZON_COGNITO_USER_POOLS",
+    });
+
+    console.log("h");
+  }
+
+  console.log(user, "user");
+  console.log(posts, "useruser");
+
   return (
     <div>
-      {" "}
       Home
+      <p> Add or Update My Info </p>
+      <button
+        onClick={() => {
+          console.log("update User");
+          updateUserFunc();
+          checkUser();
+        }}
+      >
+        Update me
+      </button>
       <AmplifySignOut />
     </div>
   );
 }
 
 export default withAuthenticator(Home);
+
 // const Container = ({ backgroundSelector }) => {
 //   const dispatch = useDispatch();
 //   return (

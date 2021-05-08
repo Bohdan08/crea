@@ -1,0 +1,17 @@
+{
+  "trigger": true,
+  "modules": [
+    "custom"
+  ],
+  "parentResource": "funccrea7ae69e527ae69e52",
+  "functionName": "funccrea7ae69e527ae69e52PostAuthentication",
+  "resourceName": "funccrea7ae69e527ae69e52PostAuthentication",
+  "parentStack": "auth",
+  "triggerEnvs": "[]",
+  "triggerDir": "/Users/macbook/.npm-packages/lib/node_modules/@aws-amplify/cli/node_modules/amplify-category-auth/provider-utils/awscloudformation/triggers/PostAuthentication",
+  "triggerTemplate": "PostAuthentication.json.ejs",
+  "triggerEventPath": "PostAuthentication.event.json",
+  "roleName": "funccrea7ae69e527ae69e52PostAuthentication",
+  "skipEdit": true,
+  "enableCors": false
+}

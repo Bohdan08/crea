@@ -16,7 +16,7 @@ import config from "../src/aws-exports";
 Amplify.configure(config);
 
 const App = ({ Component, pageProps }) => {
-  console.log(config, "config");
+  // console.log(config, "config");
   return (
     <UserProvider>
       <Provider store={store}>

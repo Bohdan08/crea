@@ -21,7 +21,7 @@
         "email"
     ],
     "userpoolClientGenerateSecret": false,
-    "userpoolClientRefreshTokenValidity": "30",
+    "userpoolClientRefreshTokenValidity": "28",
     "userpoolClientWriteAttributes": [
         "email"
     ],
@@ -47,9 +47,9 @@
     },
     "useDefault": "manual",
     "thirdPartyAuth": false,
-    "userPoolGroups": true,
+    "userPoolGroups": false,
     "adminQueries": false,
-    "triggers": "{\n  \"PostConfirmation\": [\n    \"custom\"\n  ]\n}",
+    "triggers": "{\n  \"PostAuthentication\": [\n    \"custom\"\n  ],\n  \"PostConfirmation\": [\n    \"custom\"\n  ]\n}",
     "hostedUI": false,
     "userPoolGroupList": [
         "Admin"
@@ -63,6 +63,15 @@
     "dependsOn": [
         {
             "category": "function",
+            "resourceName": "funccrea7ae69e527ae69e52PostAuthentication",
+            "triggerProvider": "Cognito",
+            "attributes": [
+                "Arn",
+                "Name"
+            ]
+        },
+        {
+            "category": "function",
             "resourceName": "funccrea7ae69e527ae69e52PostConfirmation",
             "triggerProvider": "Cognito",
             "attributes": [
@@ -70,5 +79,6 @@
                 "Name"
             ]
         }
-    ]
+    ],
+    "authProviders": []
 }

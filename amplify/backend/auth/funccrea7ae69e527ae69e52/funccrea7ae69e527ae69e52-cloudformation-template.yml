@@ -11,6 +11,16 @@ Parameters:
   
   
   
+  functionfunccrea7ae69e527ae69e52PostAuthenticationArn:
+    Type: String
+    Default: functionfunccrea7ae69e527ae69e52PostAuthenticationArn
+  
+  functionfunccrea7ae69e527ae69e52PostAuthenticationName:
+    Type: String
+    Default: functionfunccrea7ae69e527ae69e52PostAuthenticationName
+  
+  
+  
   functionfunccrea7ae69e527ae69e52PostConfirmationArn:
     Type: String
     Default: functionfunccrea7ae69e527ae69e52PostConfirmationArn
@@ -149,7 +159,6 @@ Parameters:
   userPoolGroupList:
     Type: CommaDelimitedList
       
-            
   serviceName:
     Type: String
   
@@ -170,6 +179,11 @@ Parameters:
   dependsOn:
     Type: CommaDelimitedList
       
+        
+  authProviders:
+    Type: CommaDelimitedList
+      
+            
 Conditions:
   ShouldNotCreateEnvResources: !Equals [ !Ref env, NONE ]
   
@@ -235,6 +249,8 @@ Resources:
         
         
         
+          PostAuthentication: !Ref functionfunccrea7ae69e527ae69e52PostAuthenticationArn
+        
         
           PostConfirmation: !Ref functionfunccrea7ae69e527ae69e52PostConfirmationArn
         
@@ -269,6 +285,15 @@ Resources:
   
   
   
+  
+  UserPoolPostAuthenticationLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn: UserPool
+    Properties:
+      Action: "lambda:invokeFunction"
+      Principal: "cognito-idp.amazonaws.com"
+      FunctionName: !Ref functionfunccrea7ae69e527ae69e52PostAuthenticationName
+      SourceArn: !GetAtt UserPool.Arn
   
   
   UserPoolPostConfirmationLambdaInvokePermission:
