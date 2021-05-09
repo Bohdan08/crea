@@ -1,6 +1,5 @@
 import React from "react";
 import Header from "../components/Header";
-import { UserProvider } from "@auth0/nextjs-auth0";
 import { Provider } from "react-redux";
 import store from "../redux/store";
 
@@ -16,18 +15,13 @@ import config from "../src/aws-exports";
 Amplify.configure(config);
 
 const App = ({ Component, pageProps }) => {
-  // console.log(config, "config");
   return (
-    <UserProvider>
-      <Provider store={store}>
-        <div className="min-h-screen">
-          <>
-            <Header />
-            <Component {...pageProps} />
-          </>
-        </div>
-      </Provider>
-    </UserProvider>
+    <Provider store={store}>
+      <div className="min-h-screen">
+        <Header />
+        <Component {...pageProps} />
+      </div>
+    </Provider>
   );
 };
 

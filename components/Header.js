@@ -1,17 +1,49 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useUser } from "@auth0/nextjs-auth0";
-import { useSelector } from "react-redux";
+import { Auth } from "aws-amplify";
+import { resetUser } from "../redux/slices/userSlice";
 
 // style scss
 import styles from "./header.module.scss";
 
 const Header = () => {
-  const { user } = useUser();
+  // const [user, setUser] = useState(null);
   const region = useSelector((state) => state.region.value);
+  const { user } = useSelector((state) => state.user);
   const router = useRouter();
 
+  console.log(user, "userHeader");
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // if (!user || !Object.entries(user).length) {
+    //   checkUser();
+    // }
+  }, []);
+
+  // async function checkUser() {
+  //   let formattedUserPayload = {};
+
+  //   const userData = await Auth.currentAuthenticatedUser();
+
+  //   if (userData) {
+  //     Object.entries(userData).forEach(([key, value]) => {
+  //       if (key === "username") {
+  //         formattedUserPayload["username"] = value;
+  //       } else if (key === "attributes") {
+  //         formattedUserPayload = { ...formattedUserPayload, ...value };
+  //       }
+  //     });
+
+  //     // console.log(formattedUserPayload, "formattedUserPayload");
+  //     // dispatch(setUser(formattedUserPayload));
+  //   }
+  // }
+
+  // console.log(user && Object.entries(user).length, "userHeader");
   return router.pathname !== "/" ? (
     <header className="header py-2 px-10 flex bg-white shadow">
       <Link href="/home" as="/home">
@@ -47,23 +79,25 @@ const Header = () => {
           </li>
         )}
         <div className="float-right">
-          {/* <li className="float-right">
-            <Link href="/singup" as="/signup">
-              <a>Sign up</a>
-            </Link>
-          </li> */}
-
           {!user ? (
             <li className="float-right">
-              <Link href="/api/auth/login">
-                <a>Login</a>
+              <Link href="/auth/">
+                <a>Sign In</a>
               </Link>
             </li>
           ) : (
             <li className="float-right">
-              <Link href="/api/auth/logout">
-                <a>Log out</a>
-              </Link>
+              <button
+                type="submit"
+                className="focus:outline-none"
+                onClick={() => {
+                  Auth.signOut({ global: true });
+                  dispatch(resetUser());
+                  router.push("/home");
+                }}
+              >
+                <span className="font-light">Sign out</span>
+              </button>
             </li>
           )}
         </div>

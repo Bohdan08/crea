@@ -1,15 +1,13 @@
-import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
-function Profile() {
-  const { user, isLoading } = useUser();
+const Profile = () => {
+  const user = useSelector((state) => state.user.user);
 
-  
-  // console.log(user, "user");
+  console.log(user, "user");
   return (
-    <>
-      {isLoading && <div>loading... </div>}
-      {user && (
+    <div>
+      {user ? (
         <div className="w-12/12 h-full px-5 py-10 flex flex-row items-stretch">
           <div className="w-3/12 mr-5 bg-white rounded shadow-xl">
             <div className="flex flex-col pt-5">
@@ -21,15 +19,6 @@ function Profile() {
           </div>
           <div className="w-9/12 bg-white rounded shadow-xl p-5">
             <div className="flex flex-row w-full">
-              <div className="w-1/6">
-                <img
-                  src={user.picture}
-                  alt="Profile"
-                  className="rounded-full img-fluid profile-picture mb-3 mb-md-0"
-                  decode="async"
-                  data-testid="profile-picture"
-                />
-              </div>
               <div className="w-5/6 text-2xl flex flex-col justify-center">
                 {/* <p className="pt-2">Name: {user.name}</p> */}
                 <p className="flex flex-row">
@@ -56,12 +45,9 @@ function Profile() {
             </div> */}
           </div>
         </div>
-      )}
-    </>
+      ) : null}
+    </div>
   );
-}
+};
 
-export default withPageAuthRequired(Profile, {
-  onRedirecting: () => <div> loading</div>,
-  onError: (error) => <div>error is {error}</div>,
-});
+export default Profile;
