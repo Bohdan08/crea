@@ -1,29 +1,5 @@
 @import "../../../../styles/variables.scss";
 
-.tooltip {
-  position: relative;
-  display: inline-block;
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 200px;
-  background-color: black;
-  color: $white;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 115%;
-  left: 50%;
-  margin-left: -85px;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-}
-
 .comment-thread {
   height: 400px;
 }
