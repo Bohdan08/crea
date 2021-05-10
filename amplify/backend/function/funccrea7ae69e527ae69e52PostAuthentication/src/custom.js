@@ -4,7 +4,7 @@ var aws = require("aws-sdk");
 var ddb = new aws.DynamoDB();
 
 exports.handler = async (event, context) => {
-  // console.log(event, "EVENT");
+  debug(event, "EVENT_POST_AUTH");
   let date = new Date();
   console.log(event.request.userAttributes, "event.request.userAttributes");
   if (event.request.userAttributes.sub) {

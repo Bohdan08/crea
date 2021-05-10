@@ -2,7 +2,7 @@ var aws = require("aws-sdk");
 var ddb = new aws.DynamoDB();
 
 exports.handler = async (event, context) => {
-  console.log(event, "EVENT POST CONFIRMATION");
+  debug(event, "EVENT_POST_CONFIRMATION");
   let date = new Date();
   if (event.request.userAttributes.sub) {
     console.log(

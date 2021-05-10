@@ -15,11 +15,15 @@
       "function": {
         "funccrea7ae69e527ae69e52PostAuthentication": {
           "deploymentBucketName": "amplify-funccrea-dev-85234-deployment",
-          "s3Key": "amplify-builds/funccrea7ae69e527ae69e52PostAuthentication-68534372597648334e49-build.zip"
+          "s3Key": "amplify-builds/funccrea7ae69e527ae69e52PostAuthentication-6378694653776c4b6644-build.zip"
         },
         "funccrea7ae69e527ae69e52PostConfirmation": {
           "deploymentBucketName": "amplify-funccrea-dev-85234-deployment",
-          "s3Key": "amplify-builds/funccrea7ae69e527ae69e52PostConfirmation-2f45386172354f6f3958-build.zip"
+          "s3Key": "amplify-builds/funccrea7ae69e527ae69e52PostConfirmation-6a474f77334e54703967-build.zip"
+        },
+        "funccrea7ae69e527ae69e52PreSignup": {
+          "deploymentBucketName": "amplify-funccrea-dev-85234-deployment",
+          "s3Key": "amplify-builds/funccrea7ae69e527ae69e52PreSignup-54487975384e52796f4d-build.zip"
         }
       },
       "auth": {

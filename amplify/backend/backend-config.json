@@ -9,6 +9,11 @@
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "funccrea7ae69e527ae69e52PreSignup": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   },
   "auth": {
@@ -44,6 +49,15 @@
         {
           "category": "function",
           "resourceName": "funccrea7ae69e527ae69e52PostConfirmation",
+          "triggerProvider": "Cognito",
+          "attributes": [
+            "Arn",
+            "Name"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "funccrea7ae69e527ae69e52PreSignup",
           "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
