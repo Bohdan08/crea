@@ -38,12 +38,10 @@ const Header = () => {
   //       }
   //     });
 
-  //     // console.log(formattedUserPayload, "formattedUserPayload");
   //     // dispatch(setUser(formattedUserPayload));
   //   }
   // }
 
-  // console.log(user && Object.entries(user).length, "userHeader");
   return router.pathname !== "/" ? (
     <header className="header py-2 px-10 flex bg-white shadow">
       <Link href="/home" as="/home">

@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "funccrea7ae69e52_identitypool_7ae69e52",
+    "identityPoolName": "Welobby",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "funccr7ae69e52",
-    "userPoolName": "funccrea7ae69e52_userpool_7ae69e52",
+    "resourceNameTruncated": "welobbf19995d8",
+    "userPoolName": "welobbyf19995d8_userpool_f19995d8",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -21,20 +21,17 @@
         "email"
     ],
     "userpoolClientGenerateSecret": false,
-    "userpoolClientRefreshTokenValidity": "26",
+    "userpoolClientRefreshTokenValidity": "30",
     "userpoolClientWriteAttributes": [
-        "family_name",
         "email"
     ],
     "userpoolClientReadAttributes": [
-        "email",
-        "family_name",
-        "given_name"
+        "email"
     ],
-    "userpoolClientLambdaRole": "funccr7ae69e52_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "Welobbf19995d8_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "7ae69e52",
-    "resourceName": "funccrea7ae69e527ae69e52",
+    "sharedId": "f19995d8",
+    "resourceName": "Welobby",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -49,9 +46,13 @@
         ]
     },
     "useDefault": "manual",
-    "userPoolGroups": false,
+    "thirdPartyAuth": false,
+    "usernameAttributes": [
+        "email"
+    ],
+    "userPoolGroups": true,
     "adminQueries": false,
-    "triggers": "{\n  \"PostAuthentication\": [\n    \"custom\"\n  ],\n  \"PostConfirmation\": [\n    \"custom\"\n  ],\n  \"PreSignup\": [\n    \"custom\"\n  ]\n}",
+    "triggers": "{\n  \"PostConfirmation\": [\n    \"custom\"\n  ]\n}",
     "hostedUI": false,
     "userPoolGroupList": [
         "Admin"
@@ -65,34 +66,12 @@
     "dependsOn": [
         {
             "category": "function",
-            "resourceName": "funccrea7ae69e527ae69e52PostAuthentication",
-            "triggerProvider": "Cognito",
-            "attributes": [
-                "Arn",
-                "Name"
-            ]
-        },
-        {
-            "category": "function",
-            "resourceName": "funccrea7ae69e527ae69e52PostConfirmation",
-            "triggerProvider": "Cognito",
-            "attributes": [
-                "Arn",
-                "Name"
-            ]
-        },
-        {
-            "category": "function",
-            "resourceName": "funccrea7ae69e527ae69e52PreSignup",
+            "resourceName": "WelobbyPostConfirmation",
             "triggerProvider": "Cognito",
             "attributes": [
                 "Arn",
                 "Name"
             ]
         }
-    ],
-    "authProviders": [
-        "accounts.google.com"
-    ],
-    "thirdPartyAuth": true
+    ]
 }

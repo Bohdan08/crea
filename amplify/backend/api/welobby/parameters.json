@@ -1,10 +1,10 @@
 {
-  "AppSyncApiName": "funccrea",
+  "AppSyncApiName": "welobby",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false,
   "AuthCognitoUserPoolId": {
     "Fn::GetAtt": [
-      "authfunccrea7ae69e527ae69e52",
+      "authWelobby",
       "Outputs.UserPoolId"
     ]
   }

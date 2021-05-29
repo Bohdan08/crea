@@ -10,9 +10,9 @@ import { setRegion } from "../redux/slices/regionSlice";
 // style
 import styles from "./index.module.scss";
 
-import { withAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
-import { listUsers } from "../src/graphql/queries";
-import { createUser, updateUser } from "../src/graphql/mutations";
+// import { withAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
+// import { listUsers } from "../src/graphql/queries";
+// import { createUser, updateUser } from "../src/graphql/mutations";
 
 const Container = ({ backgroundSelector }) => {
   const dispatch = useDispatch();
