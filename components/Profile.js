@@ -11,6 +11,8 @@ function Profile({ setUiState }) {
     setUser(user.attributes);
   }
   if (!user) return null;
+
+  console.log("profile");
   return (
     <>
       <p className="text-xl font-black">Welcome, {user.email}</p>

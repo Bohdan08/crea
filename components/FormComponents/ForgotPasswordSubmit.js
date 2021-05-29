@@ -13,13 +13,19 @@ function FogotPasswordSubmit({ setUiState, onChange, forgotPasswordSubmit }) {
         <Input type="password" name="password" onChange={onChange} />
       </div>
       <button
-        onClick={() => forgotPasswordSubmit()}
+        onClick={(e) => {
+          e.preventDefault();
+          forgotPasswordSubmit();
+        }}
         className="text-white w-full mt-4 bg-pink-600 p-3 rounded"
       >
         Continue
       </button>
       <button
-        onClick={() => setUiState("signIn")}
+        onClick={() => {
+          e.preventDefault();
+          setUiState("signIn");
+        }}
         className="text-sm mt-6 text-pink-500"
       >
         Cancel

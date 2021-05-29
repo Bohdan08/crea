@@ -17,15 +17,15 @@
 //   // const [user, ]
 //   // const [user, setUser] = useState(null);
 //   const [posts, setPosts] = useState([]);
-//   useEffect(() => {
-//     //
-//     // updateUser();
-//     if (!user || !Object.entries(user).length) {
-//       checkUser();
-//     } else {
-//       route.push("/profile");
-//     }
-//   }, []);
+// useEffect(() => {
+//   //
+//   // updateUser();
+//   if (!user || !Object.entries(user).length) {
+//     checkUser();
+//   } else {
+//     route.push("/profile");
+//   }
+// }, []);
 
 //   async function checkUser() {
 //     let formattedUserPayload = {};
@@ -141,9 +141,12 @@ import {
   SignUp,
   SignIn,
 } from "../components/FormComponents";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/slices/userSlice";
+import { useRouter } from "next/router";
 
 const StyledForm = styled.form`
-  width: 500px;
+  width: 500px !important;
 `;
 
 const App = () => {
@@ -151,32 +154,56 @@ const App = () => {
   const [formState, setFormState] = useState({
     email: "",
     password: "",
+    repeatedPassword: "",
     authCode: "",
   });
   const [error, setError] = useState(null);
 
-  const { email, password, authCode } = formState;
+  const { email, password, repeatedPassword, authCode } = formState;
+
+  const dispatch = useDispatch();
+  const route = useRouter();
 
   useEffect(() => {
-    // checkUser();
+    checkUser();
   }, []);
 
-  // async function checkUser() {
-  //   console.log("checking user...");
-  //   try {
-  //     setUiState("loading");
-  //     await Auth.currentAuthenticatedUser();
-  //     setUiState("signedIn");
-  //   } catch (err) {
-  //     console.log(err, "err");
-  //     // setUiState("signIn");
-  //   }
-  // }
+  useEffect(() => {
+    //
+    // // updateUser();
+    // if (!user || !Object.entries(user).length) {
+    //   checkUser();
+    // } else {
+    //   route.push("/profile");
+    // }
+
+    console.log(uiState, "uiState");
+    if (uiState === "signedIn") {
+      route.push("/profile");
+    }
+  }, [uiState]);
+
+  async function checkUser() {
+    console.log("checking user...");
+    try {
+      setUiState("loading");
+      let userValues = await Auth.currentAuthenticatedUser();
+      setUiState("signedIn");
+      dispatch(setUser(userValues?.attributes || {}));
+    } catch (err) {
+      console.log(err, "err");
+      setUiState("signIn");
+    }
+  }
 
   const onChange = ({ target: { name, value } }) =>
     setFormState({ ...formState, [name]: value });
 
   async function signUp() {
+    if (password !== repeatedPassword) {
+      setError({ message: "Passwords don't match" });
+      return;
+    }
     try {
       await Auth.signUp({ username: email, password, attributes: { email } });
       setUiState("confirmSignUp");
@@ -188,7 +215,8 @@ const App = () => {
   async function confirmSignUp() {
     try {
       await await Auth.confirmSignUp(email, authCode);
-      await Auth.signIn(email, password);
+      const userValues = await Auth.signIn(email, password);
+      dispatch(setUser(userValues?.attributes || {}));
       setUiState("signedIn");
     } catch (err) {
       setError(err);
@@ -198,6 +226,7 @@ const App = () => {
   async function signIn() {
     try {
       await Auth.signIn(email, password);
+      dispatch(setUser(userValues?.attributes || {}));
       setUiState("signedIn");
     } catch (err) {
       setError(err);
@@ -208,19 +237,23 @@ const App = () => {
       await Auth.forgotPassword(email);
       setUiState("forgotPasswordSubmit");
     } catch (err) {
-      console.log({ err });
+      setError(err);
     }
   }
   async function forgotPasswordSubmit() {
-    await Auth.forgotPasswordSubmit(email, authCode, password);
-    setUiState("signIn");
+    try {
+      await Auth.forgotPasswordSubmit(email, authCode, password);
+      setUiState("signIn");
+    } catch (err) {
+      setError(err);
+    }
   }
   console.log(uiState, "uiState");
   console.log(error, "error");
   return (
     <div className="bg-gray-50 min-h-screen text-lg">
       <div className="flex flex-col items-center">
-        <div className="sm:w-540 mt-14">
+        <div className="mt-14">
           <div className="mb-8">
             {error && (
               <div className="bg-red-300 text-red-900 rounded shadow p-2">
@@ -233,9 +266,9 @@ const App = () => {
               (uiState === "loading" && (
                 <p className="font-bold">Loading ...</p>
               ))}
-            {uiState === "signedIn" && (
+            {/* {uiState === "signedIn" && (
               <Profile setUiState={setUiState} onChange={onChange} />
-            )}
+            )} */}
             {uiState === "signUp" && (
               <SignUp
                 setUiState={setUiState}

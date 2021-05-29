@@ -8,16 +8,8 @@ const SignIn = ({ setUiState, onChange, signIn }) => (
       <FormLabel>Email</FormLabel>
       <FormInput onChange={onChange} name="email" icon="envelope" />
     </div>
-    <div className="mt-8">
-      <FormLabel>
-        Password
-        <span
-          onClick={() => setUiState("forgotPassword")}
-          className="ml-8 sm:ml-48 text-pink-500"
-        >
-          Forgot your password?
-        </span>
-      </FormLabel>
+    <div className="mt-6">
+      <FormLabel>Password</FormLabel>
       <FormInput
         type="password"
         name="password"
@@ -27,7 +19,16 @@ const SignIn = ({ setUiState, onChange, signIn }) => (
     </div>
 
     <button
-      onClick={signIn}
+      onClick={() => setUiState("forgotPassword")}
+      className="mt-6 text-pink-500"
+    >
+      Forgot your password?
+    </button>
+    <button
+      onClick={(e) => {
+        e.preventDefault();
+        signIn();
+      }}
       className="text-white w-full mt-6 bg-pink-600 p-3 rounded"
     >
       Sign In
