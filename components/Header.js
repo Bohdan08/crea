@@ -18,11 +18,11 @@ const Header = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // if (!user || !Object.entries(user).length) {
-    //   checkUser();
-    // }
-    checkUser();
-  }, [user]);
+    if (!user || !Object.entries(user).length) {
+      checkUser();
+    }
+    // checkUser();
+  }, []);
 
   async function checkUser() {
     console.log("checking user from Header...");
@@ -102,6 +102,8 @@ const Header = () => {
                 onClick={() => {
                   console.log("sign out");
                   Auth.signOut();
+                  dispatch(resetUser());
+                  router.push("/");
                   {
                     /* Auth.signOut({ global: true }); */
                   }
