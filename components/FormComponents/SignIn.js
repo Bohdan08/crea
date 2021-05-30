@@ -18,7 +18,7 @@ const SignIn = ({ setUiState, onChange, signIn, setError }) => (
       />
     </div>
 
-    <button
+    <div
       onClick={() => {
         setUiState("forgotPassword");
         setError(null);
@@ -26,7 +26,7 @@ const SignIn = ({ setUiState, onChange, signIn, setError }) => (
       className="mt-6 text-pink-500 focus:outline-none"
     >
       Forgot your password?
-    </button>
+    </div>
     <button
       onClick={(e) => {
         e.preventDefault();
@@ -37,6 +37,7 @@ const SignIn = ({ setUiState, onChange, signIn, setError }) => (
       Sign In
     </button>
     {/* <SocialSignIn /> */}
+    <SocialSignIn />
     <p className="mt-12 font-light">
       Don't have an account?
       <span

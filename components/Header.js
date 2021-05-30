@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Auth } from "aws-amplify";
-import { resetUser } from "../redux/slices/userSlice";
+import { resetUser, setUser } from "../redux/slices/userSlice";
 
 // style scss
 import styles from "./header.module.scss";
@@ -15,16 +15,26 @@ const Header = () => {
   const { user } = useSelector((state) => state.user);
   const router = useRouter();
 
-  console.log(user, "userHeader");
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // if (!user || !Object.entries(user).length) {
-    //   checkUser();
-    // }
+    if (!user || !Object.entries(user).length) {
+      checkUser();
+    }
+    checkUser();
   }, []);
 
-  // async function checkUser() {
+  async function checkUser() {
+    console.log("checking user...");
+    try {
+      const userValues = await Auth.currentAuthenticatedUser();
+      dispatch(setUser(userValues?.attributes || {}));
+    } catch (err) {
+      console.log(err, "err");
+    }
+  }
+
+  // // async function checkUser() {
   //   let formattedUserPayload = {};
 
   //   const userData = await Auth.currentAuthenticatedUser();
@@ -91,7 +101,7 @@ const Header = () => {
                 onClick={() => {
                   Auth.signOut({ global: true });
                   dispatch(resetUser());
-                  router.push("/home");
+                  router.push("/");
                 }}
               >
                 <span className="font-light">Sign out</span>

@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "Welobby",
+    "identityPoolName": "welobbyf76746fc_identitypool_f76746fc",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "welobbf19995d8",
-    "userPoolName": "welobbyf19995d8_userpool_f19995d8",
+    "resourceNameTruncated": "welobbf76746fc",
+    "userPoolName": "welobbyf76746fc_userpool_f76746fc",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -21,17 +21,17 @@
         "email"
     ],
     "userpoolClientGenerateSecret": false,
-    "userpoolClientRefreshTokenValidity": "30",
+    "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [
         "email"
     ],
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "Welobbf19995d8_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "welobbf76746fc_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "f19995d8",
-    "resourceName": "Welobby",
+    "sharedId": "f76746fc",
+    "resourceName": "welobbyf76746fc",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -45,34 +45,19 @@
             "Arn"
         ]
     },
-    "useDefault": "manual",
-    "thirdPartyAuth": false,
+    "useDefault": "defaultSocial",
+    "hostedUI": true,
     "usernameAttributes": [
         "email"
     ],
-    "userPoolGroups": false,
-    "adminQueries": false,
-    "triggers": "{\n  \"PostConfirmation\": [\n    \"custom\"\n  ]\n}",
-    "hostedUI": false,
-    "userPoolGroupList": [
-        "Admin"
+    "hostedUIDomainName": "welobbyf76746fc-f76746fc",
+    "authProvidersUserPool": [
+        "Google"
     ],
+    "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
+    "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
-    "parentStack": {
-        "Ref": "AWS::StackId"
-    },
-    "permissions": [],
-    "dependsOn": [
-        {
-            "category": "function",
-            "resourceName": "WelobbyPostConfirmation",
-            "triggerProvider": "Cognito",
-            "attributes": [
-                "Arn",
-                "Name"
-            ]
-        }
-    ],
-    "authProviders": []
+    "dependsOn": [],
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\"],\"LogoutURLs\":[\"http://localhost:3000/\"]}"
 }

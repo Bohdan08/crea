@@ -4,11 +4,14 @@ import Link from "next/link";
 import Slider from "react-slick";
 import { Auth } from "aws-amplify";
 import { API } from "aws-amplify";
-
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import AuthComponent from "../components/Auth";
 import { setRegion } from "../redux/slices/regionSlice";
+
 // style
 import styles from "./index.module.scss";
+import { useRouter } from "next/router";
+import { setUser } from "../redux/slices/userSlice";
 
 // import { withAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
 // import { listUsers } from "../src/graphql/queries";
@@ -76,7 +79,33 @@ const Home = () => {
     pauseOnHover: false,
   };
 
-  return (
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    console.log("USE_EFFECT_USE EFFECT");
+    checkUser();
+  }, []);
+
+  const dispatch = useDispatch();
+
+  const route = useRouter();
+
+  async function checkUser() {
+    console.log("checking user...");
+    try {
+      // setUiState("loading");
+      const userValues = await Auth.currentAuthenticatedUser();
+      dispatch(setUser(userValues?.attributes || {}));
+      // setIsAuthenticated(true);
+      // route.push("/profile");
+    } catch (err) {
+      // setIsAuthenticated(false);
+      console.log(err, "err");
+    }
+  }
+
+  return user ? (
     <>
       <div>
         <Head>
@@ -91,6 +120,8 @@ const Home = () => {
         </Slider>
       </div>
     </>
+  ) : (
+    <AuthComponent />
   );
 };
 

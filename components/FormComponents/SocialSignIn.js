@@ -1,7 +1,8 @@
-// import { FaGoogle, FaFacebook } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGoogle, faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { Auth } from "aws-amplify";
 
-function SocialSignIn() {
+const SocialSignIn = () => {
   return (
     <div className="flex flex-col">
       <button
@@ -9,21 +10,21 @@ function SocialSignIn() {
         onClick={() => Auth.federatedSignIn({ provider: "Google" })}
       >
         <div className="flex border border-gray-300 p-2 rounded-full items-center justify-center">
-          {/* <FaGoogle size="38" className="text-red-600" /> */}
+          <FontAwesomeIcon className="text-red-600" icon={faGoogle} />
           <p className="ml-3">Sign in with Google</p>
         </div>
       </button>
-      <button
+      {/* <button
         className="mt-4 focus:outline-none"
         onClick={() => Auth.federatedSignIn({ provider: "Facebook" })}
       >
         <div className="flex border border-gray-300 p-2 rounded-full items-center justify-center">
-          {/* <FaFacebook size="38" className="text-blue-600" /> */}
+          <FontAwesomeIcon className="text-blue-600" icon={faFacebook} />
           <p className="ml-3">Sign in with Facebook</p>
         </div>
-      </button>
+      </button> */}
     </div>
   );
-}
+};
 
 export default SocialSignIn;

@@ -20,7 +20,7 @@ const SignUp = ({ setUiState, signUp, onChange, setError }) => (
     <div className="mt-7">
       <FormLabel>Repeat Password</FormLabel>
       <FormInput
-        name="repeat password"
+        name="repeatedPassword"
         onChange={onChange}
         type="password"
         icon="lock"
