@@ -1,7 +1,7 @@
 import { FormLabel, FormInput } from "./FormUIElements";
 import SocialSignIn from "./SocialSignIn";
 
-const SignIn = ({ setUiState, onChange, signIn }) => (
+const SignIn = ({ setUiState, onChange, signIn, setError }) => (
   <>
     <p className="text-3xl font-black">Sign in to your account</p>
     <div className="mt-10">
@@ -19,8 +19,11 @@ const SignIn = ({ setUiState, onChange, signIn }) => (
     </div>
 
     <button
-      onClick={() => setUiState("forgotPassword")}
-      className="mt-6 text-pink-500"
+      onClick={() => {
+        setUiState("forgotPassword");
+        setError(null);
+      }}
+      className="mt-6 text-pink-500 focus:outline-none"
     >
       Forgot your password?
     </button>
@@ -37,7 +40,10 @@ const SignIn = ({ setUiState, onChange, signIn }) => (
     <p className="mt-12 font-light">
       Don't have an account?
       <span
-        onClick={() => setUiState("signUp")}
+        onClick={() => {
+          setUiState("signUp");
+          setError(null);
+        }}
         role="button"
         className="cursor-pointer text-pink-600 pl-2"
       >

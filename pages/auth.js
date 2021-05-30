@@ -151,13 +151,13 @@ const StyledForm = styled.form`
 
 const App = () => {
   const [uiState, setUiState] = useState("signIn");
+  const [error, setError] = useState(null);
   const [formState, setFormState] = useState({
     email: "",
     password: "",
     repeatedPassword: "",
     authCode: "",
   });
-  const [error, setError] = useState(null);
 
   const { email, password, repeatedPassword, authCode } = formState;
 
@@ -169,15 +169,6 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    //
-    // // updateUser();
-    // if (!user || !Object.entries(user).length) {
-    //   checkUser();
-    // } else {
-    //   route.push("/profile");
-    // }
-
-    console.log(uiState, "uiState");
     if (uiState === "signedIn") {
       route.push("/profile");
     }
@@ -274,6 +265,7 @@ const App = () => {
                 setUiState={setUiState}
                 onChange={onChange}
                 signUp={signUp}
+                setError={setError}
               />
             )}
             {uiState === "confirmSignUp" && (
@@ -281,6 +273,7 @@ const App = () => {
                 setUiState={setUiState}
                 onChange={onChange}
                 confirmSignUp={confirmSignUp}
+                setError={setError}
               />
             )}
             {uiState === "signIn" && (
@@ -288,6 +281,7 @@ const App = () => {
                 setUiState={setUiState}
                 onChange={onChange}
                 signIn={signIn}
+                setError={setError}
               />
             )}
             {uiState === "forgotPassword" && (
@@ -295,6 +289,7 @@ const App = () => {
                 setUiState={setUiState}
                 onChange={onChange}
                 forgotPassword={forgotPassword}
+                setError={setError}
               />
             )}
             {uiState === "forgotPasswordSubmit" && (

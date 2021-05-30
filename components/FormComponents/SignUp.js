@@ -1,7 +1,7 @@
 import { FormLabel } from "./FormUIElements";
 import FormInput from "./FormUIElements/FormInput";
 
-const SignUp = ({ setUiState, signUp, onChange }) => (
+const SignUp = ({ setUiState, signUp, onChange, setError }) => (
   <>
     <p className="text-3xl font-black">Sign up for an account</p>
     <div className="mt-10">
@@ -39,7 +39,10 @@ const SignUp = ({ setUiState, signUp, onChange }) => (
       Already have an account?
       <span
         className="cursor-pointer pl-2 text-pink-600"
-        onClick={() => setUiState("signIn")}
+        onClick={() => {
+          setUiState("signIn");
+          setError(null);
+        }}
       >
         Sign In.
       </span>
