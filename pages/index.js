@@ -105,6 +105,7 @@ const Home = () => {
     }
   }
 
+  console.log(user, "uese");
   return user ? (
     <>
       <div>

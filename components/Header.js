@@ -18,19 +18,20 @@ const Header = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!user || !Object.entries(user).length) {
-      checkUser();
-    }
+    // if (!user || !Object.entries(user).length) {
+    //   checkUser();
+    // }
     checkUser();
-  }, []);
+  }, [user]);
 
   async function checkUser() {
-    console.log("checking user...");
+    console.log("checking user from Header...");
     try {
       const userValues = await Auth.currentAuthenticatedUser();
       dispatch(setUser(userValues?.attributes || {}));
     } catch (err) {
-      console.log(err, "err");
+      dispatch(resetUser());
+      router.push("/");
     }
   }
 
@@ -99,9 +100,15 @@ const Header = () => {
                 type="submit"
                 className="focus:outline-none"
                 onClick={() => {
-                  Auth.signOut({ global: true });
-                  dispatch(resetUser());
-                  router.push("/");
+                  console.log("sign out");
+                  Auth.signOut();
+                  {
+                    /* Auth.signOut({ global: true }); */
+                  }
+                  {
+                    /* dispatch(resetUser());
+                  router.push("/"); */
+                  }
                 }}
               >
                 <span className="font-light">Sign out</span>
