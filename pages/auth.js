@@ -131,7 +131,7 @@
 // | import "../src/configureAmplify";
 import "../src/aws-exports";
 import { useEffect, useState } from "react";
-import { Auth } from "aws-amplify";
+// import { Auth } from "aws-amplify";
 import styled from "styled-components";
 import Profile from "../components/Profile";
 import {
