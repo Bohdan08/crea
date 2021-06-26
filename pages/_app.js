@@ -3,7 +3,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope, faLock, faUser } from "@fortawesome/free-solid-svg-icons";
 import Header from "../components/Header";
-import { Provider, useDispatch } from "react-redux";
+import { Provider, } from "react-redux";
 import store from "../redux/store";
 
 // icons
@@ -18,7 +18,6 @@ import "slick-carousel/slick/slick-theme.css";
 // aws
 import Amplify, { Auth } from "aws-amplify";
 import config from "../src/aws-exports";
-import { setUser } from "../redux/slices/userSlice";
 import { useRouter } from "next/router";
 Amplify.configure(config);
 

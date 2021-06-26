@@ -53,7 +53,7 @@ const Header = () => {
   //   }
   // }
 
-  return router.pathname !== "/" ? (
+  return (
     <header className="header py-2 px-10 flex bg-white shadow">
       <Link href="/home" as="/home">
         <a>
@@ -104,13 +104,6 @@ const Header = () => {
                   Auth.signOut();
                   dispatch(resetUser());
                   router.push("/");
-                  {
-                    /* Auth.signOut({ global: true }); */
-                  }
-                  {
-                    /* dispatch(resetUser());
-                  router.push("/"); */
-                  }
                 }}
               >
                 <span className="font-light">Sign out</span>
@@ -120,7 +113,7 @@ const Header = () => {
         </div>
       </ul>
     </header>
-  ) : null;
+  );
 };
 
 export default Header;

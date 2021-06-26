@@ -83,7 +83,7 @@ const Home = () => {
   const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
-    console.log("USE_EFFECT_USE EFFECT");
+    // console.log("USE_EFFECT_USE EFFECT");
     checkUser();
   }, []);
 
@@ -106,23 +106,42 @@ const Home = () => {
   }
 
   console.log(user, "uese");
-  return user ? (
-    <>
-      <div>
-        <Head>
-          <title>Welobby</title>
-          <script src="https://cdn.auth0.com/js/auth0/9.11/auth0.min.js"></script>
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-
-        <Slider {...sliderSettings}>
-          <Container backgroundSelector="us-banner" />
-          <Container backgroundSelector="uk-banner" />
-        </Slider>
+  let region = "us";
+  return (
+    <div>
+      <div
+        className={`${
+          styles[`${region}-banner`]
+        } w-full bg-cover bg-no-repeat bg-top ${styles.banner}`}
+      >
+        <div className="text-white p-8">
+          <p className="text-3xl text-white">
+            {" "}
+            Discover {region?.toUpperCase()} Government Information
+          </p>
+          <p className="pt-2 text-xl">
+            We make {region?.toUpperCase()} Congress more open and accessible.
+          </p>
+          <button
+            className="mt-5 py-2 w-44 bg-white text-black rounded cursor-pointer focus:outline-none"
+            onClick={() => setRegionModal(true)}
+          >
+            Change Region{" "}
+          </button>
+        </div>
       </div>
-    </>
-  ) : (
-    <AuthComponent />
+      {/* <Container backgroundSelector="us-banner" /> */}
+      {/* <Head>
+        <title>Welobby</title>
+        <script src="https://cdn.auth0.com/js/auth0/9.11/auth0.min.js"></script>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <Slider {...sliderSettings}>
+        <Container backgroundSelector="us-banner" />
+        <Container backgroundSelector="uk-banner" />
+      </Slider> */}
+    </div>
   );
 };
 

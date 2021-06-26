@@ -14,44 +14,44 @@ const Home = () => {
   const route = useRouter();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    window.Swal = swal;
+  // useEffect(() => {
+  //   window.Swal = swal;
 
-    if (regionModal) {
-      Swal.fire({
-        icon: "question",
-        title: "Choose Region",
-        allowOutsideClick: false,
-        showConfirmButton: false,
-        html: `
-            <div class="swal2-html-container"> Please choose the region you want to read news about.  </div>
-            <div id="swal-button-group" class="mt-5">
-              <button id="swal-region-us" name="region" type="submit" value="us" class="swal2-confirm swal2-styled" onclick="Swal.clickConfirm()"> United States </button>
-              <button id="swal-region-uk" name="region" type="submit" value="uk" class="swal2-cancel swal2-styled" onclick="Swal.clickConfirm()"> United Kingdom </button>
-            </div>
-            `,
-        preConfirm: () => document.getElementById("swal-button-group"),
-        focusConfirm: false,
-      }).then(({ value }) =>
-        value.addEventListener("click", (event) => {
-          localStorage.setItem("selectedRegion", event.target.value);
-          dispatch(setRegion(event.target.value));
-          setRegionModal(false);
-        })
-      );
-    }
-  }, [regionModal]);
+  //   if (regionModal) {
+  //     Swal.fire({
+  //       icon: "question",
+  //       title: "Choose Region",
+  //       allowOutsideClick: false,
+  //       showConfirmButton: false,
+  //       html: `
+  //           <div class="swal2-html-container"> Please choose the region you want to read news about.  </div>
+  //           <div id="swal-button-group" class="mt-5">
+  //             <button id="swal-region-us" name="region" type="submit" value="us" class="swal2-confirm swal2-styled" onclick="Swal.clickConfirm()"> United States </button>
+  //             <button id="swal-region-uk" name="region" type="submit" value="uk" class="swal2-cancel swal2-styled" onclick="Swal.clickConfirm()"> United Kingdom </button>
+  //           </div>
+  //           `,
+  //       preConfirm: () => document.getElementById("swal-button-group"),
+  //       focusConfirm: false,
+  //     }).then(({ value }) =>
+  //       value.addEventListener("click", (event) => {
+  //         localStorage.setItem("selectedRegion", event.target.value);
+  //         dispatch(setRegion(event.target.value));
+  //         setRegionModal(false);
+  //       })
+  //     );
+  //   }
+  // }, [regionModal]);
 
-  useEffect(() => {
-    if (!region) {
-      const savedRegion = localStorage.getItem("region");
-      if (savedRegion) {
-        dispatch(setRegion(savedRegion));
-      } else {
-        route.push("/");
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!region) {
+  //     const savedRegion = localStorage.getItem("region");
+  //     if (savedRegion) {
+  //       dispatch(setRegion(savedRegion));
+  //     } else {
+  //       route.push("/");
+  //     }
+  //   }
+  // }, []);
   return (
     <div
       className={`${
