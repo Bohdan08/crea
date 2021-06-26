@@ -1,6 +1,6 @@
-import "../src/aws-exports";
+// import "../src/aws-exports";
 import { useEffect, useState } from "react";
-import { Auth } from "aws-amplify";
+// import { Auth } from "aws-amplify";
 import styled from "styled-components";
 import {
   ConfirmSignUp,
@@ -32,9 +32,9 @@ const AuthComponent = () => {
   const dispatch = useDispatch();
   const route = useRouter();
 
-  useEffect(() => {
-    checkUser();
-  }, []);
+  // useEffect(() => {
+  //   checkUser();
+  // }, []);
 
   // useEffect(() => {
   //   if (uiState === "signedIn") {
@@ -42,18 +42,18 @@ const AuthComponent = () => {
   //   }
   // }, [uiState]);
 
-  async function checkUser() {
-    console.log("checking user...");
-    try {
-      setUiState("loading");
-      const userValues = await Auth.currentAuthenticatedUser();
-      dispatch(setUser(userValues?.attributes || {}));
-      setUiState("signedIn");
-    } catch (err) {
-      console.log(err, "err");
-      setUiState("signIn");
-    }
-  }
+  // async function checkUser() {
+  //   console.log("checking user...");
+  //   try {
+  //     setUiState("loading");
+  //     const userValues = await Auth.currentAuthenticatedUser();
+  //     dispatch(setUser(userValues?.attributes || {}));
+  //     setUiState("signedIn");
+  //   } catch (err) {
+  //     console.log(err, "err");
+  //     setUiState("signIn");
+  //   }
+  // }
 
   const onChange = ({ target: { name, value } }) =>
     setFormState({ ...formState, [name]: value });

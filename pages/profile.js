@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Auth } from "aws-amplify";
+// import { Auth } from "aws-amplify";
 import { useDispatch, useSelector } from "react-redux";
 // import { changeUserSingleField, setUser } from "../redux/slices/userSlice";
 
@@ -100,20 +100,20 @@ const Profile = () => {
     }
   }, []);
 
-  useEffect(() => {
-    checkUser();
-  }, []);
+  // useEffect(() => {
+  //   checkUser();
+  // }, []);
 
-  async function checkUser() {
-    try {
-      const userValues = await Auth.currentAuthenticatedUser();
-      dispatch(setUser(userValues?.attributes || {}));
-      setAuthInfo("signedIn");
-    } catch (err) {
-      console.log(err, "err");
-      setAuthInfo(err?.message);
-    }
-  }
+  // async function checkUser() {
+  //   try {
+  //     const userValues = await Auth.currentAuthenticatedUser();
+  //     dispatch(setUser(userValues?.attributes || {}));
+  //     setAuthInfo("signedIn");
+  //   } catch (err) {
+  //     console.log(err, "err");
+  //     setAuthInfo(err?.message);
+  //   }
+  // }
 
   const onChangeField = (field, value) => {
     setUserValues({ ...userValues, [field]: value });

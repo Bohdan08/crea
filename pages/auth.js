@@ -129,7 +129,7 @@
 // export default withAuthenticator(AuthComponent);
 
 // | import "../src/configureAmplify";
-import "../src/aws-exports";
+// import "../src/aws-exports";
 import { useEffect, useState } from "react";
 // import { Auth } from "aws-amplify";
 import styled from "styled-components";

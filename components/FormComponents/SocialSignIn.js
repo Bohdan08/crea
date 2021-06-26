@@ -1,11 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle, faFacebook } from "@fortawesome/free-brands-svg-icons";
-import { Auth } from "aws-amplify";
+// import { Auth } from "aws-amplify";
 
 const SocialSignIn = () => {
   return (
     <div className="flex flex-col">
-      <button
+      {/* <button
         className="mt-10 focus:outline-none"
         onClick={() => Auth.federatedSignIn({ provider: "Google" })}
       >
@@ -13,7 +13,7 @@ const SocialSignIn = () => {
           <FontAwesomeIcon className="text-red-600" icon={faGoogle} />
           <p className="ml-3">Sign in with Google</p>
         </div>
-      </button>
+      </button> */}
       {/* <button
         className="mt-4 focus:outline-none"
         onClick={() => Auth.federatedSignIn({ provider: "Facebook" })}

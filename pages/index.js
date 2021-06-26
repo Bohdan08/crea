@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Slider from "react-slick";
-import { Auth } from "aws-amplify";
-import { API } from "aws-amplify";
+// import { Auth } from "aws-amplify";
+// import { API } from "aws-amplify";
 import { useDispatch, useSelector } from "react-redux";
-import AuthComponent from "../components/Auth";
+// import AuthComponent from "../components/Auth";
 import { setRegion } from "../redux/slices/regionSlice";
 
 // style
@@ -82,34 +82,34 @@ const Home = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { user } = useSelector((state) => state.user);
 
-  useEffect(() => {
-    // console.log("USE_EFFECT_USE EFFECT");
-    checkUser();
-  }, []);
+  // useEffect(() => {
+  //   // console.log("USE_EFFECT_USE EFFECT");
+  //   checkUser();
+  // }, []);
 
   const dispatch = useDispatch();
 
   const route = useRouter();
 
-  async function checkUser() {
-    console.log("checking user...");
-    try {
-      // setUiState("loading");
-      const userValues = await Auth.currentAuthenticatedUser();
-      dispatch(setUser(userValues?.attributes || {}));
-      // setIsAuthenticated(true);
-      // route.push("/profile");
-    } catch (err) {
-      // setIsAuthenticated(false);
-      console.log(err, "err");
-    }
-  }
+  // async function checkUser() {
+  //   console.log("checking user...");
+  //   try {
+  //     // setUiState("loading");
+  //     const userValues = await Auth.currentAuthenticatedUser();
+  //     dispatch(setUser(userValues?.attributes || {}));
+  //     // setIsAuthenticated(true);
+  //     // route.push("/profile");
+  //   } catch (err) {
+  //     // setIsAuthenticated(false);
+  //     console.log(err, "err");
+  //   }
+  // }
 
-  console.log(user, "uese");
-  let region = "us";
+  // console.log(user, "uese");
+  // let region = "us";
   return (
-    <div>
-      <div
+    <div className="overflow-hidden">
+      {/* <div
         className={`${
           styles[`${region}-banner`]
         } w-full bg-cover bg-no-repeat bg-top ${styles.banner}`}
@@ -129,7 +129,7 @@ const Home = () => {
             Change Region{" "}
           </button>
         </div>
-      </div>
+      </div> */}
       {/* <Container backgroundSelector="us-banner" /> */}
       {/* <Head>
         <title>Welobby</title>
@@ -141,6 +141,56 @@ const Home = () => {
         <Container backgroundSelector="us-banner" />
         <Container backgroundSelector="uk-banner" />
       </Slider> */}
+      {/* ${backgroundSelector} */}
+      {/* <div className={`h-screen bg-cover flex flex-row `}>
+      <div className="h-screen w-7/12"></div>
+      <div className="h-screen w-4/12 p-2 bg-white flex justify-center">
+        <div
+          className={`${styles["welcome-container"]} text-center font-light`}
+        >
+          <p className="text-4xl font-light">Welcome to Welobby! </p>
+          <p className="pt-5 text-2xl">
+            {" "}
+            We make politics more open and accessible.
+          </p>
+          <p className="pt-5 text-lg">
+            {" "}
+            Please choose the region you want to read news about.
+          </p>
+          <div className="pt-12 w-80 m-auto flex justify-around">
+            <Link href="/home/" as="/home/">
+              <button
+                className="bg-blue-500 text-white text-lg py-3 w-36 rounded"
+                onClick={() => {
+                  dispatch(setRegion("us"));
+                  localStorage.setItem("region", "us");
+                }}
+              >
+                <a>United States</a>
+              </button>
+            </Link>
+            <Link href="/home/" as="/home/" className="mr-2">
+              <button
+                className="bg-gray-500 text-white text-lg py-3 w-36 rounded"
+                onClick={() => {
+                  dispatch(setRegion("uk"));
+                  localStorage.setItem("region", "uk");
+                }}
+              >
+                {" "}
+                <a>United Kingdom</a>
+              </button>
+            </Link>
+          </div>
+
+          <div></div>
+        </div>
+      </div> */}
+      {/* </div> */}
+      <Slider {...sliderSettings}>
+        <Container backgroundSelector="us-banner" />
+        <Container backgroundSelector="uk-banner" />
+      </Slider>
     </div>
   );
 };

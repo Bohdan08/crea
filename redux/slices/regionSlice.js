@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  value: null,
+  currentRegion: null,
 };
 
 export const regionSlice = createSlice({
@@ -9,7 +9,7 @@ export const regionSlice = createSlice({
   initialState,
   reducers: {
     setRegion: (state, { payload }) => {
-      state.value = payload;
+      state.currentRegion = payload;
     },
   },
 });

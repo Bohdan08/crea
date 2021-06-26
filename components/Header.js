@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Auth } from "aws-amplify";
+// import { Auth } from "aws-amplify";
 import { resetUser, setUser } from "../redux/slices/userSlice";
 
 // style scss
@@ -11,29 +11,29 @@ import styles from "./header.module.scss";
 
 const Header = () => {
   // const [user, setUser] = useState(null);
-  const region = useSelector((state) => state.region.value);
-  const { user } = useSelector((state) => state.user);
+  const { region, user } = useSelector((store) => store);
+  const { currentRegion } = region;
   const router = useRouter();
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (!user || !Object.entries(user).length) {
-      checkUser();
-    }
-    // checkUser();
-  }, []);
+  // useEffect(() => {
+  //   if (!user || !Object.entries(user).length) {
+  //     checkUser();
+  //   }
+  //   // checkUser();
+  // }, []);
 
-  async function checkUser() {
-    console.log("checking user from Header...");
-    try {
-      const userValues = await Auth.currentAuthenticatedUser();
-      dispatch(setUser(userValues?.attributes || {}));
-    } catch (err) {
-      dispatch(resetUser());
-      router.push("/");
-    }
-  }
+  // async function checkUser() {
+  //   console.log("checking user from Header...");
+  //   try {
+  //     const userValues = await Auth.currentAuthenticatedUser();
+  //     dispatch(setUser(userValues?.attributes || {}));
+  //   } catch (err) {
+  //     dispatch(resetUser());
+  //     router.push("/");
+  //   }
+  // }
 
   // // async function checkUser() {
   //   let formattedUserPayload = {};
@@ -53,6 +53,7 @@ const Header = () => {
   //   }
   // }
 
+  console.log(currentRegion, "currentRegion");
   return (
     <header className="header py-2 px-10 flex bg-white shadow">
       <Link href="/home" as="/home">
@@ -101,7 +102,9 @@ const Header = () => {
                 className="focus:outline-none"
                 onClick={() => {
                   console.log("sign out");
-                  Auth.signOut();
+                  {
+                    /* Auth.signOut(); */
+                  }
                   dispatch(resetUser());
                   router.push("/");
                 }}
