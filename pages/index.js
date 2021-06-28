@@ -36,29 +36,26 @@ const Container = ({ backgroundSelector }) => {
             Please choose the region you want to read news about.
           </p>
           <div className="pt-12 w-80 m-auto flex justify-around">
-            <Link href="/home/" as="/home/">
-              <button
-                className="bg-blue-500 text-white text-lg py-3 w-36 rounded"
-                onClick={() => {
-                  dispatch(setRegion("us"));
-                  localStorage.setItem("region", "us");
-                }}
-              >
-                <a>United States</a>
-              </button>
-            </Link>
-            <Link href="/home/" as="/home/" className="mr-2">
-              <button
-                className="bg-gray-500 text-white text-lg py-3 w-36 rounded"
-                onClick={() => {
-                  dispatch(setRegion("uk"));
-                  localStorage.setItem("region", "uk");
-                }}
-              >
-                {" "}
-                <a>United Kingdom</a>
-              </button>
-            </Link>
+            <button
+              className="bg-blue-500 text-white text-lg py-3 w-36 rounded"
+              onClick={() => {
+                dispatch(setRegion("us"));
+                localStorage.setItem("region", "us");
+              }}
+            >
+              <a>United States</a>
+            </button>
+
+            <button
+              className="bg-gray-500 text-white text-lg py-3 w-36 rounded"
+              onClick={() => {
+                dispatch(setRegion("uk"));
+                localStorage.setItem("region", "uk");
+              }}
+            >
+              {" "}
+              <a>United Kingdom</a>
+            </button>
           </div>
 
           <div></div>
@@ -68,7 +65,7 @@ const Container = ({ backgroundSelector }) => {
   );
 };
 
-const Home = () => {
+const App = () => {
   const sliderSettings = {
     autoplay: true,
     fade: true,
@@ -80,7 +77,8 @@ const Home = () => {
   };
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { user } = useSelector((state) => state.user);
+  const { region, user } = useSelector((store) => store);
+  const { currentRegion } = region;
 
   // useEffect(() => {
   //   // console.log("USE_EFFECT_USE EFFECT");
@@ -107,86 +105,32 @@ const Home = () => {
 
   // console.log(user, "uese");
   // let region = "us";
-  return (
-    <div className="overflow-hidden">
-      {/* <div
-        className={`${
-          styles[`${region}-banner`]
-        } w-full bg-cover bg-no-repeat bg-top ${styles.banner}`}
-      >
-        <div className="text-white p-8">
-          <p className="text-3xl text-white">
-            {" "}
-            Discover {region?.toUpperCase()} Government Information
-          </p>
-          <p className="pt-2 text-xl">
-            We make {region?.toUpperCase()} Congress more open and accessible.
-          </p>
-          <button
-            className="mt-5 py-2 w-44 bg-white text-black rounded cursor-pointer focus:outline-none"
-            onClick={() => setRegionModal(true)}
-          >
-            Change Region{" "}
-          </button>
-        </div>
-      </div> */}
-      {/* <Container backgroundSelector="us-banner" /> */}
-      {/* <Head>
-        <title>Welobby</title>
-        <script src="https://cdn.auth0.com/js/auth0/9.11/auth0.min.js"></script>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <Slider {...sliderSettings}>
-        <Container backgroundSelector="us-banner" />
-        <Container backgroundSelector="uk-banner" />
-      </Slider> */}
-      {/* ${backgroundSelector} */}
-      {/* <div className={`h-screen bg-cover flex flex-row `}>
-      <div className="h-screen w-7/12"></div>
-      <div className="h-screen w-4/12 p-2 bg-white flex justify-center">
-        <div
-          className={`${styles["welcome-container"]} text-center font-light`}
+  console.log(currentRegion, "currentRegion");
+  return currentRegion ? (
+    <div
+      className={`${
+        styles[`${currentRegion}-banner`]
+      } w-full bg-cover bg-no-repeat bg-top ${styles.banner}`}
+    >
+      <div className="text-white p-8">
+        <p className="text-3xl text-white">
+          {" "}
+          Discover {currentRegion?.toUpperCase()} Government Information
+        </p>
+        <p className="pt-2 text-xl">
+          We make {currentRegion?.toUpperCase()} Congress more open and
+          accessible.
+        </p>
+        <button
+          className="mt-5 py-2 w-44 bg-white text-black rounded cursor-pointer focus:outline-none"
+          onClick={() => setRegionModal(true)}
         >
-          <p className="text-4xl font-light">Welcome to Welobby! </p>
-          <p className="pt-5 text-2xl">
-            {" "}
-            We make politics more open and accessible.
-          </p>
-          <p className="pt-5 text-lg">
-            {" "}
-            Please choose the region you want to read news about.
-          </p>
-          <div className="pt-12 w-80 m-auto flex justify-around">
-            <Link href="/home/" as="/home/">
-              <button
-                className="bg-blue-500 text-white text-lg py-3 w-36 rounded"
-                onClick={() => {
-                  dispatch(setRegion("us"));
-                  localStorage.setItem("region", "us");
-                }}
-              >
-                <a>United States</a>
-              </button>
-            </Link>
-            <Link href="/home/" as="/home/" className="mr-2">
-              <button
-                className="bg-gray-500 text-white text-lg py-3 w-36 rounded"
-                onClick={() => {
-                  dispatch(setRegion("uk"));
-                  localStorage.setItem("region", "uk");
-                }}
-              >
-                {" "}
-                <a>United Kingdom</a>
-              </button>
-            </Link>
-          </div>
-
-          <div></div>
-        </div>
-      </div> */}
-      {/* </div> */}
+          Change Region{" "}
+        </button>
+      </div>
+    </div>
+  ) : (
+    <div className="overflow-hidden">
       <Slider {...sliderSettings}>
         <Container backgroundSelector="us-banner" />
         <Container backgroundSelector="uk-banner" />
@@ -195,7 +139,7 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default App;
 
 // auth setup
 

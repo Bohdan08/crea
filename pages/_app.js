@@ -44,7 +44,7 @@ const App = ({ Component, pageProps }) => {
 
   return (
     <Provider store={store}>
-      <div>
+      <div className="min-h-screen">
         <Header />
         <Component {...pageProps} />
       </div>

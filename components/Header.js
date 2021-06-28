@@ -53,10 +53,14 @@ const Header = () => {
   //   }
   // }
 
-  console.log(currentRegion, "currentRegion");
+  console.log(user, "user");
   return (
-    <header className="header py-2 px-10 flex bg-white shadow">
-      <Link href="/home" as="/home">
+    <header
+      className={`header py-2 px-10 flex bg-white shadow ${
+        currentRegion ? "" : "hidden"
+      }`}
+    >
+      <Link href="/" as="/">
         <a>
           <Image
             src="/images/logo.jpeg"
@@ -71,7 +75,7 @@ const Header = () => {
         className={`${styles.navbar} block m-auto text-xl font-light pl-10 w-full`}
       >
         <li>
-          <Link href="/home/" href="/home/">
+          <Link href="/" href="/">
             <a>Home</a>
           </Link>
         </li>
@@ -81,7 +85,7 @@ const Header = () => {
             <a>Bills</a>
           </Link>
         </li>
-        {user && (
+        {user.user && (
           <li>
             <Link href="/profile/" as="/profile/">
               <a>Profile</a>
@@ -89,7 +93,7 @@ const Header = () => {
           </li>
         )}
         <div className="float-right">
-          {!user ? (
+          {!user?.user ? (
             <li className="float-right">
               <Link href="/auth/">
                 <a>Sign In</a>
