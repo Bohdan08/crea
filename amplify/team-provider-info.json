@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-welobby-dev-202001-authRole",
+      "UnauthRoleArn": "arn:aws:iam::643914154920:role/amplify-welobby-dev-202001-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::643914154920:role/amplify-welobby-dev-202001-authRole",
+      "Region": "ca-central-1",
+      "DeploymentBucketName": "amplify-welobby-dev-202001-deployment",
+      "UnauthRoleName": "amplify-welobby-dev-202001-unauthRole",
+      "StackName": "amplify-welobby-dev-202001",
+      "StackId": "arn:aws:cloudformation:ca-central-1:643914154920:stack/amplify-welobby-dev-202001/9b7bd8e0-d7a6-11eb-bcec-0ef4d7106e46",
+      "AmplifyAppId": "d2zuoj91snxyiz"
+    },
+    "categories": {
+      "function": {
+        "welobbyPostConfirmation": {}
+      },
+      "auth": {
+        "welobby": {}
+      }
+    }
+  }
+}

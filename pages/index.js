@@ -131,10 +131,43 @@ const App = () => {
     </div>
   ) : (
     <div className="overflow-hidden">
-      <Slider {...sliderSettings}>
-        <Container backgroundSelector="us-banner" />
-        <Container backgroundSelector="uk-banner" />
-      </Slider>
+      <div
+        className="h-screen p-2 bg-white flex justify-center m-auto
+      "
+      >
+        <div className="text-center font-light m-auto">
+          <p className="text-4xl font-light">Welcome to Welobby! </p>
+          <p className="pt-5 text-2xl">
+            {" "}
+            We make politics more open and accessible.
+          </p>
+          <p className="pt-5 text-lg">
+            {" "}
+            Please choose the region you want to read news about.
+          </p>
+          <div className="pt-12 w-80 m-auto flex justify-around">
+            <button
+              className="bg-blue-500 text-white text-lg py-3 w-36 rounded"
+              onClick={() => {
+                dispatch(setRegion("us"));
+                localStorage.setItem("region", "us");
+              }}
+            >
+              <a>United States</a>
+            </button>
+
+            <button
+              className="bg-gray-500 text-white text-lg py-3 w-36 rounded"
+              onClick={() => {
+                dispatch(setRegion("uk"));
+                localStorage.setItem("region", "uk");
+              }}
+            >
+              <a>United Kingdom</a>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
