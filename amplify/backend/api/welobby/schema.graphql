@@ -9,6 +9,8 @@ type User
   id: ID!
   username: String!
   email: String!
+  createdAt: String
+  updatedAt: String
   geographicPreference: String
   supportGroup: String
   voteLocation: String

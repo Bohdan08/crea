@@ -1,5 +1,6 @@
 // import "../src/aws-exports";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { API, Auth } from "aws-amplify";
 import styled from "styled-components";
 import {
@@ -9,7 +10,6 @@ import {
   SignUp,
   SignIn,
 } from "./FormComponents";
-import { useDispatch } from "react-redux";
 import { fetchUserFromDbById } from "../redux/slices/userSlice";
 import { useRouter } from "next/router";
 
@@ -18,7 +18,10 @@ const StyledForm = styled.form`
 `;
 
 const AuthComponent = () => {
-  const [uiState, setUiState] = useState("signIn");
+  const { user } = useSelector((store) => store);
+
+  const [uiState, setUiState] = useState(user.data ? "signedIn" : "signIn");
+
   const [error, setError] = useState(null);
   const [formState, setFormState] = useState({
     email: "",
@@ -38,6 +41,7 @@ const AuthComponent = () => {
     }
   }, [uiState]);
 
+  console.log(uiState, "uiState");
   const onChange = ({ target: { name, value } }) =>
     setFormState({ ...formState, [name]: value });
 

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { API, Auth, graphqlOperation } from "aws-amplify";
+import { removeNullsInObject } from "../../shared/utils";
 import { getUser, listUsers } from "../../src/graphql/queries";
 
 const initialState = {
@@ -15,8 +16,7 @@ export const fetchUserFromDbById = createAsyncThunk(
       const response = await API.graphql(
         graphqlOperation(getUser, { id: userId })
       );
-      console.log(response, "response");
-      return response.data.getUser;
+      return removeNullsInObject(response.data.getUser);
     } catch (err) {
       return err;
     }
@@ -27,31 +27,11 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // fetchUserFromDb: async (state, { payload }) => {
-    //   console.log(payload, "payload");
-    //   // state.status = "loading";
-    //   try {
-    //     console.log(state.user, "state");
-    //     // const userValues = await Auth.currentAuthenticatedUser();
-    //     // console.log(userValues, "userValues");
-    //     // state.user = userValues?.attributes || {};
-
-    //     // fetch from db
-    //     const userData = await API.graphql(
-    //       graphqlOperation(getUser, { id: payload })
-    //     );
-    //     console.log(userData.data.getUser, "userDataREDUX");
-    //     state.user = userData.data.getUser;
-    //     state.status = "success";
-    //   } catch (error) {
-    //     state.status = "error";
-    //     state.message = error;
-    //   }
-    // },
     setUser: (state, { payload }) => {
-      state.user = payload;
+      state.data = payload;
     },
     changeUserSingleField: (state, { payload }) => {
+      console.log(payload, "payload");
       const { field, value } = payload;
       state.data[field] = value;
     },

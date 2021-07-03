@@ -7,12 +7,12 @@ export const getUser = /* GraphQL */ `
       id
       username
       email
+      createdAt
+      updatedAt
       geographicPreference
       supportGroup
       voteLocation
       userType
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -27,12 +27,12 @@ export const listUsers = /* GraphQL */ `
         id
         username
         email
+        createdAt
+        updatedAt
         geographicPreference
         supportGroup
         voteLocation
         userType
-        createdAt
-        updatedAt
       }
       nextToken
     }

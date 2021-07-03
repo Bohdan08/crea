@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { API, Auth, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "aws-amplify";
 import { useDispatch, useSelector } from "react-redux";
-// import { changeUserSingleField, setUser } from "../redux/slices/userSlice";
-
-// styles
-import styles from "./profile.module.scss";
-import { setUser } from "../redux/slices/userSlice";
+import _ from "lodash";
+import { changeUserSingleField, setUser } from "../redux/slices/userSlice";
 import {
   PROFILE_FIELDS_BY_CURRENT_SELECTION,
   PROFILE_FIELD_TYPES,
@@ -14,6 +11,9 @@ import {
 } from "../shared/constants";
 import { updateUser } from "../src/graphql/mutations";
 import { listUsers } from "../src/graphql/queries";
+
+// styles
+import styles from "./profile.module.scss";
 
 const ProfileSvgWrapper = ({
   path,
@@ -61,18 +61,18 @@ const ProfileInputField = ({
 const ProfileDropDownField = ({
   fieldName,
   optionName,
-  inputName,
   options,
-  // icon,
   onChangeField,
+  selectedOption,
   isEdit,
 }) => (
   <div className="flex flex-row w-full pb-5">
     <div className="text-lg flex flex-col justify-center">
       <div className="flex mt-2">
         <div className="p-2 rounded-sm disabled">
-          <form>
-            {console.log(isEdit, "isEdit")}
+          <form
+            onChange={(event) => onChangeField(optionName, event.target.value)}
+          >
             <fieldset disabled={!isEdit}>
               <label className="mr-2" htmlFor={fieldName}>
                 {fieldName}
@@ -84,11 +84,14 @@ const ProfileDropDownField = ({
                 name={fieldName}
                 id={fieldName}
               >
+                <option className="text-gray-400" selected={!selectedOption}>
+                  Select your option
+                </option>
                 {options?.map(({ key, value }) => (
                   <option
                     key={key}
                     value={value}
-                    onChange={() => onChangeField(optionName, value)}
+                    selected={!!selectedOption && value === selectedOption}
                   >
                     {value}
                   </option>
@@ -103,12 +106,14 @@ const ProfileDropDownField = ({
 );
 
 const Profile = () => {
+  /* States */
   const [isEdit, setEdit] = useState(false);
   const [userValues, setUserValues] = useState({});
   const [currentProfileFields, setCurrentProfileFields] = useState(
     PROFILE_SELECTIONS[0]
   );
-  const [authInfo, setAuthInfo] = useState(null);
+
+  /* Redux */
   const { user, region } = useSelector((state) => state);
 
   const dispatch = useDispatch();
@@ -116,13 +121,20 @@ const Profile = () => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log(user, "user_PROFILE");
     if (!user.data) {
       router.push("/auth");
     }
   }, []);
 
-  
+  useEffect(() => {
+    if (
+      !Object.entries(userValues).length &&
+      Object.entries(user.data).length
+    ) {
+      setUserValues(user.data);
+    }
+  }, [userValues, user.data]);
+
   /* else {
       setUserValues(user);
     } *
@@ -145,30 +157,16 @@ const Profile = () => {
   } */
 
   const updateUserData = async () => {
-    try {
-      // const songId = 'b1cdac03-6a27-41b3-af85-1133def71a6d'
-      console.log(user, "SAVE_PROGRESS");
-      let clonedUser = Object.assign({}, user);
-      delete clonedUser.sub;
-      // clonedUser.updatedAt = "UPDATED";
-      clonedUser.email_verified = false;
+    console.log(userValues, "userValues");
 
-      const userValues = await API.graphql(
+    try {
+      const updatedUserValues = await API.graphql(
         graphqlOperation(updateUser, {
-          input: {
-            id: "b1cdac03-6a27-41b3-af85-1133def71a6d",
-            username: "bohdanUpdated",
-            voterType: "example",
-          },
+          input: userValues,
         })
       );
-      console.log(userValues, "userValues");
-      // const userData = await API.graphql(graphqlOperation(listUsers));
-      // console.log(userData.data.listUsers.items[0], "userData");
-      // dispatch(setUser(userData.data.listUsers.items[0]));
-      // setIsAuthenticated(true);
+      dispatch(setUser(removeNullsInObject(updatedUserValues)));
     } catch (error) {
-      // setIsAuthenticated(false);
       console.log(error, "error");
     }
   };
@@ -187,20 +185,18 @@ const Profile = () => {
     }
   };
 
-  const onChangeField = (field, value) => {
+  const onChangeField = (field, value) =>
     setUserValues({ ...userValues, [field]: value });
 
-    // let userPayload = Object.assign(user, {});
-    // userPayload[field] = value;
-    // const userPayload = Object.assign(user, { [field]: value });
+  const handleEditProgress = (editValue) => {
+    setEdit(editValue);
 
-    // // { ...user, [field]: value };
-    // dispatch(setUser({ ...user, [field]: value }));
-    // dispatch(changeUserSingleField({ field, value }));
+    if (!editValue) {
+      setUserValues(user.data);
+    }
   };
 
-  console.log(userValues, "userValuesPROFILE");
-  console.log(isEdit, "isEdit");
+  const isSaveDisabled = _.isEqual(userValues, user.data);
   return (
     <div>
       {user ? (
@@ -224,7 +220,7 @@ const Profile = () => {
               <span className={styles.tooltiptext}>
                 {isEdit ? "Cancel Progress" : "Edit Profile"}
               </span>
-              <button type="button" onClick={() => setEdit(!isEdit)}>
+              <button type="button" onClick={() => handleEditProgress(!isEdit)}>
                 {!isEdit ? (
                   <ProfileSvgWrapper
                     stroke="orange"
@@ -243,9 +239,7 @@ const Profile = () => {
                 )}
               </button>
             </div>
-            {PROFILE_FIELDS_BY_CURRENT_SELECTION[
-              currentProfileFields
-            ].map(
+            {PROFILE_FIELDS_BY_CURRENT_SELECTION[currentProfileFields].map(
               ({ name, value, iconPath, options, type, geographyDependent }) =>
                 type === PROFILE_FIELD_TYPES.INPUT ? (
                   <ProfileInputField
@@ -258,31 +252,37 @@ const Profile = () => {
                     onChangeField={onChangeField}
                   />
                 ) : (
-                  <ProfileDropDownField
-                    key={name}
-                    fieldName={name}
-                    optionName={value}
-                    options={
-                      geographyDependent
-                        ? options[region.currentRegion || "usa"]
-                        : options
-                    }
-                    icon={iconPath}
-                    isEdit={isEdit}
-                    onChangeField={onChangeField}
-                  />
+                  <>
+                    {console.log(userValues, "userValues", value, "value")}
+                    <ProfileDropDownField
+                      key={name}
+                      fieldName={name}
+                      optionName={value}
+                      selectedOption={userValues[value]}
+                      options={
+                        geographyDependent
+                          ? options[region.currentRegion || "usa"]
+                          : options
+                      }
+                      icon={iconPath}
+                      isEdit={isEdit}
+                      onChangeField={onChangeField}
+                    />
+                  </>
                 )
             )}
 
-            <button
-              className="bg-green-600 text-white py-2 px-3 rounded-sm mt-1"
-              onClick={() => {
-                /* fetchUserData(); */
-                /* updateUserData(); */
-              }}
-            >
-              Save Progress
-            </button>
+            {isEdit && (
+              <button
+                className={`bg-green-600 text-white py-2 px-3 rounded-sm mt-1 ${
+                  isSaveDisabled ? "cursor-not-allowed opacity-70" : ""
+                }`}
+                disabled={isSaveDisabled}
+                onClick={() => updateUserData()}
+              >
+                Save Progress
+              </button>
+            )}
           </div>
         </div>
       ) : null}
