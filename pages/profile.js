@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { API, graphqlOperation } from "aws-amplify";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
-import { changeUserSingleField, setUser } from "../redux/slices/userSlice";
+import usePlacesAutocomplete from "use-places-autocomplete";
+import { setUser } from "../redux/slices/userSlice";
 import {
   PROFILE_FIELDS_BY_CURRENT_SELECTION,
   PROFILE_FIELD_TYPES,
   PROFILE_SELECTIONS,
+  REGIONS_MAPPING,
 } from "../shared/constants";
 import { updateUser } from "../src/graphql/mutations";
-import { listUsers } from "../src/graphql/queries";
+import { removeNullsInObject } from "../shared/utils";
 
 // styles
 import styles from "./profile.module.scss";
@@ -66,9 +69,9 @@ const ProfileDropDownField = ({
   selectedOption,
   isEdit,
 }) => (
-  <div className="flex flex-row w-full pb-5">
+  <div className="flex flex-row w-full mb-4">
     <div className="text-lg flex flex-col justify-center">
-      <div className="flex mt-2">
+      <div className="flex">
         <div className="p-2 rounded-sm disabled">
           <form
             onChange={(event) => onChangeField(optionName, event.target.value)}
@@ -78,13 +81,17 @@ const ProfileDropDownField = ({
                 {fieldName}
               </label>
               <select
-                className={`border mt-2 p-1 rounded ${
+                className={`border p-1 rounded ${
                   isEdit ? "" : "cursor-not-allowed"
                 }`}
                 name={fieldName}
                 id={fieldName}
               >
-                <option className="text-gray-400" selected={!selectedOption}>
+                <option
+                  className="text-gray-400"
+                  selected={!selectedOption}
+                  disabled
+                >
                   Select your option
                 </option>
                 {options?.map(({ key, value }) => (
@@ -114,12 +121,70 @@ const Profile = () => {
   );
 
   /* Redux */
-  const { user, region } = useSelector((state) => state);
+  const { user } = useSelector((state) => state);
+
+  /* Geo Location */
+  const {
+    ready,
+    value,
+    suggestions: { status, data },
+    setValue,
+    clearSuggestions,
+  } = usePlacesAutocomplete({
+    requestOptions: {
+      /* Define search scope here */
+    },
+    debounce: 300,
+  });
+
+  const handleInputLocation = (event) => {
+    setValue(event.target.value);
+    setUserValues({ ...userValues, voteLocation: event.target.value });
+  };
+
+  const handleSelectLocation = ({ description }) => () => {
+    // When user selects a place, we can replace the keyword without request data from API
+    // by setting the second parameter to "false"
+    setValue(description, false);
+    setUserValues({ ...userValues, voteLocation: description });
+    clearSuggestions();
+  };
+
+  const renderSuggestions = () => {
+    /* show data only according to selected region */
+    const filteredData = data?.filter((initialSuggestion) =>
+      initialSuggestion.description
+        ?.toLowerCase()
+        .includes(REGIONS_MAPPING[userValues.geographicPreference])
+    );
+
+    return filteredData.length ? (
+      filteredData.map((suggestion) => {
+        const {
+          place_id,
+          structured_formatting: { main_text, secondary_text },
+        } = suggestion;
+
+        return (
+          <li
+            key={place_id}
+            className="cursor-pointer px-2 hover:bg-gray-50"
+            onClick={handleSelectLocation(suggestion)}
+          >
+            <strong>{main_text}</strong> <small>{secondary_text}</small>
+          </li>
+        );
+      })
+    ) : (
+      <li className="px-2"> No results found... </li>
+    );
+  };
 
   const dispatch = useDispatch();
 
   const router = useRouter();
 
+  /* Use Effects */
   useEffect(() => {
     if (!user.data) {
       router.push("/auth");
@@ -129,36 +194,14 @@ const Profile = () => {
   useEffect(() => {
     if (
       !Object.entries(userValues).length &&
-      Object.entries(user.data).length
+      Object.entries(user.data || {}).length
     ) {
       setUserValues(user.data);
     }
   }, [userValues, user.data]);
 
-  /* else {
-      setUserValues(user);
-    } *
-    
-  }, []);
-
-  /* useEffect(() => {
-    checkUser();
-  }, []); */
-
-  /* async function checkUser() {
-    try {
-      const userValues = await Auth.currentAuthenticatedUser();
-      dispatch(setUser(userValues?.attributes || {}));
-      setAuthInfo("signedIn");
-    } catch (err) {
-      console.log(err, "err");
-      setAuthInfo(err?.message);
-    }
-  } */
-
+  /* Handlers */
   const updateUserData = async () => {
-    console.log(userValues, "userValues");
-
     try {
       const updatedUserValues = await API.graphql(
         graphqlOperation(updateUser, {
@@ -167,21 +210,7 @@ const Profile = () => {
       );
       dispatch(setUser(removeNullsInObject(updatedUserValues)));
     } catch (error) {
-      console.log(error, "error");
-    }
-  };
-
-  const fetchUserData = async () => {
-    try {
-      const userData = await API.graphql(graphqlOperation(listUsers));
-      console.log(userData, "userData");
-      // dispatch(setUser(userData.data.listUsers.items[0]));
-      // setIsAuthenticated(true);
-    } catch (error) {
-      {
-        /* setIsAuthenticated(false); */
-      }
-      console.log(error, "error");
+      throw Error(error);
     }
   };
 
@@ -197,6 +226,7 @@ const Profile = () => {
   };
 
   const isSaveDisabled = _.isEqual(userValues, user.data);
+
   return (
     <div>
       {user ? (
@@ -239,7 +269,9 @@ const Profile = () => {
                 )}
               </button>
             </div>
-            {PROFILE_FIELDS_BY_CURRENT_SELECTION[currentProfileFields].map(
+            {PROFILE_FIELDS_BY_CURRENT_SELECTION[
+              currentProfileFields
+            ].map(
               ({ name, value, iconPath, options, type, geographyDependent }) =>
                 type === PROFILE_FIELD_TYPES.INPUT ? (
                   <ProfileInputField
@@ -252,33 +284,61 @@ const Profile = () => {
                     onChangeField={onChangeField}
                   />
                 ) : (
-                  <>
-                    {console.log(userValues, "userValues", value, "value")}
-                    <ProfileDropDownField
-                      key={name}
-                      fieldName={name}
-                      optionName={value}
-                      selectedOption={userValues[value]}
-                      options={
-                        geographyDependent
-                          ? options[region.currentRegion || "usa"]
-                          : options
-                      }
-                      icon={iconPath}
-                      isEdit={isEdit}
-                      onChangeField={onChangeField}
-                    />
-                  </>
+                  <ProfileDropDownField
+                    key={name}
+                    fieldName={name}
+                    optionName={value}
+                    selectedOption={userValues[value]}
+                    options={
+                      geographyDependent
+                        ? options[
+                            REGIONS_MAPPING[userValues.geographicPreference]
+                          ]
+                        : options
+                    }
+                    icon={iconPath}
+                    isEdit={isEdit}
+                    onChangeField={onChangeField}
+                  />
                 )
+            )}
+            {currentProfileFields === "Preferences" && (
+              <div className="flex flex-row">
+                <label className="mx-2 pt-1 text-black text-lg">
+                  I vote in
+                </label>
+                <div>
+                  <input
+                    className={`p-1 w-96 border rounded ${
+                      !isEdit || !userValues.geographicPreference
+                        ? "cursor-not-allowed"
+                        : ""
+                    }`}
+                    value={userValues.voteLocation}
+                    onChange={handleInputLocation}
+                    disabled={!ready}
+                    placeholder="Your location"
+                    disabled={!isEdit || !userValues.geographicPreference}
+                  />
+                  {/* We can use the "status" to decide whether we should display the dropdown or not */}
+                  {status === "OK" && (
+                    <ul className="absolute mt-1 w-96 bg-white rounded border">
+                      {renderSuggestions()}
+                    </ul>
+                  )}
+                </div>
+              </div>
             )}
 
             {isEdit && (
               <button
-                className={`bg-green-600 text-white py-2 px-3 rounded-sm mt-1 ${
+                className={`bg-green-600 text-white py-2 px-3 rounded-sm mt-5 ${
                   isSaveDisabled ? "cursor-not-allowed opacity-70" : ""
                 }`}
                 disabled={isSaveDisabled}
-                onClick={() => updateUserData()}
+                onClick={() => {
+                  updateUserData();
+                }}
               >
                 Save Progress
               </button>

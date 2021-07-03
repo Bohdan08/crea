@@ -18,6 +18,7 @@ import "slick-carousel/slick/slick-theme.css";
 // aws
 import Amplify from "aws-amplify";
 import config from "../src/aws-exports";
+import Head from "next/head";
 Amplify.configure(config);
 
 const App = ({ Component, pageProps }) => {
@@ -43,6 +44,13 @@ const App = ({ Component, pageProps }) => {
 
   return (
     <Provider store={store}>
+      <Head>
+        <script
+          async
+          defer
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDdbxYCdWwJJynWZsnsyB0baAvOA6UiK5A&libraries=places"
+        ></script>
+      </Head>
       <div className="min-h-screen">
         <Header />
         <Component {...pageProps} />
