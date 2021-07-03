@@ -146,9 +146,9 @@ import { setUser } from "../redux/slices/userSlice";
 import { useRouter } from "next/router";
 import AuthComponent from "../components/Auth";
 
-const StyledForm = styled.form`
-  width: 500px !important;
-`;
+// const StyledForm = styled.form`
+//   width: 500px !important;
+// `;
 
 const Auth = () => <AuthComponent />;
 

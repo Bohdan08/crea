@@ -1,6 +1,6 @@
 // import "../src/aws-exports";
 import { useEffect, useState } from "react";
-// import { Auth } from "aws-amplify";
+import { API, Auth } from "aws-amplify";
 import styled from "styled-components";
 import {
   ConfirmSignUp,
@@ -10,7 +10,7 @@ import {
   SignIn,
 } from "./FormComponents";
 import { useDispatch } from "react-redux";
-import { setUser } from "../redux/slices/userSlice";
+import { fetchUserFromDbById } from "../redux/slices/userSlice";
 import { useRouter } from "next/router";
 
 const StyledForm = styled.form`
@@ -32,35 +32,16 @@ const AuthComponent = () => {
   const dispatch = useDispatch();
   const route = useRouter();
 
-  // useEffect(() => {
-  //   checkUser();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (uiState === "signedIn") {
-  //     route.push("/");
-  //   }
-  // }, [uiState]);
-
-  // async function checkUser() {
-  //   console.log("checking user...");
-  //   try {
-  //     setUiState("loading");
-  //     const userValues = await Auth.currentAuthenticatedUser();
-  //     dispatch(setUser(userValues?.attributes || {}));
-  //     setUiState("signedIn");
-  //   } catch (err) {
-  //     console.log(err, "err");
-  //     setUiState("signIn");
-  //   }
-  // }
+  useEffect(() => {
+    if (uiState === "signedIn") {
+      route.push("/");
+    }
+  }, [uiState]);
 
   const onChange = ({ target: { name, value } }) =>
     setFormState({ ...formState, [name]: value });
 
   async function signUp() {
-    console.log(password, "password");
-    console.log(repeatedPassword, "repeatedPassword");
     if (password !== repeatedPassword) {
       setError({ message: "Passwords don't match" });
       return;
@@ -79,9 +60,10 @@ const AuthComponent = () => {
     try {
       await Auth.confirmSignUp(email, authCode);
       const userValues = await Auth.signIn(email, password);
-      dispatch(setUser(userValues?.attributes || {}));
+      dispatch(fetchUserFromDbById(userValues?.attributes?.sub));
       setError(null);
       setUiState("signedIn");
+      route.push("/");
     } catch (err) {
       setError(err);
     }
@@ -90,8 +72,10 @@ const AuthComponent = () => {
   async function signIn() {
     try {
       const userValues = await Auth.signIn(email, password);
-      dispatch(setUser(userValues?.attributes || {}));
+      dispatch(fetchUserFromDbById(userValues?.attributes?.sub));
+      setError(null);
       setUiState("signedIn");
+      route.push("/");
     } catch (err) {
       setError(err);
     }
@@ -112,8 +96,7 @@ const AuthComponent = () => {
       setError(err);
     }
   }
-  console.log(uiState, "uiState");
-  console.log(error, "error");
+
   return (
     <div className="bg-gray-50 min-h-screen text-lg">
       <div className="flex flex-col items-center">

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import swal from "sweetalert2";
 import Head from "next/head";
 import Link from "next/link";
 import Slider from "react-slick";
@@ -11,7 +12,9 @@ import { setRegion } from "../redux/slices/regionSlice";
 // style
 import styles from "./index.module.scss";
 import { useRouter } from "next/router";
-import { setUser } from "../redux/slices/userSlice";
+import { fetchUser, setUser } from "../redux/slices/userSlice";
+import { API, graphqlOperation } from "aws-amplify";
+import { getUser, listUsers } from "../src/graphql/queries";
 
 // import { withAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
 // import { listUsers } from "../src/graphql/queries";
@@ -95,8 +98,8 @@ const Container = ({ backgroundSelector }) => {
             <button
               className="bg-blue-500 text-white text-lg py-3 w-36 rounded"
               onClick={() => {
-                dispatch(setRegion("us"));
-                localStorage.setItem("region", "us");
+                dispatch(setRegion("usa"));
+                localStorage.setItem("region", "usa");
               }}
             >
               <a>United States</a>
@@ -122,26 +125,47 @@ const Container = ({ backgroundSelector }) => {
 };
 
 const App = () => {
-  const sliderSettings = {
-    autoplay: true,
-    fade: true,
-    speed: 1500,
-    autoplaySpeed: 8000,
-    cssEase: "linear",
-    infinite: true,
-    pauseOnHover: false,
-  };
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [regionModal, setRegionModal] = useState(false);
   const { region, user } = useSelector((store) => store);
   const { currentRegion } = region;
+
+  const dispatch = useDispatch();
+
+  // fetch data
+  const fetchUserData = async () => {
+    try {
+      // const userData = await API.graphql(graphqlOperation(listUsers));
+      // console.log(userData.data, "userData");
+      // ba2bfd5a-5c62-4d1e-beac-7ad640d7ac68
+      const userData = await API.graphql(
+        graphqlOperation(getUser, {
+          id: "ba2bfd5a-5c62-4d1e-beac-7ad640d7ac68",
+        })
+      );
+      console.log(userData, "userData");
+      // dispatch(setUser(userData.data.listUsers.items[0]));
+      // setIsAuthenticated(true);
+    } catch (error) {
+      setIsAuthenticated(false);
+      console.log(error, "error");
+    }
+  };
+
+  useEffect(() => {
+    // console.log(user, "userPROFILE");
+    // dispatch(fetchUserFromDb());
+    // fetchUserData();
+  }, []);
+
+  console.log(user, "userPROFILE");
 
   // useEffect(() => {
   //   // console.log("USE_EFFECT_USE EFFECT");
   //   checkUser();
   // }, []);
 
-  const dispatch = useDispatch();
+  // b1cdac03-6a27-41b3-af85-1133def71a6d
 
   const route = useRouter();
 
@@ -149,8 +173,8 @@ const App = () => {
   //   console.log("checking user...");
   //   try {
   //     // setUiState("loading");
-  //     const userValues = await Auth.currentAuthenticatedUser();
-  //     dispatch(setUser(userValues?.attributes || {}));
+  // const userValues = await Auth.currentAuthenticatedUser();
+  // dispatch(setUser(userValues?.attributes || {}));
   //     // setIsAuthenticated(true);
   //     // route.push("/profile");
   //   } catch (err) {
@@ -160,8 +184,36 @@ const App = () => {
   // }
 
   // console.log(user, "uese");
-  // let region = "us";
+  // let region = "usa";
   // console.log(currentRegion, "currentRegion");
+
+  useEffect(() => {
+    window.Swal = swal;
+
+    if (regionModal) {
+      Swal.fire({
+        icon: "question",
+        title: "Choose Region",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        html: `
+            <div class="swal2-html-container"> Please choose the region you want to read news about.  </div>
+            <div id="swal-button-group" class="mt-5">
+              <button id="swal-region-us" name="region" type="submit" value="usa" class="swal2-confirm swal2-styled" onclick="Swal.clickConfirm()"> United States </button>
+              <button id="swal-region-uk" name="region" type="submit" value="uk" class="swal2-cancel swal2-styled" onclick="Swal.clickConfirm()"> United Kingdom </button>
+            </div>
+            `,
+        preConfirm: () => document.getElementById("swal-button-group"),
+        focusConfirm: false,
+      }).then(({ value }) =>
+        value.addEventListener("click", (event) => {
+          localStorage.setItem("selectedRegion", event.target.value);
+          dispatch(setRegion(event.target.value));
+          setRegionModal(false);
+        })
+      );
+    }
+  }, [regionModal]);
 
   const SwitchRegion = () => (
     <>
@@ -172,8 +224,8 @@ const App = () => {
         <button
           className="bg-blue-500 text-white text-lg m-0 py-3 w-36 rounded"
           onClick={() => {
-            dispatch(setRegion("us"));
-            localStorage.setItem("region", "us");
+            dispatch(setRegion("usa"));
+            localStorage.setItem("region", "usa");
           }}
         >
           <a>United States</a>
@@ -191,6 +243,7 @@ const App = () => {
       </div>
     </>
   );
+
   return currentRegion ? (
     <div className="w-full bg-cover bg-no-repeat bg-top">
       <div className="p-8">

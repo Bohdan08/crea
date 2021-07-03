@@ -1,0 +1,16 @@
+type User
+  @model
+  @auth(
+    rules: [
+      { allow: groups, groups: ["Admin"] }
+      { allow: owner, ownerField: "username" }
+    ]
+  ) {
+  id: ID!
+  username: String!
+  email: String!
+  geographicPreference: String
+  supportGroup: String
+  voteLocation: String
+  userType: String
+}

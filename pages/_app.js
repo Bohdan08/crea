@@ -16,10 +16,9 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 // aws
-// import Amplify, { Auth } from "aws-amplify";
-// import config from "../src/aws-exports";
-import { useRouter } from "next/router";
-// Amplify.configure(config);
+import Amplify from "aws-amplify";
+import config from "../src/aws-exports";
+Amplify.configure(config);
 
 const App = ({ Component, pageProps }) => {
   // useEffect(() => {

@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-// import { Auth } from "aws-amplify";
+import { API, Auth, graphqlOperation } from "aws-amplify";
 import { useDispatch, useSelector } from "react-redux";
 // import { changeUserSingleField, setUser } from "../redux/slices/userSlice";
 
 // styles
 import styles from "./profile.module.scss";
 import { setUser } from "../redux/slices/userSlice";
+import {
+  PROFILE_FIELDS_BY_CURRENT_SELECTION,
+  PROFILE_FIELD_TYPES,
+  PROFILE_SELECTIONS,
+} from "../shared/constants";
+import { updateUser } from "../src/graphql/mutations";
+import { listUsers } from "../src/graphql/queries";
 
 const ProfileSvgWrapper = ({
   path,
@@ -24,7 +31,7 @@ const ProfileSvgWrapper = ({
   </svg>
 );
 
-const ProfileField = ({
+const ProfileInputField = ({
   fieldName,
   inputValue,
   inputName,
@@ -41,7 +48,7 @@ const ProfileField = ({
           <ProfileSvgWrapper path={icon} />
           <input
             value={inputValue}
-            className="w-96 focus:outline-none bg-white"
+            className="w-96 bg-white"
             onChange={(event) => onChangeField(inputName, event.target.value)}
             disabled={!isEdit}
           />
@@ -51,69 +58,134 @@ const ProfileField = ({
   </div>
 );
 
-const profileFields = [
-  {
-    name: "Username",
-    value: "username",
-    iconPath: (
-      <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-    ),
-  },
-  {
-    name: "Email",
-    value: "email",
-    iconPath: (
-      <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-    ),
-  },
-  {
-    name: "Phone Number",
-    value: "phone_number",
-    iconPath: (
-      <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-    ),
-  },
-  {
-    name: "Address",
-    value: "address",
-    iconPath: (
-      <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-    ),
-  },
-];
+const ProfileDropDownField = ({
+  fieldName,
+  optionName,
+  inputName,
+  options,
+  // icon,
+  onChangeField,
+  isEdit,
+}) => (
+  <div className="flex flex-row w-full pb-5">
+    <div className="text-lg flex flex-col justify-center">
+      <div className="flex mt-2">
+        <div className="p-2 rounded-sm disabled">
+          <form>
+            {console.log(isEdit, "isEdit")}
+            <fieldset disabled={!isEdit}>
+              <label className="mr-2" htmlFor={fieldName}>
+                {fieldName}
+              </label>
+              <select
+                className={`border mt-2 p-1 rounded ${
+                  isEdit ? "" : "cursor-not-allowed"
+                }`}
+                name={fieldName}
+                id={fieldName}
+              >
+                {options?.map(({ key, value }) => (
+                  <option
+                    key={key}
+                    value={value}
+                    onChange={() => onChangeField(optionName, value)}
+                  >
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 const Profile = () => {
   const [isEdit, setEdit] = useState(false);
   const [userValues, setUserValues] = useState({});
+  const [currentProfileFields, setCurrentProfileFields] = useState(
+    PROFILE_SELECTIONS[0]
+  );
   const [authInfo, setAuthInfo] = useState(null);
-  const { user } = useSelector((state) => state.user);
+  const { user, region } = useSelector((state) => state);
 
   const dispatch = useDispatch();
 
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
+    console.log(user, "user_PROFILE");
+    if (!user.data) {
       router.push("/auth");
-    } else {
-      setUserValues(user);
     }
   }, []);
 
-  // useEffect(() => {
-  //   checkUser();
-  // }, []);
+  
+  /* else {
+      setUserValues(user);
+    } *
+    
+  }, []);
 
-  // async function checkUser() {
-  //   try {
-  //     const userValues = await Auth.currentAuthenticatedUser();
-  //     dispatch(setUser(userValues?.attributes || {}));
-  //     setAuthInfo("signedIn");
-  //   } catch (err) {
-  //     console.log(err, "err");
-  //     setAuthInfo(err?.message);
-  //   }
-  // }
+  /* useEffect(() => {
+    checkUser();
+  }, []); */
+
+  /* async function checkUser() {
+    try {
+      const userValues = await Auth.currentAuthenticatedUser();
+      dispatch(setUser(userValues?.attributes || {}));
+      setAuthInfo("signedIn");
+    } catch (err) {
+      console.log(err, "err");
+      setAuthInfo(err?.message);
+    }
+  } */
+
+  const updateUserData = async () => {
+    try {
+      // const songId = 'b1cdac03-6a27-41b3-af85-1133def71a6d'
+      console.log(user, "SAVE_PROGRESS");
+      let clonedUser = Object.assign({}, user);
+      delete clonedUser.sub;
+      // clonedUser.updatedAt = "UPDATED";
+      clonedUser.email_verified = false;
+
+      const userValues = await API.graphql(
+        graphqlOperation(updateUser, {
+          input: {
+            id: "b1cdac03-6a27-41b3-af85-1133def71a6d",
+            username: "bohdanUpdated",
+            voterType: "example",
+          },
+        })
+      );
+      console.log(userValues, "userValues");
+      // const userData = await API.graphql(graphqlOperation(listUsers));
+      // console.log(userData.data.listUsers.items[0], "userData");
+      // dispatch(setUser(userData.data.listUsers.items[0]));
+      // setIsAuthenticated(true);
+    } catch (error) {
+      // setIsAuthenticated(false);
+      console.log(error, "error");
+    }
+  };
+
+  const fetchUserData = async () => {
+    try {
+      const userData = await API.graphql(graphqlOperation(listUsers));
+      console.log(userData, "userData");
+      // dispatch(setUser(userData.data.listUsers.items[0]));
+      // setIsAuthenticated(true);
+    } catch (error) {
+      {
+        /* setIsAuthenticated(false); */
+      }
+      console.log(error, "error");
+    }
+  };
 
   const onChangeField = (field, value) => {
     setUserValues({ ...userValues, [field]: value });
@@ -127,15 +199,22 @@ const Profile = () => {
     // dispatch(changeUserSingleField({ field, value }));
   };
 
+  console.log(userValues, "userValuesPROFILE");
+  console.log(isEdit, "isEdit");
   return (
     <div>
       {user ? (
         <div className="w-12/12 h-full px-5 py-10 flex flex-row items-stretch">
           <div className="w-3/12 mr-5 bg-white rounded shadow-xl">
             <div className="flex flex-col pt-5">
-              <button className="focus:outline-none text-2xl font-light">
-                Personal Info
-              </button>
+              {PROFILE_SELECTIONS.map((profileSelection) => (
+                <button
+                  className="text-2xl font-light cursor-pointer mb-5"
+                  onClick={() => setCurrentProfileFields(profileSelection)}
+                >
+                  {profileSelection}
+                </button>
+              ))}
             </div>
           </div>
           <div className="w-9/12 bg-white rounded shadow-xl p-5">
@@ -145,11 +224,7 @@ const Profile = () => {
               <span className={styles.tooltiptext}>
                 {isEdit ? "Cancel Progress" : "Edit Profile"}
               </span>
-              <button
-                type="button"
-                className="focus:outline-none"
-                onClick={() => setEdit(!isEdit)}
-              >
+              <button type="button" onClick={() => setEdit(!isEdit)}>
                 {!isEdit ? (
                   <ProfileSvgWrapper
                     stroke="orange"
@@ -168,19 +243,44 @@ const Profile = () => {
                 )}
               </button>
             </div>
-            {profileFields.map(({ name, value, iconPath }) => (
-              <ProfileField
-                key={name}
-                fieldName={name}
-                inputName={value}
-                inputValue={userValues[value]}
-                icon={iconPath}
-                isEdit={isEdit}
-                onChangeField={onChangeField}
-              />
-            ))}
+            {PROFILE_FIELDS_BY_CURRENT_SELECTION[
+              currentProfileFields
+            ].map(
+              ({ name, value, iconPath, options, type, geographyDependent }) =>
+                type === PROFILE_FIELD_TYPES.INPUT ? (
+                  <ProfileInputField
+                    key={name}
+                    fieldName={name}
+                    inputName={value}
+                    inputValue={userValues[value]}
+                    icon={iconPath}
+                    isEdit={isEdit}
+                    onChangeField={onChangeField}
+                  />
+                ) : (
+                  <ProfileDropDownField
+                    key={name}
+                    fieldName={name}
+                    optionName={value}
+                    options={
+                      geographyDependent
+                        ? options[region.currentRegion || "usa"]
+                        : options
+                    }
+                    icon={iconPath}
+                    isEdit={isEdit}
+                    onChangeField={onChangeField}
+                  />
+                )
+            )}
 
-            <button className="bg-green-600 text-white py-2 px-3 rounded-sm mt-1">
+            <button
+              className="bg-green-600 text-white py-2 px-3 rounded-sm mt-1"
+              onClick={() => {
+                /* fetchUserData(); */
+                /* updateUserData(); */
+              }}
+            >
               Save Progress
             </button>
           </div>

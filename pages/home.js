@@ -26,7 +26,7 @@ const Home = () => {
   //       html: `
   //           <div class="swal2-html-container"> Please choose the region you want to read news about.  </div>
   //           <div id="swal-button-group" class="mt-5">
-  //             <button id="swal-region-us" name="region" type="submit" value="us" class="swal2-confirm swal2-styled" onclick="Swal.clickConfirm()"> United States </button>
+  //             <button id="swal-region-us" name="region" type="submit" value="usa" class="swal2-confirm swal2-styled" onclick="Swal.clickConfirm()"> United States </button>
   //             <button id="swal-region-uk" name="region" type="submit" value="uk" class="swal2-cancel swal2-styled" onclick="Swal.clickConfirm()"> United Kingdom </button>
   //           </div>
   //           `,
