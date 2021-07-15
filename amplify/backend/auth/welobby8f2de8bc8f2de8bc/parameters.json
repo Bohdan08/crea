@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "welobbya20abab8_identitypool_a20abab8",
+    "identityPoolName": "welobby8f2de8bc_identitypool_8f2de8bc",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "welobba20abab8",
-    "userPoolName": "welobbya20abab8_userpool_a20abab8",
+    "resourceNameTruncated": "welobb8f2de8bc",
+    "userPoolName": "welobby8f2de8bc_userpool_8f2de8bc",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -28,10 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "welobba20abab8_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "welobb8f2de8bc_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "a20abab8",
-    "resourceName": "welobbya20abab8a20abab8",
+    "sharedId": "8f2de8bc",
+    "resourceName": "welobby8f2de8bc8f2de8bc",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -47,6 +47,9 @@
     },
     "useDefault": "manual",
     "thirdPartyAuth": false,
+    "usernameAttributes": [
+        "email"
+    ],
     "userPoolGroups": true,
     "adminQueries": false,
     "triggers": "{\n  \"PostConfirmation\": [\n    \"custom\"\n  ]\n}",
@@ -63,7 +66,7 @@
     "dependsOn": [
         {
             "category": "function",
-            "resourceName": "welobbya20abab8a20abab8PostConfirmation",
+            "resourceName": "welobby8f2de8bc8f2de8bcPostConfirmation",
             "triggerProvider": "Cognito",
             "attributes": [
                 "Arn",

@@ -1,14 +1,15 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 
-const StyledIcon = styled(FontAwesomeIcon)`
-  margin-top: 22px;
-`;
+// const StyledIcon = styled(FontAwesomeIcon)`
+//   margin-top: 22px;
+// `;
 
 const FormInput = (props) => (
   <div className="flex flex-row">
-    <StyledIcon
-      className="absolute p-0  ml-3 text-gray-300"
+    <FontAwesomeIcon
+      style={{ marginTop: "22px" }}
+      className="absolute p-0 ml-3 text-gray-300"
       icon={props.icon || "user"}
     />
     <input

@@ -4,11 +4,11 @@ import FormInput from "./FormUIElements/FormInput";
 const SignUp = ({ setUiState, signUp, onChange, setError }) => (
   <>
     <p className="text-3xl font-black">Sign up for an account</p>
-    <div className="mt-10">
+    <div className="mt-5">
       <FormLabel>Email</FormLabel>
       <FormInput onChange={onChange} name="email" icon="envelope" />
     </div>
-    <div className="mt-7">
+    <div className="mt-5">
       <FormLabel>Password</FormLabel>
       <FormInput
         name="password"
@@ -17,7 +17,7 @@ const SignUp = ({ setUiState, signUp, onChange, setError }) => (
         icon="lock"
       />
     </div>
-    <div className="mt-7">
+    <div className="mt-5">
       <FormLabel>Repeat Password</FormLabel>
       <FormInput
         name="repeatedPassword"

@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import Head from "next/head";
 import { useRouter } from "next/router";
-import { API, graphqlOperation } from "aws-amplify";
+import { API, Auth, graphqlOperation } from "aws-amplify";
 import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
 import _ from "lodash";
 import usePlacesAutocomplete from "use-places-autocomplete";
+import Swal from "sweetalert2";
 import { setUser } from "../redux/slices/userSlice";
 import {
+  ACCOUNT,
+  PREFERENCES,
   PROFILE_FIELDS_BY_CURRENT_SELECTION,
   PROFILE_FIELD_TYPES,
   PROFILE_SELECTIONS,
@@ -17,6 +20,11 @@ import { removeNullsInObject } from "../shared/utils";
 
 // styles
 import styles from "./profile.module.scss";
+import Account from "../components/ProfileComponents/Account";
+
+const StyledUserInfoContainer = styled.div`
+  width: 700px;
+`;
 
 const ProfileSvgWrapper = ({
   path,
@@ -42,16 +50,18 @@ const ProfileInputField = ({
   onChangeField,
   isEdit,
 }) => (
-  <div className="flex flex-row w-full pb-5">
+  <div className="flex flex-row w-full pt-5">
     <div className="text-lg flex flex-col justify-center">
       <p className="font-light text-xl">{fieldName}</p>
       <div className="flex flex-row mt-2 ">
-        <div className="flex flex-row border p-2 rounded-sm">
+        <div className="flex flex-row border p-2 rounded-sm focus:outline-none">
           {icon}
           <ProfileSvgWrapper path={icon} />
           <input
             value={inputValue}
-            className="w-96 bg-white"
+            className={`w-96 bg-white ${
+              !isEdit ? "cursor-not-allowed text-gray-600" : null
+            }`}
             onChange={(event) => onChangeField(inputName, event.target.value)}
             disabled={!isEdit}
           />
@@ -119,6 +129,15 @@ const Profile = () => {
   const [currentProfileFields, setCurrentProfileFields] = useState(
     PROFILE_SELECTIONS[0]
   );
+  const [saveChangesError, setSaveChangesError] = useState(() => {
+    let initErrorMessagesBySelectionValue = {};
+    PROFILE_SELECTIONS.map((selection) => ({ [selection]: "" }));
+
+    return initErrorMessagesBySelectionValue;
+  });
+
+  const [emailChanged, setEmailChanged] = useState(false);
+  const [confirmationCodeValue, setConfirmationCodeValue] = useState("");
 
   /* Redux */
   const { user } = useSelector((state) => state);
@@ -134,6 +153,7 @@ const Profile = () => {
     requestOptions: {
       /* Define search scope here */
     },
+
     debounce: 300,
   });
 
@@ -202,15 +222,49 @@ const Profile = () => {
 
   /* Handlers */
   const updateUserData = async () => {
+    console.log(userValues, "userValues");
     try {
-      const updatedUserValues = await API.graphql(
+      /* check if users email has been changed */
+
+      /* if (user?.data?.email !== userValues.email) { */
+
+      {
+        /* console.log(userValues.email, "userValues"); */
+      }
+      const authUser = await Auth.currentAuthenticatedUser();
+
+      /*  email: "bodya.martynyuck@yandex.ua",, */
+      {
+        /* bohdan.martyniuk08@gmail.com */
+      }
+      const updatedUserAttributes = await Auth.updateUserAttributes(authUser, {
+        email: "bodya.martynyuck@yandex.ua",
+      });
+
+      /* console.log(userValues.emai, "userValues.emai"); */
+
+      console.log(updatedUserAttributes, "updatedUserAttributes");
+
+      if (updatedUserAttributes === "SUCCESS") {
+        setEmailChanged(true);
+      }
+      /* } */
+
+      {
+        /* const updatedUserValues = await API.graphql(
         graphqlOperation(updateUser, {
           input: userValues,
         })
       );
-      dispatch(setUser(removeNullsInObject(updatedUserValues)));
+
+      dispatch(setUser(removeNullsInObject(updatedUserValues))); */
+      }
+      setSaveChangesError({ [currentProfileFields]: "" });
     } catch (error) {
-      throw Error(error);
+      console.log(error, "error");
+      setSaveChangesError({ [currentProfileFields]: error.message });
+
+      /* throw Error(error.message); */
     }
   };
 
@@ -225,17 +279,49 @@ const Profile = () => {
     }
   };
 
+  async function confirmSignUp() {
+    console.log(userValues, "userValues");
+    try {
+      /* "bohdan.martyniuk08@gmail.com", */
+      const confirm = await Auth.verifyCurrentUserAttributeSubmit(
+        "email",
+        confirmationCodeValue
+      );
+    } catch (error) {
+      console.log(error, "error");
+      setSaveChangesError({ [currentProfileFields]: error.message });
+      {
+        /* setError(err); */
+      }
+    }
+  }
+
   const isSaveDisabled = _.isEqual(userValues, user.data);
+
+  const generateSaveProgressModalMessage = () =>
+    Swal.fire({
+      title: "Are you sure?",
+      text:
+        userValues.geographicPreference !== user.data.geographicPreference
+          ? `You won't have full access to ${user.data.geographicPreference} anymore`
+          : false,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
 
   return (
     <div>
       {user ? (
-        <div className="w-12/12 h-full px-5 py-10 flex flex-row items-stretch">
-          <div className="w-3/12 mr-5 bg-white rounded shadow-xl">
+        <div className="my-10 flex flex-row justify-center">
+          <div className="bg-white rounded shadow-xl w-72 mr-5 border-black">
             <div className="flex flex-col pt-5">
               {PROFILE_SELECTIONS.map((profileSelection) => (
                 <button
-                  className="text-2xl font-light cursor-pointer mb-5"
+                  key={profileSelection}
+                  className="text-2xl text-left font-light cursor-pointer my-5"
                   onClick={() => setCurrentProfileFields(profileSelection)}
                 >
                   {profileSelection}
@@ -243,7 +329,7 @@ const Profile = () => {
               ))}
             </div>
           </div>
-          <div className="w-9/12 bg-white rounded shadow-xl p-5">
+          <StyledUserInfoContainer className="bg-white rounded shadow-xl p-10">
             <div
               className={`${styles.tooltip} absolute right-0 mr-10 text-sm p-0`}
             >
@@ -269,7 +355,7 @@ const Profile = () => {
                 )}
               </button>
             </div>
-            {PROFILE_FIELDS_BY_CURRENT_SELECTION[
+            {/* {PROFILE_FIELDS_BY_CURRENT_SELECTION[
               currentProfileFields
             ].map(
               ({ name, value, iconPath, options, type, geographyDependent }) =>
@@ -301,8 +387,9 @@ const Profile = () => {
                     onChangeField={onChangeField}
                   />
                 )
-            )}
-            {currentProfileFields === "Preferences" && (
+            )} */}
+            <Account />
+            {/* {currentProfileFields === PREFERENCES && (
               <div className="flex flex-row">
                 <label className="mx-2 pt-1 text-black text-lg">
                   I vote in
@@ -311,7 +398,7 @@ const Profile = () => {
                   <input
                     className={`p-1 w-96 border rounded ${
                       !isEdit || !userValues.geographicPreference
-                        ? "cursor-not-allowed"
+                        ? "cursor-not-allowed text-gray-600"
                         : ""
                     }`}
                     value={userValues.voteLocation}
@@ -319,31 +406,76 @@ const Profile = () => {
                     disabled={!ready}
                     placeholder="Your location"
                     disabled={!isEdit || !userValues.geographicPreference}
-                  />
+                  /> */}
                   {/* We can use the "status" to decide whether we should display the dropdown or not */}
-                  {status === "OK" && (
+                  {/* {status === "OK" && isEdit && (
                     <ul className="absolute mt-1 w-96 bg-white rounded border">
                       {renderSuggestions()}
                     </ul>
                   )}
                 </div>
-              </div>
+              </div> */}
+            {/* )} */}
+            {currentProfileFields === ACCOUNT && emailChanged && (
+              <>
+                <div className="flex flex-row w-full pt-5">
+                  <div className="text-lg flex flex-col justify-center">
+                    <p className="font-light text-xl">Confirmation Code</p>
+                    <div className="flex flex-row mt-2 ">
+                      <div
+                        className={`flex flex-row border p-2 rounded-sm focus:outline-none ${
+                          !isEdit ? "cursor-now-allowed" : ""
+                        }`}
+                      >
+                        {/* {icon} */}
+                        {/* <ProfileSvgWrapper path={icon} /> */}
+                        <input
+                          value={confirmationCodeValue}
+                          className="w-96 bg-white"
+                          onChange={(event) =>
+                            setConfirmationCodeValue(event.target.value)
+                          }
+                          disabled={!isEdit}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={(event) => {
+                    event.preventDefault();
+                    confirmSignUp();
+                  }}
+                  className="text-white w-96 mt-4 bg-pink-600 p-3 rounded"
+                >
+                  Send Confirmation Code
+                </button>
+              </>
             )}
 
             {isEdit && (
-              <button
-                className={`bg-green-600 text-white py-2 px-3 rounded-sm mt-5 ${
-                  isSaveDisabled ? "cursor-not-allowed opacity-70" : ""
-                }`}
-                disabled={isSaveDisabled}
-                onClick={() => {
-                  updateUserData();
-                }}
-              >
-                Save Progress
-              </button>
+              <>
+                <button
+                  className={`bg-green-600 text-white py-2 px-3 rounded-sm mt-5 ${
+                    isSaveDisabled ? "cursor-not-allowed opacity-70" : ""
+                  }`}
+                  disabled={isSaveDisabled}
+                  onClick={() => {
+                    generateSaveProgressModalMessage().then(
+                      ({ isConfirmed }) => isConfirmed && updateUserData()
+                    );
+                  }}
+                >
+                  Save
+                </button>
+                {saveChangesError[currentProfileFields] && (
+                  <div className="bg-red-300 border-red-700 border-2 mt-5 p-2 w-5/12 rounded">
+                    {saveChangesError[currentProfileFields]}
+                  </div>
+                )}
+              </>
             )}
-          </div>
+          </StyledUserInfoContainer>
         </div>
       ) : null}
     </div>

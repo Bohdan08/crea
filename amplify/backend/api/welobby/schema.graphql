@@ -3,6 +3,7 @@ type User
   @auth(
     rules: [
       { allow: groups, groups: ["Admin"] }
+      # { allow: owner, ownerField: "email" }
       { allow: owner, ownerField: "username" }
     ]
   ) {

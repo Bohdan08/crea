@@ -12,6 +12,7 @@ library.add(fab, faUser, faLock, faEnvelope);
 // styles
 import "../styles/globals.scss";
 import "tailwindcss/tailwind.css";
+import "sweetalert2/src/sweetalert2.scss";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 

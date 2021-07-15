@@ -16,9 +16,14 @@ export const fetchUserFromDbById = createAsyncThunk(
       const response = await API.graphql(
         graphqlOperation(getUser, { id: userId })
       );
-      return removeNullsInObject(response.data.getUser);
-    } catch (err) {
-      return err;
+      const userData = response.data.getUser;
+      // if a message is received, it means that something went wrong
+      if (userData.message) {
+        return { message: userData.message };
+      }
+      return removeNullsInObject(userData);
+    } catch (error) {
+      return { message: error.errors[0].message };
     }
   }
 );
@@ -45,12 +50,20 @@ export const userSlice = createSlice({
     });
 
     builder.addCase(fetchUserFromDbById.fulfilled, (state, { payload }) => {
+      const { message } = payload;
+
+      // message means that it was unsuccessful
+      if (message) {
+        state.status = "failed";
+        state.message = message;
+        state.data = null;
+      }
       state.data = payload;
+      state.message = null;
       state.status = "succeeded";
     });
 
     builder.addCase(fetchUserFromDbById.rejected, (state, { payload }) => {
-      console.log(payload, "FAILED");
       state.status = "failed";
       state.message = payload;
     });

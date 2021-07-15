@@ -162,3 +162,7 @@ a {
 .us-banner {
   background-image: url("../public/images/us/banner1.jpeg");
 }
+
+.required:after {
+  content: " *";
+}

@@ -22,6 +22,7 @@ const AuthComponent = () => {
 
   const [uiState, setUiState] = useState(user.data ? "signedIn" : "signIn");
 
+  console.log(uiState, "uiStat");
   const [error, setError] = useState(null);
   const [formState, setFormState] = useState({
     email: "",
@@ -41,7 +42,6 @@ const AuthComponent = () => {
     }
   }, [uiState]);
 
-  console.log(uiState, "uiState");
   const onChange = ({ target: { name, value } }) =>
     setFormState({ ...formState, [name]: value });
 
@@ -65,9 +65,13 @@ const AuthComponent = () => {
       await Auth.confirmSignUp(email, authCode);
       const userValues = await Auth.signIn(email, password);
       dispatch(fetchUserFromDbById(userValues?.attributes?.sub));
-      setError(null);
-      setUiState("signedIn");
-      route.push("/");
+      if (user.message) {
+        setError(user.message);
+      } else {
+        setError(null);
+        setUiState("signedIn");
+        route.push("/");
+      }
     } catch (err) {
       setError(err);
     }
@@ -76,6 +80,7 @@ const AuthComponent = () => {
   async function signIn() {
     try {
       const userValues = await Auth.signIn(email, password);
+      console.log(userValues, "userValues");
       dispatch(fetchUserFromDbById(userValues?.attributes?.sub));
       setError(null);
       setUiState("signedIn");

@@ -1,5 +1,5 @@
 import { FormLabel, FormInput } from "./FormUIElements";
-import SocialSignIn from "./SocialSignIn";
+// import SocialSignIn from "./SocialSignIn";
 
 const SignIn = ({ setUiState, onChange, signIn, setError }) => (
   <>
@@ -37,7 +37,6 @@ const SignIn = ({ setUiState, onChange, signIn, setError }) => (
       Sign In
     </button>
     {/* <SocialSignIn /> */}
-    <SocialSignIn />
     <p className="mt-12 font-light">
       Don't have an account?
       <span

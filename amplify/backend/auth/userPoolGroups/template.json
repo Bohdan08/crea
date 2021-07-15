@@ -1,23 +1,23 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
     "Parameters": {
-        "authwelobbya20abab8a20abab8UserPoolId": {
+        "authwelobby8f2de8bc8f2de8bcUserPoolId": {
             "Type": "String",
-            "Default": "authwelobbya20abab8a20abab8UserPoolId"
+            "Default": "authwelobby8f2de8bc8f2de8bcUserPoolId"
         },
         
-        "authwelobbya20abab8a20abab8IdentityPoolId": {
+        "authwelobby8f2de8bc8f2de8bcIdentityPoolId": {
             "Type": "String",
-            "Default": "authwelobbya20abab8a20abab8IdentityPoolId"
+            "Default": "authwelobby8f2de8bc8f2de8bcIdentityPoolId"
         },
         
-        "authwelobbya20abab8a20abab8AppClientID": {
+        "authwelobby8f2de8bc8f2de8bcAppClientID": {
             "Type": "String",
-            "Default": "authwelobbya20abab8a20abab8AppClientID"
+            "Default": "authwelobby8f2de8bc8f2de8bcAppClientID"
         },
-        "authwelobbya20abab8a20abab8AppClientIDWeb": {
+        "authwelobby8f2de8bc8f2de8bcAppClientIDWeb": {
             "Type": "String",
-            "Default": "authwelobbya20abab8a20abab8AppClientIDWeb"
+            "Default": "authwelobby8f2de8bc8f2de8bcAppClientIDWeb"
         },
         "AuthRoleArn": {
             "Type": "String"
@@ -55,7 +55,7 @@
               },
               
               "UserPoolId" : {
-                "Ref": "authwelobbya20abab8a20abab8UserPoolId"
+                "Ref": "authwelobby8f2de8bc8f2de8bcUserPoolId"
               }
             }
         },
@@ -68,7 +68,7 @@
                         "",
                         [
                           {
-                            "Ref": "authwelobbya20abab8a20abab8UserPoolId"
+                            "Ref": "authwelobby8f2de8bc8f2de8bcUserPoolId"
                           },
                           "-AdminGroupRole"
                         ]
@@ -85,7 +85,7 @@
                             },
                             "Action": "sts:AssumeRoleWithWebIdentity",
                             "Condition": {
-                              "StringEquals": {"cognito-identity.amazonaws.com:aud": {"Ref":"authwelobbya20abab8a20abab8IdentityPoolId"}},
+                              "StringEquals": {"cognito-identity.amazonaws.com:aud": {"Ref":"authwelobby8f2de8bc8f2de8bcIdentityPoolId"}},
                               "ForAnyValue:StringLike": {"cognito-identity.amazonaws.com:amr": "authenticated"}
                             }
                         }
@@ -111,7 +111,7 @@
                                 "",
                                 [
 
-                                  "welobbya20abab8a20abab8",
+                                  "welobby8f2de8bc8f2de8bc",
                                   "-ExecutionRole-",
                                   {
                                     "Ref": "env"
@@ -270,16 +270,16 @@
                     "Ref": "UnauthRoleArn"
                 },
                 "identityPoolId": {
-                    "Ref": "authwelobbya20abab8a20abab8IdentityPoolId"
+                    "Ref": "authwelobby8f2de8bc8f2de8bcIdentityPoolId"
                 },
                 "userPoolId": {
-                    "Ref": "authwelobbya20abab8a20abab8UserPoolId"
+                    "Ref": "authwelobby8f2de8bc8f2de8bcUserPoolId"
                 },
                 "appClientIDWeb": {
-                    "Ref": "authwelobbya20abab8a20abab8AppClientIDWeb"
+                    "Ref": "authwelobby8f2de8bc8f2de8bcAppClientIDWeb"
                 },
                 "appClientID": {
-                    "Ref": "authwelobbya20abab8a20abab8AppClientID"
+                    "Ref": "authwelobby8f2de8bc8f2de8bcAppClientID"
                 },
                 "region": {
                     "Ref": "AWS::Region"

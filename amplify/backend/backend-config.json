@@ -1,6 +1,6 @@
 {
   "function": {
-    "welobbya20abab8a20abab8PostConfirmation": {
+    "welobby8f2de8bc8f2de8bcPostConfirmation": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
@@ -13,7 +13,7 @@
       "dependsOn": [
         {
           "category": "auth",
-          "resourceName": "welobbya20abab8a20abab8",
+          "resourceName": "welobby8f2de8bc8f2de8bc",
           "attributes": [
             "UserPoolId",
             "AppClientIDWeb",
@@ -23,13 +23,13 @@
         }
       ]
     },
-    "welobbya20abab8a20abab8": {
+    "welobby8f2de8bc8f2de8bc": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [
         {
           "category": "function",
-          "resourceName": "welobbya20abab8a20abab8PostConfirmation",
+          "resourceName": "welobby8f2de8bc8f2de8bcPostConfirmation",
           "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
@@ -49,7 +49,7 @@
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
-              "userPoolId": "authwelobbya20abab8a20abab8"
+              "userPoolId": "authwelobby8f2de8bc8f2de8bc"
             }
           },
           "additionalAuthenticationProviders": []
