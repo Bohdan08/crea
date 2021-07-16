@@ -1,7 +1,11 @@
 /* Shared Contants */
 
 /* API */
-const GOOGLE_API_KEY = "AIzaSyDz2SO7yXLWj-EBs7nz7JiP1JFv6xLnzrA";
+// const GOOGLE_API_KEY = "AIzaSyDz2SO7yXLWj-EBs7nz7JiP1JFv6xLnzrA";
+
+/* Profile Constants */
+
+export const MIN_PASSWORD_LENGTH = 6;
 
 export const AVAILABLE_REGIONS = {
   USA: "usa",
@@ -103,6 +107,7 @@ export const PROFILE_FIELDS_BY_CURRENT_SELECTION = {
       ),
       type: PROFILE_FIELD_TYPES.INPUT,
     },
+
     // {
     //   name: "Phone Number",
     //   value: "phone_number",

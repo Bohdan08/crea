@@ -126,9 +126,7 @@ const Profile = () => {
   /* States */
   const [isEdit, setEdit] = useState(false);
   const [userValues, setUserValues] = useState({});
-  const [currentProfileFields, setCurrentProfileFields] = useState(
-    PROFILE_SELECTIONS[0]
-  );
+  const [activeMenuItem, setActiveMenuItem] = useState(PROFILE_SELECTIONS[0]);
   const [saveChangesError, setSaveChangesError] = useState(() => {
     let initErrorMessagesBySelectionValue = {};
     PROFILE_SELECTIONS.map((selection) => ({ [selection]: "" }));
@@ -259,10 +257,10 @@ const Profile = () => {
 
       dispatch(setUser(removeNullsInObject(updatedUserValues))); */
       }
-      setSaveChangesError({ [currentProfileFields]: "" });
+      setSaveChangesError({ [activeMenuItem]: "" });
     } catch (error) {
       console.log(error, "error");
-      setSaveChangesError({ [currentProfileFields]: error.message });
+      setSaveChangesError({ [activeMenuItem]: error.message });
 
       /* throw Error(error.message); */
     }
@@ -289,7 +287,7 @@ const Profile = () => {
       );
     } catch (error) {
       console.log(error, "error");
-      setSaveChangesError({ [currentProfileFields]: error.message });
+      setSaveChangesError({ [activeMenuItem]: error.message });
       {
         /* setError(err); */
       }
@@ -316,13 +314,17 @@ const Profile = () => {
     <div>
       {user ? (
         <div className="my-10 flex flex-row justify-center">
-          <div className="bg-white rounded shadow-xl w-72 mr-5 border-black">
+          <div className="bg-white rounded shadow-xl w-72 border-black mr-5">
             <div className="flex flex-col pt-5">
               {PROFILE_SELECTIONS.map((profileSelection) => (
                 <button
                   key={profileSelection}
-                  className="text-2xl text-left font-light cursor-pointer my-5"
-                  onClick={() => setCurrentProfileFields(profileSelection)}
+                  className={`text-2xl text-left font-light cursor-pointer my-5 pl-5 focus:outline-none ${
+                    activeMenuItem === profileSelection
+                      ? "border-l-4 border-blue-600 text-blue-600"
+                      : ""
+                  }`}
+                  onClick={() => setActiveMenuItem(profileSelection)}
                 >
                   {profileSelection}
                 </button>
@@ -356,7 +358,7 @@ const Profile = () => {
               </button>
             </div>
             {/* {PROFILE_FIELDS_BY_CURRENT_SELECTION[
-              currentProfileFields
+              activeMenuItem
             ].map(
               ({ name, value, iconPath, options, type, geographyDependent }) =>
                 type === PROFILE_FIELD_TYPES.INPUT ? (
@@ -389,7 +391,7 @@ const Profile = () => {
                 )
             )} */}
             <Account />
-            {/* {currentProfileFields === PREFERENCES && (
+            {/* {activeMenuItem === PREFERENCES && (
               <div className="flex flex-row">
                 <label className="mx-2 pt-1 text-black text-lg">
                   I vote in
@@ -407,8 +409,8 @@ const Profile = () => {
                     placeholder="Your location"
                     disabled={!isEdit || !userValues.geographicPreference}
                   /> */}
-                  {/* We can use the "status" to decide whether we should display the dropdown or not */}
-                  {/* {status === "OK" && isEdit && (
+            {/* We can use the "status" to decide whether we should display the dropdown or not */}
+            {/* {status === "OK" && isEdit && (
                     <ul className="absolute mt-1 w-96 bg-white rounded border">
                       {renderSuggestions()}
                     </ul>
@@ -416,7 +418,7 @@ const Profile = () => {
                 </div>
               </div> */}
             {/* )} */}
-            {currentProfileFields === ACCOUNT && emailChanged && (
+            {activeMenuItem === ACCOUNT && emailChanged && (
               <>
                 <div className="flex flex-row w-full pt-5">
                   <div className="text-lg flex flex-col justify-center">
@@ -468,9 +470,9 @@ const Profile = () => {
                 >
                   Save
                 </button>
-                {saveChangesError[currentProfileFields] && (
+                {saveChangesError[activeMenuItem] && (
                   <div className="bg-red-300 border-red-700 border-2 mt-5 p-2 w-5/12 rounded">
-                    {saveChangesError[currentProfileFields]}
+                    {saveChangesError[activeMenuItem]}
                   </div>
                 )}
               </>
