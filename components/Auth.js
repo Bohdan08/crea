@@ -12,6 +12,7 @@ import {
 } from "./FormComponents";
 import { fetchUserFromDbById } from "../redux/slices/userSlice";
 import { useRouter } from "next/router";
+import { MIN_PASSWORD_LENGTH } from "../shared/constants";
 
 const StyledForm = styled.form`
   width: 500px !important;
@@ -46,7 +47,10 @@ const AuthComponent = () => {
     setFormState({ ...formState, [name]: value });
 
   async function signUp() {
-    if (password !== repeatedPassword) {
+    if (password?.length < MIN_PASSWORD_LENGTH) {
+      setError({ message: "Password should have at least 6 characters" });
+      return;
+    } else if (password !== repeatedPassword) {
       setError({ message: "Passwords don't match" });
       return;
     } else {

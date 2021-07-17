@@ -19,6 +19,7 @@ const InputContainer = ({
   validationError,
   labelName,
   value,
+  inputType,
 }) => {
   return (
     <div>
@@ -41,6 +42,7 @@ const InputContainer = ({
             className="w-96 bg-white border-red-600 focus:outline-none"
             onChange={onChangeInput}
             aria-invalid={validationError}
+            type={inputType}
           />
         </div>
         {validationError && (
@@ -56,6 +58,24 @@ const InputContainer = ({
     </div>
   );
 };
+
+const ErrorMessage = ({ message, onErrorHide }) => (
+  <div className="mt-4 bg-red-500 text-white p-2 rounded w-full">
+    <FontAwesomeIcon
+      className="h-5 w-5 mt-1 mr-3 text-white"
+      icon="minus-circle"
+    />
+    <span className="relative -top-0.5">{message}</span>
+    {onErrorHide && (
+      <button type="button" className="float-right" onClick={onErrorHide}>
+        <ProfileSvgWrapper
+          stroke="white"
+          path={<path strokeWidth={2} d="M6 18L18 6M6 6l12 12" />}
+        />
+      </button>
+    )}
+  </div>
+);
 
 const Account = () => {
   /* Redux */
@@ -80,10 +100,14 @@ const Account = () => {
   const [changePassword, setChangePassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [repeatedNewPassword, setRepeatedNewPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
+  const [passwordAPIError, setPasswordAPIError] = useState("");
+  const [passwordValidationError, setPasswordValidationError] = useState("");
+  const [passwordUpdateSuccessMessage, setPasswordSuccessMessage] = useState(
+    ""
+  );
 
-  /* AWS handlers */
+  /* EMAIL handlers */
 
   const onUpdateEmail = async () => {
     if (user?.data?.email?.toLowerCase() === currentEmailValue.toLowerCase()) {
@@ -95,7 +119,6 @@ const Account = () => {
         const authUser = await Auth.currentAuthenticatedUser();
 
         const updateUserEmail = await Auth.updateUserAttributes(authUser, {
-          // email: "bodya.martynyuck@yandex.ua",
           email: currentEmailValue,
         });
 
@@ -110,14 +133,12 @@ const Account = () => {
     }
   };
 
-  async function confirmSignUp() {
+  const confirmSignUp = async () => {
     try {
       const confirm = await Auth.verifyCurrentUserAttributeSubmit(
         "email",
         confirmationCodeValue
       );
-
-      // console.log(confirm, "confirm");
 
       if (confirm === "SUCCESS") {
         modifiyUser("email", currentEmailValue);
@@ -126,7 +147,7 @@ const Account = () => {
       console.log(error, "error");
       setEmailAPIError(error?.message);
     }
-  }
+  };
 
   const modifiyUser = async (key, value) => {
     try {
@@ -157,28 +178,10 @@ const Account = () => {
     }
   };
 
-  const onUpdatePassword = async () => {
-    try {
-      const authUser = await Auth.currentAuthenticatedUser();
-
-      const updateUserEmail = await Auth.updateUserAttributes(authUser, {
-        // email: "bodya.martynyuck@yandex.ua",
-        email: currentEmailValue,
-      });
-
-      //   console.log(updateUserEmail, "updateUserEmail");
-      //   if (updateUserEmail === "SUCCESS") {
-      //     setConfrimationCodeSent(true);
-      //   }
-    } catch (error) {
-      setPasswordError(error?.message);
-    }
-  };
-
-  /* Local Handlers */
-
   const onChangeEmailInput = (event) => {
-    setEmailValidationError(false);
+    if (event.target.value?.includes("@") && emailValidationError) {
+      setEmailValidationError(false);
+    }
     setCurrentEmailValue(event.target.value);
   };
 
@@ -193,12 +196,56 @@ const Account = () => {
     setCurrentEmailValue(user?.data?.email);
   };
 
-  const cancelPasswordChanges = () => setChangePassword(false);
+  /* Password Handlers */
+  const onUpdatePassword = async () => {
+    if (
+      newPassword?.length < MIN_PASSWORD_LENGTH ||
+      currentPassword?.length < MIN_PASSWORD_LENGTH
+    ) {
+      setPasswordValidationError("Password should be at least 6 characters");
+      return;
+    } else if (newPassword !== repeatedNewPassword) {
+      setPasswordValidationError("Passwords don't match");
+      return;
+    } else {
+      return Auth.currentAuthenticatedUser()
+        .then((user) => Auth.changePassword(user, currentPassword, newPassword))
+        .then((data) => setPasswordSuccessMessage(data))
+        .catch((error) => {
+          const { message = "" } = error;
+          console.log(message, "message");
+          if (
+            message.toLowerCase().includes("incorrect username or password")
+          ) {
+            setPasswordAPIError("Current password is invalid");
+          } else {
+            setPasswordAPIError(message);
+          }
+        });
+    }
+  };
 
-  const passwordUpdateDisabled =
-    currentPassword?.length < MIN_PASSWORD_LENGTH ||
-    newPassword?.repeatedNewPassword < MIN_PASSWORD_LENGTH ||
-    newPassword !== repeatedNewPassword;
+  const onSetNewPasswordInput = (event) => {
+    setNewPassword(event.target.value);
+  };
+
+  const onSetNewRepeatedPasswordInput = (event) => {
+    setRepeatedNewPassword(event.target.value);
+  };
+
+  const onSetCurrentPassword = (event) => {
+    setCurrentPassword(event.target.value);
+  };
+
+  const cancelPasswordChanges = () => {
+    // reset all changes
+    setChangePassword(false);
+    setNewPassword("");
+    setRepeatedNewPassword("");
+    setCurrentPassword("");
+    setPasswordAPIError("");
+    setPasswordValidationError("");
+  };
 
   return (
     <div>
@@ -223,19 +270,10 @@ const Account = () => {
           </div>
 
           {emailAPIError ? (
-            <div className="my-4 bg-red-500 text-white p-2 rounded w-full">
-              {emailAPIError}
-              <button
-                type="button"
-                className="float-right"
-                onClick={() => setEmailAPIError("")}
-              >
-                <ProfileSvgWrapper
-                  stroke="white"
-                  path={<path strokeWidth={2} d="M6 18L18 6M6 6l12 12" />}
-                />
-              </button>
-            </div>
+            <ErrorMessage
+              message={emailAPIError}
+              onErrorHide={() => setEmailAPIError("")}
+            />
           ) : confirmationCodeSent && !emailAPIError ? (
             <div className="my-4 bg-blue-500 text-white p-2 rounded w-full">
               Check your E-Mails (Spam folder included) for a confirmation code.
@@ -266,6 +304,7 @@ const Account = () => {
                 id="newEmail"
                 iconName="envelope"
                 labelName="New Email"
+                type="email"
                 value={currentEmailValue}
                 validationError={emailValidationError}
                 onChangeInput={onChangeEmailInput}
@@ -322,70 +361,86 @@ const Account = () => {
               <button
                 type="button"
                 className="text-lg text-indigo-700 ml-2 focus:outline-none hover:underline"
-                onClick={() => setChangePassword(!changePassword)}
+                onClick={() => {
+                  setChangePassword(!changePassword);
+                  setPasswordSuccessMessage("");
+                }}
               >
                 Change
               </button>
             )}
           </div>
-          <div className="pt-5">
-            Make sure it’s at least 6 characters, uses a mix of upper and lower
-            case characters, includes at least 1 number, 1 special character,
-            and does not use common words like “password”, “123456” or “qwerty”.
+          {passwordAPIError && (
+            <ErrorMessage
+              message={passwordAPIError}
+              onErrorHide={() => setPasswordAPIError("")}
+            />
+          )}
+
+          <div className="mt-5">
+            Make sure it’s at least 6 characters. We recommend you to use a mix
+            of upper and lower case characters, includes at least 1 number, 1
+            special character, and does not use common words like “password”,
+            “123456” or “qwerty”.
           </div>
           {!changePassword ? (
-            <div className="my-2 text-xl mt-5"> ●●●●●●</div>
+            <>
+              <div className="my-2 text-xl mt-5"> ●●●●●●</div>
+              {passwordUpdateSuccessMessage ? (
+                <div className="my-4 bg-green-600 text-white p-2 rounded w-full">
+                  {passwordUpdateSuccessMessage}
+                  <button
+                    type="button"
+                    className="float-right"
+                    onClick={() => setPasswordValidationError("")}
+                  >
+                    <ProfileSvgWrapper
+                      stroke="white"
+                      path={<path strokeWidth={2} d="M6 18L18 6M6 6l12 12" />}
+                    />
+                  </button>
+                </div>
+              ) : null}
+            </>
           ) : (
             <div className="my-5">
               <InputContainer
                 id="newPassword"
                 iconName="lock"
                 labelName="New Password"
-                value={currentEmailValue}
-                validationError={emailValidationError}
-                onChangeInput={onChangeEmailInput}
+                inputType="password"
+                value={newPassword}
+                validationError={passwordValidationError}
+                onChangeInput={onSetNewPasswordInput}
               />
               <div className="pt-5">
-                <label className="required" htmlFor="confirmNewPassword">
-                  Confirm New Password
-                </label>
-                <div className="flex flex-row border p-2 w-full mt-1 mb-2 rounded-sm focus:outline-none">
-                  <FontAwesomeIcon
-                    className="h-5 w-5 mt-1 mr-2 text-gray-400"
-                    icon="lock"
-                  />
-                  <input
-                    id="confirmNewPassword"
-                    className="w-96 bg-white focus:outline-none"
-                    required
-                  />
-                </div>
+                <InputContainer
+                  id="confirmNewPassword"
+                  iconName="lock"
+                  labelName="Confirm New Password"
+                  inputType="password"
+                  value={repeatedNewPassword}
+                  validationError={passwordValidationError}
+                  onChangeInput={onSetNewRepeatedPasswordInput}
+                />
               </div>
               <div className="pt-5">
-                <label className="required" htmlFor="currentPassword">
-                  Current Password
-                </label>
-                <div className="flex flex-row border p-2 w-full mt-1 mb-2 rounded-sm focus:outline-none">
-                  <FontAwesomeIcon
-                    className="h-5 w-5 mt-1 mr-2 text-gray-400"
-                    icon="lock"
-                  />
-                  <input
-                    id="currentPassword"
-                    className="w-96 bg-white focus:outline-none"
-                    required
-                  />
-                </div>
+                <InputContainer
+                  id="currentPassword"
+                  iconName="lock"
+                  labelName="Current Password"
+                  inputType="password"
+                  value={currentPassword}
+                  validationError={passwordValidationError}
+                  onChangeInput={onSetCurrentPassword}
+                />
               </div>
               <div className="float-right mt-2">
                 <CancelChangesButton
                   onClick={cancelPasswordChanges}
                   style="mr-5"
                 />
-                <SaveChangesButton
-                  onClick={onUpdateEmail}
-                  disabled={passwordUpdateDisabled}
-                />
+                <SaveChangesButton onClick={onUpdatePassword} />
               </div>
             </div>
           )}

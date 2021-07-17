@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
-import { faEnvelope, faLock, faUser, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faLock, faUser, faExclamationCircle, faMinusCircle } from "@fortawesome/free-solid-svg-icons";
 import Header from "../components/Header";
 import { Provider } from "react-redux";
 import store from "../redux/store";
 
 // icons
-library.add(fab, faUser, faLock, faEnvelope, faExclamationCircle);
+library.add(fab, faUser, faLock, faEnvelope, faExclamationCircle, faMinusCircle);
 
 // styles
 import "../styles/globals.scss";
