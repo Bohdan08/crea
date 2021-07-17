@@ -1,6 +1,6 @@
-import { Auth } from "aws-amplify";
+import { API, Auth } from "aws-amplify";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import {
@@ -9,6 +9,8 @@ import {
   CancelChangesButton,
 } from "./ProfileElements";
 import { MIN_PASSWORD_LENGTH } from "../../shared/constants";
+import { updateUser } from "../../src/graphql/mutations";
+import { setUser } from "../../redux/slices/userSlice";
 
 const InputContainer = ({
   id,
@@ -59,7 +61,10 @@ const Account = () => {
   /* Redux */
   const { user } = useSelector((state) => state);
 
+  const dispatch = useDispatch();
+
   /* States */
+
   // Email states
   const [currentEmailValue, setCurrentEmailValue] = useState(user?.data?.email);
   const [changeEmail, setChangeEmail] = useState(false);
@@ -67,6 +72,9 @@ const Account = () => {
   const [confirmationCodeValue, setConfirmationCodeValue] = useState("");
   const [emailAPIError, setEmailAPIError] = useState("");
   const [emailValidationError, setEmailValidationError] = useState("");
+  const [emailUpdateSuccessMessage, setEmailUpdateSuccessMessage] = useState(
+    ""
+  );
 
   // Password states
   const [changePassword, setChangePassword] = useState(false);
@@ -75,11 +83,10 @@ const Account = () => {
   const [passwordError, setPasswordError] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
 
-  console.log(emailValidationError, " emailValidationError");
-  // AWS handlers
+  /* AWS handlers */
+
   const onUpdateEmail = async () => {
     if (user?.data?.email?.toLowerCase() === currentEmailValue.toLowerCase()) {
-      console.log("here");
       setEmailValidationError("Please enter a new email.");
     } else if (!currentEmailValue?.includes("@")) {
       setEmailValidationError("Please enter a valid email.");
@@ -110,12 +117,45 @@ const Account = () => {
         confirmationCodeValue
       );
 
-      console.log(confirm, "confirm");
+      // console.log(confirm, "confirm");
+
+      if (confirm === "SUCCESS") {
+        modifiyUser("email", currentEmailValue);
+      }
     } catch (error) {
       console.log(error, "error");
       setEmailAPIError(error?.message);
     }
   }
+
+  const modifiyUser = async (key, value) => {
+    try {
+      const updateUsersEmailInTable = await API.graphql({
+        query: updateUser,
+        variables: {
+          input: {
+            ...user.data,
+            [key]: value,
+          },
+        },
+        authMode: "AMAZON_COGNITO_USER_POOLS",
+      });
+
+      // update redux
+      if (updateUsersEmailInTable.data?.updateUser) {
+        dispatch(setUser(updateUsersEmailInTable.data?.updateUser));
+        setEmailUpdateSuccessMessage("Email has been changed successfully");
+        setConfrimationCodeSent(false);
+        setConfirmationCodeValue("");
+        setCurrentEmailValue(updateUsersEmailInTable.data?.updateUser?.email);
+        // setChangeEmail(false);
+      } else {
+        setEmailAPIError("Email address hasn't been saved to the Database.");
+      }
+    } catch (error) {
+      setEmailAPIError(error?.message);
+    }
+  };
 
   const onUpdatePassword = async () => {
     try {
@@ -146,7 +186,10 @@ const Account = () => {
     // reset all
     setEmailAPIError("");
     setEmailValidationError("");
+    setConfirmationCodeValue("");
+    setEmailUpdateSuccessMessage("");
     setChangeEmail(false);
+    setConfrimationCodeSent(false);
     setCurrentEmailValue(user?.data?.email);
   };
 
@@ -169,7 +212,10 @@ const Account = () => {
               <button
                 type="button"
                 className="text-lg text-indigo-700 ml-2 focus:outline-none hover:underline"
-                onClick={() => setChangeEmail(!changeEmail)}
+                onClick={() => {
+                  setChangeEmail(!changeEmail);
+                  setEmailUpdateSuccessMessage("");
+                }}
               >
                 Change
               </button>
@@ -196,7 +242,24 @@ const Account = () => {
             </div>
           ) : null}
           {!changeEmail ? (
-            <div className="my-2 text-xl mt-5"> {currentEmailValue}</div>
+            <>
+              <div className="my-2 text-xl mt-5"> {currentEmailValue}</div>
+              {emailUpdateSuccessMessage ? (
+                <div className="my-4 bg-green-600 text-white p-2 rounded w-full">
+                  {emailUpdateSuccessMessage}
+                  <button
+                    type="button"
+                    className="float-right"
+                    onClick={() => setEmailUpdateSuccessMessage("")}
+                  >
+                    <ProfileSvgWrapper
+                      stroke="white"
+                      path={<path strokeWidth={2} d="M6 18L18 6M6 6l12 12" />}
+                    />
+                  </button>
+                </div>
+              ) : null}
+            </>
           ) : (
             <div className="my-5">
               <InputContainer
@@ -207,44 +270,7 @@ const Account = () => {
                 validationError={emailValidationError}
                 onChangeInput={onChangeEmailInput}
               />
-              {/* <div>
-                <label className="required" htmlFor="newEmail">
-                  New Email
-                </label>
-                <div
-                  className={`flex flex-row justify-between border p-2 rounded-sm focus:outline-none mt-1 mb-2 ${
-                    emailValidationError ? "border-red-600" : ""
-                  }`}
-                  id="newEmail"
-                >
-                  <div>
-                    <FontAwesomeIcon
-                      className="h-5 w-5 mt-1 mr-2 text-gray-400"
-                      icon="envelope"
-                    />
-                    <input
-                      value={currentEmailValue}
-                      className="w-96 bg-white border-red-600 focus:outline-none"
-                      onChange={(event) => {
-                        setEmailValidationError(false);
-                        setCurrentEmailValue(event.target.value);
-                      }}
-                      aria-invalid={!!emailValidationError}
-                    />
-                  </div>
-                  {emailValidationError && (
-                    <FontAwesomeIcon
-                      className="h-5 w-5 mt-1 text-red-400 float-right"
-                      icon="exclamation-circle"
-                    />
-                  )}
-                </div>
-                {emailValidationError && (
-                  <span className="text-red-600 text-sm pt-1">
-                    {emailValidationError}
-                  </span>
-                )}
-              </div> */}
+
               <div className="float-right mt-2">
                 <CancelChangesButton
                   onClick={cancelEmailChanges}
@@ -287,7 +313,6 @@ const Account = () => {
           )}
         </div>
 
-        {/*  */}
         <div className="pt-5">
           <div className="flex flex-row">
             <p className="font-light text-xl font-semibold">
@@ -312,23 +337,6 @@ const Account = () => {
             <div className="my-2 text-xl mt-5"> ●●●●●●</div>
           ) : (
             <div className="my-5">
-              {/* <div>
-                <label className="required" htmlFor="newPassword">
-                  New Password
-                </label>
-                <div className="flex flex-row border p-2 w-full mt-1 mb-2 rounded-sm focus:outline-none">
-                  <FontAwesomeIcon
-                    className="h-5 w-5 mt-1 mr-2 text-gray-400"
-                    icon="lock"
-                  />
-                  <input
-                    id="newPassword"
-                    className="w-96 bg-white focus:outline-none"
-                    required
-                  />
-                </div>
-              </div> */}
-
               <InputContainer
                 id="newPassword"
                 iconName="lock"
