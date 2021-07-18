@@ -19,18 +19,18 @@ export const AVAILABLE_REGIONS = {
 export const USER_AUTH_ATTRIBUTES = ["username", "email"];
 
 export const REGIONS_MAPPING = {
-  "United States of America": "us",
+  "United States of America": "usa",
   "United Kingdom": "uk",
 };
 
 export const HEADER_CONTENT_BY_REGION = {
-  us: ["Home", "Bills"],
+  usa: ["Home", "Bills"],
   uk: ["Home", "Bills"],
 };
 
 export const PROFILE_OPTIONS_BY_REGION = {
   support: {
-    US: ["Republicans", "Democrats", "Other"],
+    usa: ["Republicans", "Democrats", "Other"],
     uk: ["Labour", "Conservatives", "SNP"],
   },
 };
@@ -50,7 +50,7 @@ export const PERSONAL_INFO_MENU_ITEMS = [
     name: "I represent",
     value: "geographicPreference",
     options: [
-      { key: "us", value: "United States of America" },
+      { key: "usa", value: "United States of America" },
       { key: "uk", value: "United Kingdom" },
     ],
     dependencies: [],
@@ -73,7 +73,7 @@ export const PERSONAL_INFO_MENU_ITEMS = [
     value: "supportGroup",
     geographyDependent: true,
     options: {
-      us: [
+      usa: [
         { key: "republicans", value: "Republicans" },
         { key: "democrats", value: "Democrats" },
         { key: "other", value: "Other" },
@@ -88,9 +88,4 @@ export const PERSONAL_INFO_MENU_ITEMS = [
     },
     dependencies: ["geographicPreference"],
   },
-  // {
-  //   name: "I vote in",
-  //   value: "voteLocation",
-  //   type: PROFILE_FIELD_TYPES.INPUT,
-  // },
 ];

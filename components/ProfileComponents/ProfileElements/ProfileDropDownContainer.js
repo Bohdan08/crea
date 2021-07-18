@@ -18,7 +18,7 @@ const ProfileDropDownContainer = ({
             <fieldset disabled={disabled}>
               <label
                 className={`mr-4 ${required ? "required" : ""} ${
-                  disabled ? "opacity-80" : ""
+                  disabled ? "opacity-60" : ""
                 }`}
                 htmlFor={fieldId}
               >

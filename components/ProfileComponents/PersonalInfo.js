@@ -1,16 +1,26 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import styled from "styled-components";
 import usePlacesAutocomplete from "use-places-autocomplete";
 import {
   MAX_FULL_NAME_LENGTH,
   MAX_PREFFERED_NAME_LENGTH,
+  MIN_FULL_NAME_LENGTH,
+  MIN_PREFERRED_NAME_LENGTH,
   PERSONAL_INFO_MENU_ITEMS,
   REGIONS_MAPPING,
 } from "../../shared/constants";
 import {
+  CancelChangesButton,
+  ErrorMessage,
   ProfileDropDownContainer,
   ProfileInputContainer,
+  SaveChangesButton,
 } from "./ProfileElements";
+
+const StyledSuggestionsContainer = styled.ul`
+  height: 40px;
+`;
 
 const INIT_PROFILE_ERRORS_PAYLOAD = {
   fullName: "",
@@ -70,9 +80,12 @@ const PersonalInfo = () => {
     INIT_PROFILE_ERRORS_PAYLOAD,
   });
 
+  const [personalInfoApiError, setApiError] = useState();
+
   const onChangeDropDown = (event) => {};
 
   const onChangeVoteLocation = (event) => {
+    setValue(event.target.value);
     setCurrentPersonalInfoValues({
       ...currentPersonalInfoValues,
       ["voteLocation"]: event.target.value,
@@ -96,18 +109,19 @@ const PersonalInfo = () => {
   };
 
   const renderVoteLocationSuggestions = () => {
-    console.log(suggestions.status, "suggestionsStatus");
-    console.log(suggestions.data, "suggestionsData");
     /* show data only according to selected region */
 
-    /* const filteredData = data?.filter((initialSuggestion) =>
-      initialSuggestion.description
-        ?.toLowerCase()
-        .includes(REGIONS_MAPPING[user])
-    ); */
+    const filteredData = suggestions?.data?.filter(
+      (initialSuggestion) =>
+        initialSuggestion.description
+          ?.toLowerCase()
+          .includes(
+            REGIONS_MAPPING[currentPersonalInfoValues["geographicPreference"]]
+          ) && initialSuggestion.types?.includes("locality")
+    );
 
-    return suggestions?.data?.length ? (
-      suggestions.data.map((suggestion) => {
+    return filteredData?.length ? (
+      filteredData.map((suggestion) => {
         const {
           place_id,
           structured_formatting: { main_text, secondary_text },
@@ -116,29 +130,82 @@ const PersonalInfo = () => {
         return (
           <li
             key={place_id}
-            className="cursor-pointer px-2 hover:bg-gray-50"
+            className="h-full flex flex-row justify-left items-center border cursor-pointer px-2 hover:bg-gray-50"
             onClick={handleSelectLocation(suggestion)}
           >
-            <strong>{main_text}</strong> <small>{secondary_text}</small>
+            <strong>{main_text}</strong>{" "}
+            <small className="relative pt-1 pl-1">{secondary_text}</small>
           </li>
         );
       })
     ) : (
-      <li className="px-2"> No results found... </li>
+      <li className="h-full flex justify-left items-center px-2">
+        {" "}
+        No results found...{" "}
+      </li>
     );
   };
 
+  const validateProfileChanges = () => {
+    if (
+      Object.entries(user.data).filter(
+        ([key, value]) =>
+          currentPersonalInfoValues[key]?.toLowerCase().trim() ===
+          value?.toLowerCase().trim()
+      )
+    ) {
+      setApiError(`You haven't made any changes to your profile.`);
+
+      return false;
+    }
+    // check input lengths
+    if (currentPersonalInfoValues["fullName"]?.length < MIN_FULL_NAME_LENGTH) {
+      setValidationErrors({
+        ...validationErrors,
+        ["fullName"]: `Full name should be at least ${MIN_FULL_NAME_LENGTH} characters.`,
+      });
+
+      return false;
+    } else if (
+      currentPersonalInfoValues["preferredName"]?.length <
+      MIN_PREFERRED_NAME_LENGTH
+    ) {
+      setValidationErrors({
+        ...validationErrors,
+        ["preferredName"]: `Preferred name should be at least ${MIN_PREFERRED_NAME_LENGTH} characters.`,
+      });
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const onSaveProfileChanges = () => {
+    // make sure if user completed their profile properly
+    if (validateProfileChanges()) {
+      // push changes to db
+      console.log("DB CHANGES");
+    }
+  };
+
   console.log(currentPersonalInfoValues, "currentPersonalInfoValues");
+
   return (
     <>
       {Object.values(currentPersonalInfoValues).filter(
         (personalInfoValue) => personalInfoValue === ""
-      ).length ? (
+      ).length && !personalInfoApiError ? (
         <div className="border rounded bg-blue-600 p-3 text-white">
           Please, answer all questions below in order to gain full access to the
           application. <br />
           Having full access you will be able to chat and vote with others.
         </div>
+      ) : personalInfoApiError ? (
+        <ErrorMessage
+          message={personalInfoApiError}
+          onErrorHide={() => setApiError("")}
+        />
       ) : null}
       <ProfileInputContainer
         id="userFullName"
@@ -166,7 +233,7 @@ const PersonalInfo = () => {
         required
         value={currentPersonalInfoValues["peferredName"]}
         validationError={validationErrors["preferredName"]}
-        maxLength={2}
+        maxLength={MAX_PREFFERED_NAME_LENGTH}
         onChangeInput={(event) =>
           setCurrentPersonalInfoValues({
             ...currentPersonalInfoValues,
@@ -214,16 +281,32 @@ const PersonalInfo = () => {
         inputType="text"
         labelName="I vote in"
         required
-        /* disabled={!currentPersonalInfoValues["geographicPreference"]} */
+        disabled={!currentPersonalInfoValues["geographicPreference"]}
         value={currentPersonalInfoValues["voteLocation"]}
         onChangeInput={onChangeVoteLocation}
       />
       {/* We can use the "status" to decide whether we should display the dropdown or not */}
-      {suggestions?.status === "OK" && (
-        <ul className="absolute mt-1 w-96 bg-white rounded border">
+      {suggestions?.status === "OK" ? (
+        <StyledSuggestionsContainer className="relative mt-1 bg-white rounded border">
           {renderVoteLocationSuggestions()}
-        </ul>
-      )}
+        </StyledSuggestionsContainer>
+      ) : status !== "" ? (
+        <ErrorMessage message={status} />
+      ) : null}
+      <div className="float-right mt-2">
+        <CancelChangesButton
+          style="mr-5"
+          onClick={() => setCurrentPersonalInfoValues(user.data || {})}
+        />
+        <SaveChangesButton
+          onClick={onSaveProfileChanges}
+          disabled={
+            Object.values(currentPersonalInfoValues).filter(
+              (personalInfoValue) => personalInfoValue === ""
+            ).length
+          }
+        />
+      </div>
     </>
   );
 };
