@@ -98,8 +98,8 @@ const Container = ({ backgroundSelector }) => {
             <button
               className="bg-blue-500 text-white text-lg py-3 w-36 rounded"
               onClick={() => {
-                dispatch(setRegion("usa"));
-                localStorage.setItem("region", "usa");
+                dispatch(setRegion("US"));
+                localStorage.setItem("region", "US");
               }}
             >
               <a>United States</a>
@@ -184,7 +184,7 @@ const App = () => {
   // }
 
   // console.log(user, "uese");
-  // let region = "usa";
+  // let region = "US";
   // console.log(currentRegion, "currentRegion");
 
   useEffect(() => {
@@ -199,7 +199,7 @@ const App = () => {
         html: `
             <div class="swal2-html-container"> Please choose the region you want to read news about.  </div>
             <div id="swal-button-group" class="mt-5">
-              <button id="swal-region-us" name="region" type="submit" value="usa" class="swal2-confirm swal2-styled" onclick="Swal.clickConfirm()"> United States </button>
+              <button id="swal-region-us" name="region" type="submit" value="US" class="swal2-confirm swal2-styled" onclick="Swal.clickConfirm()"> United States </button>
               <button id="swal-region-uk" name="region" type="submit" value="uk" class="swal2-cancel swal2-styled" onclick="Swal.clickConfirm()"> United Kingdom </button>
             </div>
             `,
@@ -224,8 +224,8 @@ const App = () => {
         <button
           className="bg-blue-500 text-white text-lg m-0 py-3 w-36 rounded"
           onClick={() => {
-            dispatch(setRegion("usa"));
-            localStorage.setItem("region", "usa");
+            dispatch(setRegion("US"));
+            localStorage.setItem("region", "US");
           }}
         >
           <a>United States</a>

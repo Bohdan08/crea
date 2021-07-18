@@ -15,7 +15,7 @@
       "function": {
         "welobby8f2de8bc8f2de8bcPostConfirmation": {
           "deploymentBucketName": "amplify-welobby-dev-192451-deployment",
-          "s3Key": "amplify-builds/welobby8f2de8bc8f2de8bcPostConfirmation-302b58616b61335a6d42-build.zip"
+          "s3Key": "amplify-builds/welobby8f2de8bc8f2de8bcPostConfirmation-2f514b6a704668504358-build.zip"
         }
       },
       "auth": {

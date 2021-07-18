@@ -10,6 +10,8 @@ type User
   id: ID!
   username: String!
   email: String!
+  fullName: String
+  preferredName: String
   createdAt: String
   updatedAt: String
   geographicPreference: String

@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import { setUser } from "../redux/slices/userSlice";
 import {
   ACCOUNT,
+  PERSONAL_INFO,
   PREFERENCES,
   PROFILE_FIELDS_BY_CURRENT_SELECTION,
   PROFILE_FIELD_TYPES,
@@ -21,9 +22,14 @@ import { removeNullsInObject } from "../shared/utils";
 // styles
 import styles from "./profile.module.scss";
 import Account from "../components/ProfileComponents/Account";
+import PersonalInfo from "../components/ProfileComponents/PersonalInfo";
 
 const StyledUserInfoContainer = styled.div`
   width: 700px;
+`;
+
+const StyledMenuSelectionContainer = styled.div`
+  height: 300px;
 `;
 
 const ProfileSvgWrapper = ({
@@ -222,52 +228,21 @@ const Profile = () => {
   const updateUserData = async () => {
     console.log(userValues, "userValues");
     try {
-      /* check if users email has been changed */
-
-      /* if (user?.data?.email !== userValues.email) { */
-
-      {
-        /* console.log(userValues.email, "userValues"); */
-      }
-      const authUser = await Auth.currentAuthenticatedUser();
-
-      /*  email: "bodya.martynyuck@yandex.ua",, */
-      {
-        /* bohdan.martyniuk08@gmail.com */
-      }
-      const updatedUserAttributes = await Auth.updateUserAttributes(authUser, {
-        email: "bodya.martynyuck@yandex.ua",
-      });
-
-      /* console.log(userValues.emai, "userValues.emai"); */
-
-      console.log(updatedUserAttributes, "updatedUserAttributes");
-
-      if (updatedUserAttributes === "SUCCESS") {
-        setEmailChanged(true);
-      }
-      /* } */
-
-      {
-        /* const updatedUserValues = await API.graphql(
+      /* const updatedUserValues = await API.graphql(
         graphqlOperation(updateUser, {
           input: userValues,
         })
       );
 
       dispatch(setUser(removeNullsInObject(updatedUserValues))); */
-      }
+
       setSaveChangesError({ [activeMenuItem]: "" });
     } catch (error) {
-      console.log(error, "error");
       setSaveChangesError({ [activeMenuItem]: error.message });
 
       /* throw Error(error.message); */
     }
   };
-
-  const onChangeField = (field, value) =>
-    setUserValues({ ...userValues, [field]: value });
 
   const handleEditProgress = (editValue) => {
     setEdit(editValue);
@@ -314,12 +289,12 @@ const Profile = () => {
     <div>
       {user ? (
         <div className="my-10 flex flex-row justify-center">
-          <div className="bg-white rounded shadow-xl w-72 border-black mr-5">
+          <StyledMenuSelectionContainer className="bg-white rounded shadow-xl w-72 border-black mr-5">
             <div className="flex flex-col pt-5">
               {PROFILE_SELECTIONS.map((profileSelection) => (
                 <button
                   key={profileSelection}
-                  className={`text-2xl text-left font-light cursor-pointer my-5 pl-5 focus:outline-none ${
+                  className={`text-2xl text-left font-light cursor-pointer my-5 pl-5  ${
                     activeMenuItem === profileSelection
                       ? "border-l-4 border-blue-600 text-blue-600"
                       : ""
@@ -330,7 +305,7 @@ const Profile = () => {
                 </button>
               ))}
             </div>
-          </div>
+          </StyledMenuSelectionContainer>
           <StyledUserInfoContainer className="bg-white rounded shadow-xl p-10">
             <div
               className={`${styles.tooltip} absolute right-0 mr-10 text-sm p-0`}
@@ -390,7 +365,10 @@ const Profile = () => {
                   />
                 )
             )} */}
-            <Account />
+            <div className="w-full pt-5">
+              {activeMenuItem === ACCOUNT && <Account />}
+              {activeMenuItem === PERSONAL_INFO && <PersonalInfo />}
+            </div>
             {/* {activeMenuItem === PREFERENCES && (
               <div className="flex flex-row">
                 <label className="mx-2 pt-1 text-black text-lg">
@@ -425,7 +403,7 @@ const Profile = () => {
                     <p className="font-light text-xl">Confirmation Code</p>
                     <div className="flex flex-row mt-2 ">
                       <div
-                        className={`flex flex-row border p-2 rounded-sm focus:outline-none ${
+                        className={`flex flex-row border p-2 rounded-sm ${
                           !isEdit ? "cursor-now-allowed" : ""
                         }`}
                       >

@@ -59,7 +59,7 @@ export const data = [
             law;
     Whereas the former Syrian military photographer Caesar'' meticulously 
             photographed the Assad regime's widespread system of arrest, detention, 
-            torture and murder of tens of thousands of Syrian protesters and 
+            torture and murder of tens of thoUSnds of Syrian protesters and 
             dissidents, and then courageously smuggled 55,000 of those photographs 
             out of Syria, exposing the regime's barbarity for the world to witness;
     Whereas the Caesar Syria Civilian Protection Act of 2019 (22 U.S.C. 8791 note), 
