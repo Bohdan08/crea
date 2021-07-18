@@ -54,6 +54,7 @@ export const PERSONAL_INFO_MENU_ITEMS = [
       { key: "uk", value: "United Kingdom" },
     ],
     dependencies: [],
+    influence: ["supportGroup", "voteLocation"],
   },
   {
     name: "I am a",

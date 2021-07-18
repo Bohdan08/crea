@@ -9,6 +9,8 @@ export const getUser = /* GraphQL */ `
       email
       createdAt
       updatedAt
+      fullName
+      preferredName
       geographicPreference
       supportGroup
       voteLocation

@@ -28,6 +28,8 @@ export const updateUser = /* GraphQL */ `
       id
       username
       email
+      fullName
+      preferredName
       createdAt
       updatedAt
       geographicPreference
