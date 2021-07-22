@@ -45,19 +45,14 @@ export const PROFILE_FIELD_TYPES = {
   DROPDOWN: "dropdown",
 };
 
-export const DEFAULT_GEOGRAPHIC_LOCATION = "usa";
+// will grow in the future
+export const TEMPORARY_DEFAULT_GEOGRAPHIC_LOCATION = "USA";
+
+export const GEOGRAPHIC_LOCATION_KEY_MAPPING = {
+  [TEMPORARY_DEFAULT_GEOGRAPHIC_LOCATION]: "United States of America",
+};
 
 export const PERSONAL_INFO_MENU_ITEMS = [
-  // {
-  //   name: "I represent",
-  //   value: "geographicPreference",
-  //   options: [
-  //     { key: "usa", value: "United States of America" },
-  //     { key: "uk", value: "United Kingdom" },
-  //   ],
-  //   dependencies: [],
-  //   influence: ["supportGroup", "voteLocation"],
-  // },
   {
     name: "I am a",
     value: "userType",
@@ -69,26 +64,15 @@ export const PERSONAL_INFO_MENU_ITEMS = [
       { key: "otherOfficial", value: "Other official" },
       { key: "politicalActivist", value: "Political Activist" },
     ],
-    dependencies: [],
   },
   {
     name: "I support",
     value: "supportGroup",
     geographyDependent: true,
-    options: {
-      usa: [
-        { key: "republicans", value: "Republicans" },
-        { key: "democrats", value: "Democrats" },
-        { key: "other", value: "Other" },
-      ],
-      uk: [
-        { key: "labour", value: "Labour" },
-        { key: "conservatives", value: "Conservatives" },
-        { key: "snp", value: "SNP" },
-        { key: "liberalDemocrats", value: "Liberal Democrats" },
-        { key: "other", value: "Other" },
-      ],
-    },
-    dependencies: ["geographicPreference"],
+    options: [
+      { key: "republicans", value: "Republicans" },
+      { key: "democrats", value: "Democrats" },
+      { key: "other", value: "Other" },
+    ],
   },
 ];

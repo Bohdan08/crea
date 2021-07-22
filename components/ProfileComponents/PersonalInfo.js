@@ -6,12 +6,13 @@ import styled from "styled-components";
 import usePlacesAutocomplete from "use-places-autocomplete";
 import { setUser } from "../../redux/slices/userSlice";
 import {
+  GEOGRAPHIC_LOCATION_KEY_MAPPING,
   MAX_FULL_NAME_LENGTH,
   MAX_PREFFERED_NAME_LENGTH,
   MIN_FULL_NAME_LENGTH,
   MIN_PREFERRED_NAME_LENGTH,
   PERSONAL_INFO_MENU_ITEMS,
-  REGIONS_MAPPING,
+  TEMPORARY_DEFAULT_GEOGRAPHIC_LOCATION,
 } from "../../shared/constants";
 import { removeNullsInObject, shallowEqualObjects } from "../../shared/utils";
 import { updateUser } from "../../src/graphql/mutations";
@@ -128,28 +129,11 @@ const PersonalInfo = () => {
   }, []);
 
   /* Handlers */
-  const onChangeDropDown = (userKey, value, influence) => {
-    let clonedValues = Object.assign({}, currentPersonalInfoValues);
-
-    // check if a current key changes will influence other values
-    if (influence?.length) {
-      for (let key in clonedValues) {
-        if (influence.includes(key)) {
-          clonedValues[key] = "";
-        }
-      }
-
-      setCurrentPersonalInfoValues({
-        ...clonedValues,
-        [userKey]: value,
-      });
-    } else {
-      setCurrentPersonalInfoValues({
-        ...clonedValues,
-        [userKey]: value,
-      });
-    }
-  };
+  const onChangeDropDown = (userKey, value) =>
+    setCurrentPersonalInfoValues({
+      ...clonedValues,
+      [userKey]: value,
+    });
 
   const onChangeVoteLocation = (event) => {
     setVoteLocationValue(event.target.value);
@@ -176,9 +160,8 @@ const PersonalInfo = () => {
       (initialSuggestion) =>
         initialSuggestion.description
           ?.toLowerCase()
-          .includes(
-            REGIONS_MAPPING[currentPersonalInfoValues["geographicPreference"]]
-          ) && initialSuggestion.types?.includes("locality")
+          .includes(TEMPORARY_DEFAULT_GEOGRAPHIC_LOCATION.toLowerCase()) &&
+        initialSuggestion.types?.includes("locality")
     );
 
     return filteredData?.length ? (
@@ -248,7 +231,12 @@ const PersonalInfo = () => {
     try {
       const updatedProfileValues = await API.graphql(
         graphqlOperation(updateUser, {
-          input: { ...user.data, ...currentPersonalInfoValues },
+          input: {
+            ...user.data,
+            ...currentPersonalInfoValues,
+            // temporary preference
+            ["geographicPreference"]: TEMPORARY_DEFAULT_GEOGRAPHIC_LOCATION,
+          },
         })
       );
 
@@ -366,44 +354,21 @@ const PersonalInfo = () => {
             }
           />
 
-          {PERSONAL_INFO_MENU_ITEMS.map(
-            ({
-              name,
-              value,
-              options,
-              geographyDependent,
-              dependencies,
-              influence,
-            }) => (
-              <ProfileDropDownContainer
-                key={name}
-                containerStyles="mt-5"
-                fieldId={value}
-                fieldName={name}
-                optionName={value}
-                required
-                options={
-                  geographyDependent
-                    ? options[
-                        REGIONS_MAPPING[
-                          currentPersonalInfoValues["geographicPreference"]
-                        ]
-                      ]
-                    : options
-                }
-                selectedOption={currentPersonalInfoValues[value]}
-                onChangeField={(event) =>
-                  onChangeDropDown(value, event.target.value, influence)
-                }
-                disabled={
-                  dependencies.length &&
-                  Object.entries(currentPersonalInfoValues).filter(
-                    ([key, value]) => dependencies.includes(key) && value === ""
-                  ).length
-                }
-              />
-            )
-          )}
+          {PERSONAL_INFO_MENU_ITEMS.map(({ name, value, options }) => (
+            <ProfileDropDownContainer
+              key={name}
+              containerStyles="mt-5"
+              fieldId={value}
+              fieldName={name}
+              optionName={value}
+              required
+              options={options}
+              selectedOption={currentPersonalInfoValues[value]}
+              onChangeField={(event) =>
+                onChangeDropDown(value, event.target.value)
+              }
+            />
+          ))}
 
           <ProfileInputContainer
             id="voteLocation"
@@ -457,7 +422,11 @@ const PersonalInfo = () => {
 
           <UserInfoBlock
             header="Geographic Preference"
-            content={currentPersonalInfoValues["geographicPreference"]}
+            content={
+              GEOGRAPHIC_LOCATION_KEY_MAPPING[
+                currentPersonalInfoValues["geographicPreference"]
+              ]
+            }
           />
 
           <UserInfoBlock
