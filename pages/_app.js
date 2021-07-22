@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
@@ -9,6 +9,9 @@ import {
   faExclamationCircle,
   faMinusCircle,
   faSearchLocation,
+  faTimes,
+  faInfo,
+  faEdit,
 } from "@fortawesome/free-solid-svg-icons";
 import Header from "../components/Header";
 import { Provider } from "react-redux";
@@ -22,7 +25,10 @@ library.add(
   faEnvelope,
   faExclamationCircle,
   faMinusCircle,
-  faSearchLocation
+  faSearchLocation,
+  faTimes,
+  faInfo,
+  faEdit
 );
 
 // styles
@@ -31,12 +37,27 @@ import "tailwindcss/tailwind.css";
 import "sweetalert2/src/sweetalert2.scss";
 
 // AWS
-import Amplify from "aws-amplify";
+import Amplify, { Auth } from "aws-amplify";
 import config from "../src/aws-exports";
+import { useRouter } from "next/router";
 
 Amplify.configure(config);
 
 const App = ({ Component, pageProps }) => {
+  //  Prod Link
+  // `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GEO_LOCATION_API}&libraries=places`;
+  const route = useRouter();
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  async function checkUser() {
+    const user = await Auth.currentAuthenticatedUser();
+    // setUser(user.attributes);
+    console.log(user, "user");
+  }
+
   return (
     <Provider store={store}>
       <Head>

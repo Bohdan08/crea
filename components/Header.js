@@ -1,28 +1,27 @@
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Auth } from "aws-amplify";
+import styled from "styled-components";
 import { resetUser } from "../redux/slices/userSlice";
 
-// style scss
-import styles from "./header.module.scss";
+const StyledNavBar = styled.ul`
+  li {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+`;
 
 const Header = () => {
-  const { region, user } = useSelector((store) => store);
-  const { currentRegion } = region;
+  const { user } = useSelector((store) => store);
   const router = useRouter();
 
   const dispatch = useDispatch();
 
   return (
-    <header
-      className={`header py-2 px-10 flex bg-white shadow ${
-        currentRegion ? "" : "hidden"
-      }`}
-    >
-      <Link href="/" as="/">
+    <header className="header py-2 px-10 flex bg-white shadow">
+      <Link href="/">
         <a>
           <Image
             src="/images/logo.jpeg"
@@ -33,28 +32,28 @@ const Header = () => {
           />
         </a>
       </Link>
-      <ul
-        className={`${styles.navbar} block m-auto text-xl font-light pl-10 w-full`}
-      >
-        <li>
-          <Link href="/" href="/">
-            <a>Home</a>
-          </Link>
-        </li>
-
-        <li>
-          <Link href="/posts/" as="/posts/">
-            <a>Bills</a>
-          </Link>
-        </li>
-        {user?.data && (
+      <nav className="flex flex-row justify-between items-center text-xl font-light pl-10 w-full">
+        <StyledNavBar className="flex flex-row">
           <li>
-            <Link href="/profile/" as="/profile/">
-              <a>Profile</a>
+            <Link href="/">
+              <a>Home</a>
             </Link>
           </li>
-        )}
-        <div className="float-right">
+
+          <li>
+            <Link href="/posts/" as="/posts/">
+              <a>Bills</a>
+            </Link>
+          </li>
+          {user?.data && (
+            <li>
+              <Link href="/profile/" as="/profile/">
+                <a>Profile</a>
+              </Link>
+            </li>
+          )}
+        </StyledNavBar>
+        <ul className="float-right">
           {!user?.data ? (
             <li className="float-right">
               <Link href="/auth/">
@@ -75,8 +74,8 @@ const Header = () => {
               </button>
             </li>
           )}
-        </div>
-      </ul>
+        </ul>
+      </nav>
     </header>
   );
 };

@@ -16,9 +16,9 @@ export const fetchUserFromDbById = createAsyncThunk(
       const response = await API.graphql(
         graphqlOperation(getUser, { id: userId })
       );
+
       const userData = response.data.getUser;
-      console.log("I AM FETCHING USER FROM DB");
-      console.log(userData, "userData");
+
       // if a message is received, it means that something went wrong
       if (userData.message) {
         return { message: userData.message };

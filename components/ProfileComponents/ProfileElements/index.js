@@ -5,6 +5,7 @@ import CancelChangesButton from "./CancelChangesButton";
 import ErrorMessage from "./ErrorMessage";
 import ProfileInputContainer from "./ProfileInputContainer";
 import ProfileDropDownContainer from "./ProfileDropDownContainer";
+import InfoMessage from "./InfoMessage";
 
 export {
   ProfileInputContainer,
@@ -14,4 +15,5 @@ export {
   SaveChangesButton,
   CancelChangesButton,
   ErrorMessage,
+  InfoMessage,
 };

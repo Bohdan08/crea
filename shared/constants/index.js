@@ -45,17 +45,19 @@ export const PROFILE_FIELD_TYPES = {
   DROPDOWN: "dropdown",
 };
 
+export const DEFAULT_GEOGRAPHIC_LOCATION = "usa";
+
 export const PERSONAL_INFO_MENU_ITEMS = [
-  {
-    name: "I represent",
-    value: "geographicPreference",
-    options: [
-      { key: "usa", value: "United States of America" },
-      { key: "uk", value: "United Kingdom" },
-    ],
-    dependencies: [],
-    influence: ["supportGroup", "voteLocation"],
-  },
+  // {
+  //   name: "I represent",
+  //   value: "geographicPreference",
+  //   options: [
+  //     { key: "usa", value: "United States of America" },
+  //     { key: "uk", value: "United Kingdom" },
+  //   ],
+  //   dependencies: [],
+  //   influence: ["supportGroup", "voteLocation"],
+  // },
   {
     name: "I am a",
     value: "userType",

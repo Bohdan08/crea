@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { API, graphqlOperation } from "aws-amplify";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -17,6 +18,7 @@ import { updateUser } from "../../src/graphql/mutations";
 import {
   CancelChangesButton,
   ErrorMessage,
+  InfoMessage,
   ProfileDropDownContainer,
   ProfileInputContainer,
   ProfileSvgWrapper,
@@ -27,6 +29,17 @@ const StyledSuggestionsItem = styled.ul`
   height: 40px;
 `;
 
+const StyledTooltipContainer = styled.div`
+  &:hover .tooltip-text {
+  visibility: visible;
+`;
+
+const StyledTooltipText = styled.span`
+  width: 200px;
+  margin-left: -70px;
+  margin-top: -30px;
+`;
+
 const INIT_PROFILE_ERRORS_PAYLOAD = {
   fullName: "",
   preferredName: "",
@@ -34,6 +47,13 @@ const INIT_PROFILE_ERRORS_PAYLOAD = {
   voteLocation: "",
   geographicPreference: "",
 };
+
+const UserInfoBlock = ({ header, content }) => (
+  <>
+    <div className="mb-1 mt-5"> {header}</div>
+    <div className="font-semibold">{content} </div>
+  </>
+);
 
 const PersonalInfo = () => {
   /* Redux */
@@ -74,12 +94,36 @@ const PersonalInfo = () => {
     ""
   );
 
+  const [infoMessageViewAwareness, setInfoMessageViewAwareness] = useState(
+    true
+  );
+  const [infoMessageViewRules, setInfoMessageViewRules] = useState(true);
+  const [profileCompleted, setProfileCompleted] = useState(false);
+
+  const [editMode, setEditMode] = useState(false);
+
   /*  Use Effects */
 
   useEffect(() => {
     if (user?.data?.voteLocation) {
       setVoteLocationValue(user?.data?.voteLocation, false);
       clearSuggestions();
+    }
+  }, []);
+
+  useEffect(() => {
+    // check if user completed their profile
+    if (
+      user?.data &&
+      !Object.values(user?.data || {}).filter(
+        (personalInfoValue) => personalInfoValue === ""
+      ).length
+    ) {
+      setProfileCompleted(true);
+      setEditMode(false);
+    } else {
+      setProfileCompleted(false);
+      setEditMode(true);
     }
   }, []);
 
@@ -234,38 +278,27 @@ const PersonalInfo = () => {
 
   return (
     <>
-      {/* <div className={`${styles.tooltip} absolute right-0 mr-10 text-sm p-0`}>
-        <span className={styles.tooltiptext}>
-          {isEdit ? "Cancel Progress" : "Edit Profile"}
-        </span>
-        <button type="button" onClick={() => handleEditProgress(!isEdit)}>
-          {!isEdit ? (
-            <ProfileSvgWrapper
-              stroke="orange"
-              path={
-                <path
-                  strokeWidth={2}
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                />
-              }
-            />
-          ) : (
-            <ProfileSvgWrapper
-              stroke="red"
-              path={<path strokeWidth={2} d="M6 18L18 6M6 6l12 12" />}
-            />
-          )}
-        </button>
-      </div> */}
-      {Object.values(user?.data || {}).filter(
-        (personalInfoValue) => personalInfoValue === ""
-      ).length && !personalInfoApiError ? (
-        <div className="border rounded bg-blue-600 p-3 text-white">
+      {infoMessageViewAwareness ? (
+        <InfoMessage
+          containerStyles="mb-4"
+          onInfoMessageHide={() => setInfoMessageViewAwareness(false)}
+        >
+          Beware that you can have full access to only one region at a time.
+          <br /> So, if you choose to represent United States of America, you
+          won't have full access to United Kingdom, and vice versa.
+        </InfoMessage>
+      ) : null}
+      {!profileCompleted && infoMessageViewRules ? (
+        <InfoMessage
+          containerStyles="my-4"
+          onInfoMessageHide={() => setInfoMessageViewRules(false)}
+        >
           Please, answer all questions below in order to gain full access to the
           application. <br />
           Having full access you will be able to chat and vote with others.
-        </div>
-      ) : personalInfoApiError ? (
+        </InfoMessage>
+      ) : null}
+      {personalInfoApiError ? (
         <ErrorMessage
           message={personalInfoApiError}
           onErrorHide={() => setApiError("")}
@@ -285,115 +318,164 @@ const PersonalInfo = () => {
           </button>
         </div>
       ) : null}
-      <ProfileInputContainer
-        id="userFullName"
-        iconName="user"
-        labelName="Full Name"
-        type="text"
-        containerStyles="mt-0"
-        required
-        value={currentPersonalInfoValues["fullName"]}
-        validationError={validationErrors["fullName"]}
-        maxLength={MAX_FULL_NAME_LENGTH}
-        onChangeInput={(event) =>
-          setCurrentPersonalInfoValues({
-            ...currentPersonalInfoValues,
-            ["fullName"]: event.target.value,
-          })
-        }
-      />
-      <ProfileInputContainer
-        id="userFullName"
-        iconName="user"
-        labelName="Preferred Name"
-        type="text"
-        containerStyles="mt-5"
-        required
-        value={currentPersonalInfoValues["preferredName"]}
-        validationError={validationErrors["preferredName"]}
-        maxLength={MAX_PREFFERED_NAME_LENGTH}
-        onChangeInput={(event) =>
-          setCurrentPersonalInfoValues({
-            ...currentPersonalInfoValues,
-            ["preferredName"]: event.target.value,
-          })
-        }
-      />
-
-      {PERSONAL_INFO_MENU_ITEMS.map(
-        ({
-          name,
-          value,
-          options,
-          geographyDependent,
-          dependencies,
-          influence,
-        }) => (
-          <ProfileDropDownContainer
-            key={name}
-            containerStyles="mt-5"
-            fieldId={value}
-            fieldName={name}
-            optionName={value}
-            required
-            options={
-              geographyDependent
-                ? options[
-                    REGIONS_MAPPING[
-                      currentPersonalInfoValues["geographicPreference"]
-                    ]
-                  ]
-                : options
-            }
-            selectedOption={currentPersonalInfoValues[value]}
-            onChangeField={(event) =>
-              onChangeDropDown(value, event.target.value, influence)
-            }
-            disabled={
-              dependencies.length &&
-              Object.entries(currentPersonalInfoValues).filter(
-                ([key, value]) => dependencies.includes(key) && value === ""
-              ).length
-            }
-          />
-        )
-      )}
-
-      <ProfileInputContainer
-        id="voteLocation"
-        iconName="search-location"
-        containerStyles="mt-5"
-        inputType="text"
-        labelName="I vote in"
-        required
-        disabled={!currentPersonalInfoValues["geographicPreference"]}
-        /* value={currentPersonalInfoValues["voteLocation"]} */
-        value={voteLocationValue}
-        onChangeInput={onChangeVoteLocation}
-      />
-      {/* We can use the "status" to decide whether we should display the dropdown or not */}
-      {suggestions?.status === "OK" ? (
-        <ul className="relative mt-1 bg-white rounded border">
-          {renderVoteLocationSuggestions()}
-        </ul>
-      ) : suggestions?.status !== "" ? (
-        <ErrorMessage message={suggestions.status} />
+      {!editMode ? (
+        <StyledTooltipContainer className="inline-block float-right">
+          <StyledTooltipText className="tooltip-text absolute rounded p-1 invisible text-center bg-black text-white">
+            Edit your answers
+          </StyledTooltipText>
+          <button type="button" onClick={() => setEditMode(true)}>
+            <FontAwesomeIcon icon="edit" className="text-yellow-700" />
+          </button>
+        </StyledTooltipContainer>
       ) : null}
 
-      <div className="float-right mt-2">
-        <CancelChangesButton
-          style="mr-5"
-          onClick={() => setCurrentPersonalInfoValues(user.data || {})}
-        />
-        <SaveChangesButton
-          onClick={onSaveProfileChanges}
-          disabled={
-            Object.values(currentPersonalInfoValues).filter(
-              (personalInfoValue) => personalInfoValue === ""
-            ).length
-          }
-        />
-      </div>
+      {editMode ? (
+        <>
+          <ProfileInputContainer
+            id="userFullName"
+            iconName="user"
+            labelName="Full Name"
+            type="text"
+            containerStyles="mt-0"
+            required
+            value={currentPersonalInfoValues["fullName"]}
+            validationError={validationErrors["fullName"]}
+            maxLength={MAX_FULL_NAME_LENGTH}
+            onChangeInput={(event) =>
+              setCurrentPersonalInfoValues({
+                ...currentPersonalInfoValues,
+                ["fullName"]: event.target.value,
+              })
+            }
+          />
+          <ProfileInputContainer
+            id="userFullName"
+            iconName="user"
+            labelName="Preferred Name"
+            type="text"
+            containerStyles="mt-5"
+            required
+            value={currentPersonalInfoValues["preferredName"]}
+            validationError={validationErrors["preferredName"]}
+            maxLength={MAX_PREFFERED_NAME_LENGTH}
+            onChangeInput={(event) =>
+              setCurrentPersonalInfoValues({
+                ...currentPersonalInfoValues,
+                ["preferredName"]: event.target.value,
+              })
+            }
+          />
+
+          {PERSONAL_INFO_MENU_ITEMS.map(
+            ({
+              name,
+              value,
+              options,
+              geographyDependent,
+              dependencies,
+              influence,
+            }) => (
+              <ProfileDropDownContainer
+                key={name}
+                containerStyles="mt-5"
+                fieldId={value}
+                fieldName={name}
+                optionName={value}
+                required
+                options={
+                  geographyDependent
+                    ? options[
+                        REGIONS_MAPPING[
+                          currentPersonalInfoValues["geographicPreference"]
+                        ]
+                      ]
+                    : options
+                }
+                selectedOption={currentPersonalInfoValues[value]}
+                onChangeField={(event) =>
+                  onChangeDropDown(value, event.target.value, influence)
+                }
+                disabled={
+                  dependencies.length &&
+                  Object.entries(currentPersonalInfoValues).filter(
+                    ([key, value]) => dependencies.includes(key) && value === ""
+                  ).length
+                }
+              />
+            )
+          )}
+
+          <ProfileInputContainer
+            id="voteLocation"
+            iconName="search-location"
+            containerStyles="mt-5"
+            inputType="text"
+            labelName="I vote in"
+            required
+            disabled={!currentPersonalInfoValues["geographicPreference"]}
+            /* value={currentPersonalInfoValues["voteLocation"]} */
+            value={voteLocationValue}
+            onChangeInput={onChangeVoteLocation}
+          />
+          {/* We can use the "status" to decide whether we should display the dropdown or not */}
+          {suggestions?.status === "OK" ? (
+            <ul className="relative mt-1 bg-white rounded border">
+              {renderVoteLocationSuggestions()}
+            </ul>
+          ) : suggestions?.status !== "" ? (
+            <ErrorMessage message={suggestions.status} />
+          ) : null}
+
+          <div className="float-right mt-2">
+            <CancelChangesButton
+              style="mr-5"
+              onClick={() => {
+                setEditMode(false);
+                setCurrentPersonalInfoValues(user.data || {});
+              }}
+            />
+            <SaveChangesButton
+              onClick={onSaveProfileChanges}
+              disabled={
+                Object.values(currentPersonalInfoValues).filter(
+                  (personalInfoValue) => personalInfoValue === ""
+                ).length
+              }
+            />
+          </div>
+        </>
+      ) : (
+        <div className="text-xl">
+          <UserInfoBlock
+            header="Full Name"
+            content={currentPersonalInfoValues["fullName"]}
+          />
+          <UserInfoBlock
+            header="Preferred Name"
+            content={currentPersonalInfoValues["preferredName"]}
+          />
+
+          <UserInfoBlock
+            header="Geographic Preference"
+            content={currentPersonalInfoValues["geographicPreference"]}
+          />
+
+          <UserInfoBlock
+            header="Identity"
+            content={currentPersonalInfoValues["userType"]}
+          />
+
+          <UserInfoBlock
+            header="Support Group"
+            content={currentPersonalInfoValues["supportGroup"]}
+          />
+
+          <UserInfoBlock
+            header="Location"
+            content={currentPersonalInfoValues["voteLocation"]}
+          />
+        </div>
+      )}
     </>
   );
 };
