@@ -37,26 +37,14 @@ import "tailwindcss/tailwind.css";
 import "sweetalert2/src/sweetalert2.scss";
 
 // AWS
-import Amplify, { Auth } from "aws-amplify";
+import Amplify from "aws-amplify";
 import config from "../src/aws-exports";
-import { useRouter } from "next/router";
 
 Amplify.configure(config);
 
 const App = ({ Component, pageProps }) => {
   //  Prod Link
   // `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GEO_LOCATION_API}&libraries=places`;
-  const route = useRouter();
-
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  async function checkUser() {
-    const user = await Auth.currentAuthenticatedUser();
-    // setUser(user.attributes);
-    console.log(user, "user");
-  }
 
   return (
     <Provider store={store}>
