@@ -1,5 +1,6 @@
 import { Auth } from "aws-amplify";
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { fetchUserFromDbById } from "../redux/slices/userSlice";
 
 const Home = () => {
@@ -10,18 +11,14 @@ const Home = () => {
   }, []);
 
   const checkUser = async () => {
-    // setUser(user.attributes);
-    const user = await Auth.currentAuthenticatedUser();
-    console.log(user, "user");
-    // dispatch(fetchUserFromDbById(userValues?.attributes?.sub));
-    // if (user.message) {
-    //   setError(user.message);
-    // } else {
-    //   setError(null);
-    //   setUiState("signedIn");
-    //   route.push("/");
-    // }
+    const userAuthValues = await Auth.currentAuthenticatedUser();
+
+    // pull user's data from db and save it to redux
+    if (userAuthValues?.attributes?.sub) {
+      dispatch(fetchUserFromDbById(userAuthValues.attributes.sub));
+    }
   };
+
   return (
     <div className="overflow-hidden">
       <div className="flex p-12 h-72 bg-yellow-100">

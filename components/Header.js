@@ -45,6 +45,11 @@ const Header = () => {
               <a>Bills</a>
             </Link>
           </li>
+          <li>
+            <Link href="/bills/" as="/bills/">
+              <a>New Bills</a>
+            </Link>
+          </li>
           {user?.data && (
             <li>
               <Link href="/profile/" as="/profile/">
