@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Head from "next/head";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
@@ -12,6 +12,9 @@ import {
   faTimes,
   faInfo,
   faEdit,
+  faArrowRight,
+  faThumbsUp,
+  faThumbsDown,
 } from "@fortawesome/free-solid-svg-icons";
 import Header from "../components/Header";
 import { Provider } from "react-redux";
@@ -28,7 +31,10 @@ library.add(
   faSearchLocation,
   faTimes,
   faInfo,
-  faEdit
+  faEdit,
+  faArrowRight,
+  faThumbsUp,
+  faThumbsDown
 );
 
 // styles
@@ -57,7 +63,7 @@ const App = ({ Component, pageProps }) => {
       </Head>
       <div className="min-h-screen">
         <Header />
-        <Component {...pageProps} />
+        <Component {...pageProps} className="px-10" />
       </div>
     </Provider>
   );

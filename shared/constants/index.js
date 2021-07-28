@@ -2,7 +2,9 @@
 
 /* API */
 // const GOOGLE_API_KEY = "AIzaSyDz2SO7yXLWj-EBs7nz7JiP1JFv6xLnzrA";
-
+export const API_US_GOV_INFO_BILLS =
+  "https://api.govinfo.gov/collections/bills";
+export const API_PAGE_SIZE = 10;
 /* Profile Constants */
 
 export const MIN_PASSWORD_LENGTH = 6;
