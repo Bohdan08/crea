@@ -1,8 +1,18 @@
 import Link from "next/link";
-import React, { useEffect } from "react";
+import Router, { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { API_PAGE_SIZE, API_US_GOV_INFO_BILLS } from "../../shared/constants";
 import styled from "styled-components";
+import router from "next/router";
+
+const todaysData = () => {
+  let date = new Date();
+  // set midnight
+  date.setHours(0, 0, 0, 0);
+
+  return date.toISOString().split(".")[0] + "Z";
+};
 
 const StyledCardContainer = styled.div`
   &:hover {
@@ -29,19 +39,118 @@ const InnerInfoBox = ({ title, description }) => (
 
 const getRandomInt = (max) => Math.floor(Math.random() * max).toLocaleString();
 
+const formatDate = (dateStr) => new Date(dateStr).toString().slice(4, 15);
+
 const Bills = ({ data }) => {
-  const { count, message, nextPage, packages, previousPage } = data;
-  console.log(data, "data");
+  const { count, message, nextPage, packages, previousPage } = data || {};
 
-  //
+  const [billsData, setBillsData] = useState([]);
+  const [currentPageSize, setCurrentPageSize] = useState(API_PAGE_SIZE);
+  const [currentDate, setCurrentDate] = useState(todaysData());
+  const [loading, setLoading] = useState(false);
+  const startLoading = () => setLoading(true);
+  const stopLoading = () => setLoading(false);
 
-  // Listen to scroll positions for loading more data on scroll
+  // Set up bills data
+
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  });
+    if (packages?.length) {
+      setBillsData(packages);
+    }
+  }, [packages]);
+
+  // const fetchData = async () => {
+  //   const res = await fetch(
+  //     `${API_US_GOV_INFO_BILLS}/${todaysData()}?offset=0&pageSize=${API_PAGE_SIZE}&api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
+  //   );
+  //   const json = await res.json();
+  //   console.log(json, "json");
+  // };
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+
+  // Router event handler
+  // useEffect(() => {
+  //   Router.events.on("routeChangeStart", startLoading);
+  //   Router.events.on("routeChangeComplete", stopLoading);
+  //   return () => {
+  //     Router.events.off("routeChangeStart", startLoading);
+  //     Router.events.off("routeChangeComplete", stopLoading);
+  //   };
+  // }, []);
+
+  // // Listen to scroll positions for loading more data on scroll
+  // useEffect(() => {
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => {
+  //     window.removeEventListener("scroll", handleScroll);
+  //   };
+  // });
+
+  // // console.log(document, "document");
+  // const lastComponent = document.querySelector("#bills-list");
+
+  // console.log(lastComponent?.lastChild, "lastComponent");
+  // // console.log(lastComponent, "lastComponent");
+
+  // const fetchMoreBills = async (updatedPageSize) => {
+  //   const moreBillsData = await fetch(
+  //     `${API_US_GOV_INFO_BILLS}/${todaysData()}?offset=${
+  //       updatedPageSize - API_PAGE_SIZE
+  //     }&pageSize=${updatedPageSize}&api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
+  //   ).then((res) => res.json());
+
+  //   console.log(moreBillsData, "moreBillsData");
+  // };
+
+  // const fetchBillsForPreviousDay = async () => {
+  //   // const res = await fetch(
+  //   //   `${API_US_GOV_INFO_BILLS}/${todaysData()}?offset=0&pageSize=${API_PAGE_SIZE}&api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
+  //   // );
+  //   // const json = await res.json();
+  //   // console.log(json, "json");
+  //   // const date = new Date(currentDate);
+  //   // const previousDay =
+  //   //   new Date(date.setDate(date.getDate() - 1)).toISOString().split(".")[0] +
+  //   //   "Z";
+  //   // setCurrentDate(previousDay);
+  //   // setCurrentPageSize(API_PAGE_SIZE);
+  //   // const previousDayBills = await fetch(
+  //   //   `${API_US_GOV_INFO_BILLS}/${previousDay}?offset=0&pageSize=${API_PAGE_SIZE}&api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
+  //   // ).then((res) => res.json());
+  //   // console.log(previousDayBills, "previousDayBills");
+  // };
+
+  // const handleScroll = () => {
+  //   // To get page offset of last user
+  //   const lastFetchedBill = document?.querySelector("#bills-list")?.lastChild;
+
+  //   if (lastFetchedBill) {
+  //     const lastFetchedhBillOffset =
+  //       lastFetchedBill.offsetTop + lastFetchedBill.clientHeight;
+  //     const pageOffset = window.pageYOffset + window.innerHeight;
+
+  //     if (pageOffset < lastFetchedhBillOffset) {
+  //       startLoading(true);
+
+  //       if (!nextPage) {
+  //         fetchBillsForPreviousDay();
+  //       }
+
+  //       //
+  //       // if (!nextPage) {
+  //       //   // console.log(nextPage, "nextPage");
+  //       //   const aggregatedPageSize = currentPageSize + API_PAGE_SIZE;
+
+  //       //   setCurrentPageSize(currentPageSize + API_PAGE_SIZE);
+
+  //       //   fetchMoreBills(aggregatedPageSize);
+  //       // }
+  //     }
+  //   }
+  // };
 
   return (
     <div className="my-12 mx-auto max-w-screen-lg px-10">
@@ -54,99 +163,97 @@ const Bills = ({ data }) => {
         <hr />
       </div>
       <div className="flex flex-row flex-wrap justify-start" id="bills-list">
-        {data?.packages?.length &&
-          data.packages.map(
-            ({ packageId, congress, title, lastModified, dateIssued }) => {
-              const formatDate = (dateStr) =>
-                new Date(dateStr).toString().slice(4, 15);
-
-              return (
-                <div key={packageId} className="bill-item py-2 my-2 w-full">
-                  <Link
-                    href="bills/bill/[packageId]"
-                    as={`bills/bill/${packageId}`}
-                  >
-                    <StyledCardContainer className="cursor-pointer relative py-4 border-2 bg-white rounded-lg text-lg">
-                      <StyledFontAwesomeIconArrowRight
-                        className="h-6 w-6 absolute icon-arrow"
-                        icon="arrow-right"
-                      />
-                      <div className="w-full">
-                        <div className="px-4">
-                          <p className="text-xl font-light pl-2">{title}</p>
-                          <div className="flex w-full mt-5 justify-around">
-                            <InnerInfoBox
-                              title="Congress"
-                              description={congress}
-                            />
-                            <InnerInfoBox
-                              title="Introduced"
-                              description={formatDate(dateIssued)}
-                            />
-                            <InnerInfoBox
-                              title="Last Modified"
-                              description={formatDate(lastModified)}
-                            />
-                            <InnerInfoBox
-                              title="Comments"
-                              description={getRandomInt(2000)}
-                            />
-                          </div>
-                          {/* <div className="flex w-full mt-5 justify-around">
+        {billsData?.length && (
+          <>
+            <div className="text-xl text-gray-800 my-2">
+              {count} bills were last modified on{" "}
+              {formatDate(billsData[0].dateIssued)}.
+            </div>
+            {billsData.map(
+              ({ packageId, congress, title, lastModified, dateIssued }) => {
+                return (
+                  <div key={packageId} className="bill-item py-2 my-2 w-full">
+                    <Link
+                      href="bills/bill/[packageId]"
+                      as={`bills/bill/${packageId}`}
+                    >
+                      <StyledCardContainer className="cursor-pointer relative py-4 border-2 bg-white rounded-lg text-lg">
+                        <StyledFontAwesomeIconArrowRight
+                          className="h-6 w-6 absolute icon-arrow"
+                          icon="arrow-right"
+                        />
+                        <div className="w-full">
+                          <div className="px-4">
+                            <p className="text-xl font-light pl-2">{title}</p>
+                            <div className="flex w-full mt-5 justify-around">
+                              <InnerInfoBox
+                                title="Congress"
+                                description={congress}
+                              />
+                              <InnerInfoBox
+                                title="Introduced"
+                                description={formatDate(dateIssued)}
+                              />
+                              <InnerInfoBox
+                                title="Last Modified"
+                                description={formatDate(lastModified)}
+                              />
+                              <InnerInfoBox
+                                title="Comments"
+                                description={getRandomInt(2000)}
+                              />
+                            </div>
+                            {/* <div className="flex w-full mt-5 justify-around">
                           <button className="w-3/12 mx-1 rounded-full py-2 border-2 border-gray-600 cursor-pointer text-center rounded focus:outline-none focus:ring-2">
                             {" "}
                             Summary{" "}
                           </button> 
                         </div> */}
-                        </div>
-                        <div className="flex w-full items-center justify-left border-t-2 pl-6 mt-4">
-                          <div className="flex flex-row mt-4">
-                            <div className="flex flex-row">
-                              <button className="rounded-full flex items-center border p-2 bg-blue-600 focus:outline-none focus:ring-2">
-                                <FontAwesomeIcon
-                                  icon="thumbs-up"
-                                  color="white"
-                                />
-                              </button>
-                              <span className="text-gray-500 mt-1 ml-1">
-                                {getRandomInt(100)}
-                              </span>
-                            </div>
+                          </div>
+                          <div className="flex w-full items-center justify-left border-t-2 pl-6 mt-4">
+                            <div className="flex flex-row mt-4">
+                              <div className="flex flex-row">
+                                <button className="rounded-full flex items-center border p-2 bg-blue-600 focus:outline-none focus:ring-2">
+                                  <FontAwesomeIcon
+                                    icon="thumbs-up"
+                                    color="white"
+                                  />
+                                </button>
+                                <span className="text-gray-500 mt-1 ml-1">
+                                  {getRandomInt(100)}
+                                </span>
+                              </div>
 
-                            <div className="flex flex-row ml-3">
-                              <button className="rounded-full flex items-center border p-2 bg-red-600 focus:outline-none focus:ring-2">
-                                <FontAwesomeIcon
-                                  icon="thumbs-down"
-                                  color="white"
-                                />
-                              </button>
-                              <span className="text-gray-500 mt-1 ml-1">
-                                {getRandomInt(100)}
-                              </span>
+                              <div className="flex flex-row ml-3">
+                                <button className="rounded-full flex items-center border p-2 bg-red-600 focus:outline-none focus:ring-2">
+                                  <FontAwesomeIcon
+                                    icon="thumbs-down"
+                                    color="white"
+                                  />
+                                </button>
+                                <span className="text-gray-500 mt-1 ml-1">
+                                  {getRandomInt(100)}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </StyledCardContainer>
-                  </Link>
-                </div>
-              );
-            }
-          )}
+                      </StyledCardContainer>
+                    </Link>
+                  </div>
+                );
+              }
+            )}
+          </>
+        )}
       </div>
     </div>
   );
 };
 
 export async function getStaticProps() {
-  let date = new Date();
-  // set midnight
-  date.setHours(0, 0, 0, 0);
-
-  const todaysDate = date.toISOString().split(".")[0] + "Z";
-
   const res = await fetch(
-    `${API_US_GOV_INFO_BILLS}/${todaysDate}?offset=0&pageSize=${API_PAGE_SIZE}&api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
+    `${API_US_GOV_INFO_BILLS}/${todaysData()}?offset=0&pageSize=${API_PAGE_SIZE}&api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
   );
   const json = await res.json();
 
@@ -156,5 +263,22 @@ export async function getStaticProps() {
     },
   };
 }
+
+{/* export async function getStaticPaths() {
+  const res = await fetch(
+    `${API_US_GOV_INFO_BILLS}/${todaysData()}?offset=0&pageSize=${API_PAGE_SIZE}&api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
+  );
+
+  const billPackagesData = await res.json();
+
+  console.log(billPackagesData, "billPackagesPaths");
+  const billPackagesPaths = billPackagesData.packages.map(({ packageId }) => ({
+    params: { id: packageId },
+  }));
+
+  console.log(billPackagesPaths, "billPackagesPaths");
+
+  return { paths: billPackagesPaths, fallback: false };
+} */}
 
 export default Bills;
