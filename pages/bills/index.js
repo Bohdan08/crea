@@ -264,21 +264,4 @@ export async function getStaticProps() {
   };
 }
 
-{/* export async function getStaticPaths() {
-  const res = await fetch(
-    `${API_US_GOV_INFO_BILLS}/${todaysData()}?offset=0&pageSize=${API_PAGE_SIZE}&api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
-  );
-
-  const billPackagesData = await res.json();
-
-  console.log(billPackagesData, "billPackagesPaths");
-  const billPackagesPaths = billPackagesData.packages.map(({ packageId }) => ({
-    params: { id: packageId },
-  }));
-
-  console.log(billPackagesPaths, "billPackagesPaths");
-
-  return { paths: billPackagesPaths, fallback: false };
-} */}
-
 export default Bills;
