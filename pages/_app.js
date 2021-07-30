@@ -51,6 +51,7 @@ Amplify.configure(config);
 const App = ({ Component, pageProps }) => {
   //  Prod Link
   // `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GEO_LOCATION_API}&libraries=places`;
+  // AIzaSyDdbxYCdWwJJynWZsnsyB0baAvOA6UiK5A
 
   return (
     <Provider store={store}>
@@ -58,7 +59,7 @@ const App = ({ Component, pageProps }) => {
         <script
           async
           defer
-          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.GEO_LOCATION_API}&libraries=places`}
+          src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyDdbxYCdWwJJynWZsnsyB0baAvOA6UiK5A&libraries=places`}
         ></script>
       </Head>
       <div className="min-h-screen">
