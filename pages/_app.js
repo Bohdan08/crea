@@ -58,7 +58,7 @@ const App = ({ Component, pageProps }) => {
         <script
           async
           defer
-          src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyDdbxYCdWwJJynWZsnsyB0baAvOA6UiK5A&libraries=places`}
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GEO_LOCATION_API}&libraries=places`}
         ></script>
       </Head>
       <div className="min-h-screen">
