@@ -131,7 +131,7 @@ const PersonalInfo = () => {
   /* Handlers */
   const onChangeDropDown = (userKey, value) =>
     setCurrentPersonalInfoValues({
-      ...clonedValues,
+      ...currentPersonalInfoValues,
       [userKey]: value,
     });
 
