@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
@@ -15,7 +14,7 @@ const StyledNavBar = styled.ul`
   }
 `;
 
-const StyledOverviewMenu = styled.ul`
+const StyledMenu = styled.ul`
   li {
     display: flex;
     flex-direction: row;
@@ -24,7 +23,7 @@ const StyledOverviewMenu = styled.ul`
   }
 `;
 
-const MENU_LIST = ["Overview", "Summary", "Details", "Text", "Your Vote"];
+const MENU_LIST = ["Overview", "Summary", "Text", "Your Vote"];
 
 const OverviewBulletPoint = ({ children }) => (
   <div className="p-1 bg-blue-800 text-white rounded mr-2 w-32 text-center">
@@ -33,8 +32,18 @@ const OverviewBulletPoint = ({ children }) => (
   </div>
 );
 
+// const convertXMLtoJSON = (xml) => {
+//   let jsonRes = "";
+//   const parseString = require("xml2js").parseString;
+
+//   parseString(xml, (err, parsedData) => {
+//     jsonRes = parsedData;
+//   });
+
+//   return jsonRes;
+// };
+
 const BillOverview = ({ data }) => {
-  // console.log(data, "propsBullsdata");
   const {
     packageId,
     dateIssued,
@@ -57,7 +66,7 @@ const BillOverview = ({ data }) => {
 
   useEffect(() => {
     // Always do navigations after the first render
-    router.push(`/bills/bill/${packageId}?section=overview`, undefined, {
+    router.replace(`/bills/bill/${packageId}?section=Overview`, undefined, {
       shallow: true,
     });
   }, []);
@@ -66,7 +75,7 @@ const BillOverview = ({ data }) => {
     <div className="my-12 mx-auto max-w-screen-lg px-10">
       <h1 className="text-2xl font-medium">
         {currentChamber.slice(0, 1)}. {billNumber}:{" "}
-        {shortTitle ? shortTitle[0].title : title}
+        {shortTitle && shortTitle[0] ? shortTitle[0].title : title}
       </h1>
       <div id="bill-menu" className="mt-6">
         <nav className="border-2 rounded shadow-sm text-xl">
@@ -79,16 +88,14 @@ const BillOverview = ({ data }) => {
                 }  `}
                 onClick={() => {
                   setActiveMenuItem(menuItem);
-                  router.push(
+                  router.replace(
                     `/bills/bill/${packageId}?section=${menuItem}`,
                     undefined,
                     { shallow: true }
                   );
                 }}
               >
-                {/* <Link href="/text" as={`/bills/bill/${packageId}/text`} > */}
                 {menuItem}
-                {/* </Link> */}
               </li>
             ))}
           </StyledNavBar>
@@ -97,7 +104,7 @@ const BillOverview = ({ data }) => {
 
       <div className="mt-6 text-lg font-light">
         {activeMenuItem === "Overview" ? (
-          <StyledOverviewMenu>
+          <StyledMenu>
             <li>
               <OverviewBulletPoint>Introduced</OverviewBulletPoint>
               <span className="font-light"> {dateIssued}</span>
@@ -112,21 +119,27 @@ const BillOverview = ({ data }) => {
             <li>
               <OverviewBulletPoint> Congress </OverviewBulletPoint> {congress}
             </li>
-            <li>
-              <OverviewBulletPoint> Sponsor </OverviewBulletPoint>{" "}
-              {members[0].memberName}{" "}
-            </li>
-            <li>
-              <OverviewBulletPoint> Cosponsors </OverviewBulletPoint>{" "}
-              {members
-                .filter((member) => member.role === "COSPONSOR")
-                .map((filteredMember) => filteredMember.memberName)
-                .join(" ; ")}{" "}
-            </li>
-            <li>
-              <OverviewBulletPoint> Committees </OverviewBulletPoint>{" "}
-              {committees[0].committeeName}{" "}
-            </li>
+            {members?.length && members[0] ? (
+              <>
+                <li>
+                  <OverviewBulletPoint> Sponsor </OverviewBulletPoint>{" "}
+                  {members[0].memberName}{" "}
+                </li>
+                <li>
+                  <OverviewBulletPoint> Cosponsors </OverviewBulletPoint>{" "}
+                  {members
+                    .filter((member) => member.role === "COSPONSOR")
+                    .map((filteredMember) => filteredMember.memberName)
+                    .join(" ; ")}{" "}
+                </li>
+              </>
+            ) : null}
+            {committees?.length && (
+              <li>
+                <OverviewBulletPoint> Committees </OverviewBulletPoint>{" "}
+                {committees[0].committeeName}{" "}
+              </li>
+            )}
             <li>
               <OverviewBulletPoint> Chamber </OverviewBulletPoint>
               {currentChamber}
@@ -140,7 +153,7 @@ const BillOverview = ({ data }) => {
               <OverviewBulletPoint> Class Number </OverviewBulletPoint>{" "}
               {suDocClassNumber}{" "}
             </li>
-          </StyledOverviewMenu>
+          </StyledMenu>
         ) : null}
         {activeMenuItem.toLowerCase() === "text" ? (
           <div className="text-xl bg-white rounded border-2">
@@ -150,7 +163,11 @@ const BillOverview = ({ data }) => {
             />
           </div>
         ) : null}
-        {activeMenuItem.toLowerCase() === "summary" ? <div>{title}</div> : null}
+        {activeMenuItem.toLowerCase() === "summary" ? (
+          <div>
+            A bill {`${title.slice(0, 1).toLowerCase()}${title.slice(1)}`}
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -187,13 +204,23 @@ export async function getStaticProps({ params }) {
 
   if (json?.download?.txtLink) {
     let htmlRes = await fetch(
-      `${json.download.txtLink}?api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
+      `${json.download.txtLink}?api_key=${process.env.REACT_APP_GOV_US_API_KEY}`
     );
 
     let htmlTextRes = await htmlRes.text();
 
     json.htmlData = htmlTextRes;
   }
+
+  // if (json?.related?.billStatusLink) {
+  //   let xmlRes = await fetch(
+  //     `${json.related.billStatusLink}?api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
+  //   );
+
+  //   let xmlResText = await xmlRes.text();
+
+  //   json.statusData = xmlResText;
+  // }
 
   return {
     props: {

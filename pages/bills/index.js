@@ -163,7 +163,7 @@ const Bills = ({ data }) => {
         <hr />
       </div>
       <div className="flex flex-row flex-wrap justify-start" id="bills-list">
-        {billsData?.length && (
+        {billsData?.length && billsData[0] && (
           <>
             <div className="text-xl text-gray-800 my-2">
               {count} bills were last modified on{" "}
@@ -252,6 +252,12 @@ const Bills = ({ data }) => {
 };
 
 export async function getStaticProps() {
+  {
+    /* X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb */
+  }
+  {
+    /* console.log(process.env.REACT_APP_GOV_US_API_KEY) */
+  }
   const res = await fetch(
     `${API_US_GOV_INFO_BILLS}/${todaysData()}?offset=0&pageSize=${API_PAGE_SIZE}&api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
   );

@@ -40,14 +40,14 @@ const Header = () => {
             </Link>
           </li>
 
-          <li>
+          {/* <li>
             <Link href="/posts/" as="/posts/">
               <a>Bills</a>
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link href="/bills/" as="/bills/">
-              <a>New Bills</a>
+              <a>Bills</a>
             </Link>
           </li>
           {user?.data && (
