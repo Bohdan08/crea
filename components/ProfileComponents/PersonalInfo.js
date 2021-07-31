@@ -264,6 +264,8 @@ const PersonalInfo = () => {
     }
   };
 
+  console.log(currentPersonalInfoValues, "currentPersonalInfoValues");
+
   return (
     <>
       {infoMessageViewAwareness ? (
@@ -402,8 +404,10 @@ const PersonalInfo = () => {
             <SaveChangesButton
               onClick={onSaveProfileChanges}
               disabled={
-                Object.values(currentPersonalInfoValues).filter(
-                  (personalInfoValue) => personalInfoValue === ""
+                Object.entries(currentPersonalInfoValues).filter(
+                  ([personalInfoKey, personalInfoValue]) =>
+                    personalInfoKey !== "geographicPreference" &&
+                    personalInfoValue === ""
                 ).length
               }
             />
