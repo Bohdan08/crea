@@ -377,7 +377,7 @@ const PersonalInfo = () => {
             inputType="text"
             labelName="I vote in"
             required
-            {/* disabled={!currentPersonalInfoValues["geographicPreference"]} */}
+            /* disabled={!currentPersonalInfoValues["geographicPreference"]} */
             /* value={currentPersonalInfoValues["voteLocation"]} */
             value={voteLocationValue}
             onChangeInput={onChangeVoteLocation}
