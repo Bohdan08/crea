@@ -127,10 +127,14 @@ const BillOverview = ({ data }) => {
                 </li>
                 <li>
                   <OverviewBulletPoint> Cosponsors </OverviewBulletPoint>{" "}
-                  {members
-                    .filter((member) => member.role === "COSPONSOR")
-                    .map((filteredMember) => filteredMember.memberName)
-                    .join(" ; ")}{" "}
+                  <div className="w-4/5">
+                    {" "}
+                    {members
+                      .filter((member) => member.role === "COSPONSOR")
+                      .map((filteredMember) => filteredMember.memberName)
+                      .join(" ; ")}{" "}
+                    .
+                  </div>
                 </li>
               </>
             ) : null}
@@ -183,7 +187,9 @@ const todaysData = () => {
 
 export async function getStaticPaths() {
   const res = await fetch(
-    `${API_US_GOV_INFO_BILLS}/${todaysData()}?offset=0&pageSize=${API_PAGE_SIZE}&api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
+    `${API_US_GOV_INFO_BILLS}/${todaysData()}?offset=0&pageSize=${API_PAGE_SIZE}&api_key=${
+      process.env.GOV_US_API_KEY
+    }`
   );
 
   const billPackagesData = await res.json();
@@ -198,13 +204,13 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const res = await fetch(
-    `${API_US_GOV_INFO_BILL_SUMMARY}/${params.packageId}/summary?api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
+    `${API_US_GOV_INFO_BILL_SUMMARY}/${params.packageId}/summary?api_key=${process.env.GOV_US_API_KEY}`
   );
   const json = await res.json();
 
   if (json?.download?.txtLink) {
     let htmlRes = await fetch(
-      `${json.download.txtLink}?api_key=${process.env.REACT_APP_GOV_US_API_KEY}`
+      `${json.download.txtLink}?api_key=${process.env.GOV_US_API_KEY}`
     );
 
     let htmlTextRes = await htmlRes.text();
@@ -214,7 +220,7 @@ export async function getStaticProps({ params }) {
 
   // if (json?.related?.billStatusLink) {
   //   let xmlRes = await fetch(
-  //     `${json.related.billStatusLink}?api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
+  //     `${json.related.billStatusLink}?api_key=${process.env.GOV_US_API_KEY}`
   //   );
 
   //   let xmlResText = await xmlRes.text();

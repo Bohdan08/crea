@@ -23,7 +23,6 @@ const AuthComponent = () => {
 
   const [uiState, setUiState] = useState(user.data ? "signedIn" : "signIn");
 
-  console.log(uiState, "uiStat");
   const [error, setError] = useState(null);
   const [formState, setFormState] = useState({
     email: "",
@@ -84,7 +83,6 @@ const AuthComponent = () => {
   async function signIn() {
     try {
       const userValues = await Auth.signIn(email, password);
-      console.log(userValues, "userValues");
       dispatch(fetchUserFromDbById(userValues?.attributes?.sub));
       setError(null);
       setUiState("signedIn");
