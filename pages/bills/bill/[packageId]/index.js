@@ -74,7 +74,7 @@ const BillOverview = ({ data }) => {
   return (
     <div className="my-12 mx-auto max-w-screen-lg px-10">
       <h1 className="text-2xl font-medium">
-        {currentChamber.slice(0, 1)}. {billNumber}:{" "}
+        {currentChamber ? currentChamber.slice(0, 1) : ""}. {billNumber}:{" "}
         {shortTitle && shortTitle[0] ? shortTitle[0].title : title}
       </h1>
       <div id="bill-menu" className="mt-6">
@@ -111,7 +111,10 @@ const BillOverview = ({ data }) => {
             </li>
             <li>
               <OverviewBulletPoint>Last Modified</OverviewBulletPoint>
-              <span className="font-light"> {lastModified.slice(0, 10)}</span>
+              <span className="font-light">
+                {" "}
+                {lastModified && lastModified.slice(0, 10)}
+              </span>
             </li>
             <li>
               <OverviewBulletPoint>Published </OverviewBulletPoint> {publisher}{" "}
@@ -169,7 +172,12 @@ const BillOverview = ({ data }) => {
         ) : null}
         {activeMenuItem.toLowerCase() === "summary" ? (
           <div>
-            A bill {`${title.slice(0, 1).toLowerCase()}${title.slice(1)}`}
+            A bill{" "}
+            {`${
+              title
+                ? `${title.slice(0, 1).toLowerCase()}${title.slice(1)}`
+                : null
+            }`}
           </div>
         ) : null}
       </div>
