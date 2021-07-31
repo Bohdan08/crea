@@ -42,14 +42,14 @@ const getRandomInt = (max) => Math.floor(Math.random() * max).toLocaleString();
 const formatDate = (dateStr) => new Date(dateStr).toString().slice(4, 15);
 
 const Bills = ({ data }) => {
-  const { count, message, nextPage, packages, previousPage } = data || {};
+  const { count, nextPage, packages, previousPage, error } = data || {};
 
   const [billsData, setBillsData] = useState([]);
-  const [currentPageSize, setCurrentPageSize] = useState(API_PAGE_SIZE);
-  const [currentDate, setCurrentDate] = useState(todaysData());
-  const [loading, setLoading] = useState(false);
-  const startLoading = () => setLoading(true);
-  const stopLoading = () => setLoading(false);
+  // const [currentPageSize, setCurrentPageSize] = useState(API_PAGE_SIZE);
+  // const [currentDate, setCurrentDate] = useState(todaysData());
+  // const [loading, setLoading] = useState(false);
+  // const startLoading = () => setLoading(true);
+  // const stopLoading = () => setLoading(false);
 
   // Set up bills data
 
@@ -163,7 +163,7 @@ const Bills = ({ data }) => {
         <hr />
       </div>
       <div className="flex flex-row flex-wrap justify-start" id="bills-list">
-        {billsData?.length && billsData[0] && (
+        {billsData?.length && billsData[0] ? (
           <>
             <div className="text-xl text-gray-800 my-2">
               {count} bills were last modified on{" "}
@@ -245,7 +245,12 @@ const Bills = ({ data }) => {
               }
             )}
           </>
-        )}
+        ) : error ? (
+          <div className="my-4 bg-red-500 text-white p-2 rounded w-full text-center text-xl">
+            <div className="relative -top-0.5">ERROR: {error.code}</div>
+            <div className="relative -top-0.5">{error.message}</div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
