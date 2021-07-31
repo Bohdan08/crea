@@ -1,5 +1,6 @@
 module.exports = {
   env: {
-    geoLocationApiKey: "AIzaSyDdbxYCdWwJJynWZsnsyB0baAvOA6UiK5A",
+    GEO_LOCATION_API: process.env.GEO_LOCATION_API,
+    GOV_US_API_KEY: process.env.GOV_US_API_KEY,
   },
 };

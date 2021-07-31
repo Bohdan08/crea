@@ -252,14 +252,10 @@ const Bills = ({ data }) => {
 };
 
 export async function getStaticProps() {
-  {
-    /* X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb */
-  }
-  {
-    /* console.log(process.env.REACT_APP_GOV_US_API_KEY) */
-  }
   const res = await fetch(
-    `${API_US_GOV_INFO_BILLS}/${todaysData()}?offset=0&pageSize=${API_PAGE_SIZE}&api_key=X2Jml3Y7OxdHkmo7iOGQ4to6S4lk9Puv5qwCq4Sb`
+    `${API_US_GOV_INFO_BILLS}/${todaysData()}?offset=0&pageSize=${API_PAGE_SIZE}&api_key=${
+      process.env.GOV_US_API_KEY
+    }`
   );
   const json = await res.json();
 
