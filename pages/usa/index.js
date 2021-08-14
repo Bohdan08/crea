@@ -174,8 +174,10 @@ const Bills = ({ data }) => {
                 return (
                   <div key={packageId} className="bill-item py-2 my-2 w-full">
                     <Link
-                      href="bills/bill/[packageId]"
-                      as={`bills/bill/${packageId}`}
+                      /* href="bills/bill/[packageId]"
+                      as={`bills/bill/${packageId}`} */
+                      href="usa/bills/[packageId]"
+                      as={`usa/bills/${packageId}`}
                     >
                       <StyledCardContainer className="cursor-pointer relative py-4 border-2 bg-white rounded-lg text-lg">
                         <StyledFontAwesomeIconArrowRight

@@ -18,13 +18,12 @@ import { removeNullsInObject, shallowEqualObjects } from "../../shared/utils";
 import { updateUser } from "../../src/graphql/mutations";
 import {
   CancelChangesButton,
-  ErrorMessage,
-  InfoMessage,
   ProfileDropDownContainer,
   ProfileInputContainer,
   ProfileSvgWrapper,
   SaveChangesButton,
 } from "./ProfileElements";
+import { ErrorMessage, InfoMessage } from "../Shared";
 
 const StyledSuggestionsItem = styled.ul`
   height: 40px;

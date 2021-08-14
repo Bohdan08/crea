@@ -4,7 +4,10 @@ const ddb = new aws.DynamoDB();
 exports.handler = async (event, context) => {
   let date = new Date();
 
-  if (event.request.userAttributes.sub) {
+  if (
+    event?.triggerSource !== "PostConfirmation_ConfirmForgotPassword" &&
+    event.request.userAttributes.sub
+  ) {
     let params = {
       Item: {
         id: { S: event.request.userAttributes.sub },
@@ -26,7 +29,7 @@ exports.handler = async (event, context) => {
 
     console.log("Success: Everything executed correctly");
     context.done(null, event);
-  } else {
+  }  {
     console.log("Error: Nothing was written to DynamoDB");
     context.done(null, event);
   }
