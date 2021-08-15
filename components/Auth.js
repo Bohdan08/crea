@@ -38,9 +38,11 @@ const AuthComponent = () => {
 
   useEffect(() => {
     if (uiState === "signedIn") {
-      route.push("/");
+      route.push("/usa/profile");
     }
   }, [uiState]);
+
+  console.log(route, "route");
 
   const onChange = ({ target: { name, value } }) =>
     setFormState({ ...formState, [name]: value });
