@@ -23,6 +23,7 @@ export const fetchUserFromDbById = createAsyncThunk(
       if (userData.message) {
         return { message: userData.message };
       }
+      console.log(userData, "userData");
       return removeNullsInObject(userData);
     } catch (error) {
       return { message: error.errors[0].message };

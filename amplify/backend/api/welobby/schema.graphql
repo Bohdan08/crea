@@ -18,4 +18,5 @@ type User
   supportGroup: String
   voteLocation: String
   userType: String
+  profileCompleted: Boolean
 }

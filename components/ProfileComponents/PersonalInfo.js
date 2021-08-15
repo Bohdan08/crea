@@ -127,6 +127,15 @@ const PersonalInfo = () => {
     }
   }, []);
 
+  const checkIfProfileCompleted = () => {
+    return (
+      user?.data &&
+      !Object.values(user?.data || {}).filter(
+        (personalInfoValue) => personalInfoValue === ""
+      ).length
+    );
+  };
+
   /* Handlers */
   const onChangeDropDown = (userKey, value) =>
     setCurrentPersonalInfoValues({
@@ -220,10 +229,10 @@ const PersonalInfo = () => {
 
   const onSaveProfileChanges = () => {
     // make sure if user completed their profile properly
-    if (validateProfileChanges()) {
-      // push changes to db
-      updateUserProfileInDB();
-    }
+    // if (validateProfileChanges()) {
+    // push changes to db
+    updateUserProfileInDB();
+    // }
   };
 
   const updateUserProfileInDB = async () => {
@@ -235,6 +244,7 @@ const PersonalInfo = () => {
             ...currentPersonalInfoValues,
             // temporary preference
             ["geographicPreference"]: TEMPORARY_DEFAULT_GEOGRAPHIC_LOCATION,
+            profileCompleted: true,
           },
         })
       );
@@ -265,6 +275,7 @@ const PersonalInfo = () => {
 
   console.log(currentPersonalInfoValues, "currentPersonalInfoValues");
 
+  console.log(checkIfProfileCompleted(), "checkIfProfileCompleted");
   return (
     <>
       {infoMessageViewAwareness ? (
@@ -402,13 +413,13 @@ const PersonalInfo = () => {
             />
             <SaveChangesButton
               onClick={onSaveProfileChanges}
-              disabled={
+              /* disabled={
                 Object.entries(currentPersonalInfoValues).filter(
                   ([personalInfoKey, personalInfoValue]) =>
                     personalInfoKey !== "geographicPreference" &&
                     personalInfoValue === ""
                 ).length
-              }
+              } */
             />
           </div>
         </>

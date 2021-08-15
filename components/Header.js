@@ -29,15 +29,23 @@ const Header = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (router.pathname === "/") {
-  //     console.log("remove items");
-  //     localStorage.removeItem("region");
-  //     dispatch(setRegion(""));
-  //   }
-  // }, [router]);
+  useEffect(() => {
+    if (router.pathname === "/") {
+      console.log("remove items");
+      localStorage.removeItem("region");
+      dispatch(setRegion(""));
+    }
+  }, [router]);
 
   // console.log(region.currentRegion, "region");
+
+  const opositeRegion = currentRegion
+    ? currentRegion === "uk"
+      ? "usa"
+      : "uk"
+    : null;
+
+  console.log(opositeRegion, "opositeRegion", currentRegion);
   return currentRegion && currentRegion !== "uk" ? (
     <header className="header py-2 px-10 flex bg-white shadow">
       <Link href={`/${currentRegion}/`}>
@@ -71,11 +79,29 @@ const Header = () => {
           </li> */}
           {user?.data && (
             <li>
-              <Link href="/profile/" as="/profile/">
+              <Link
+                href={`/[currentRegion]/profile/`}
+                as={`/${currentRegion}/profile/`}
+              >
                 <a>Profile</a>
               </Link>
             </li>
           )}
+          {opositeRegion ? (
+            <li>
+              <Link href={`/${opositeRegion}/`} as={`/${opositeRegion}/`}>
+                <a>{opositeRegion?.toUpperCase()}</a>
+              </Link>
+            </li>
+          ) : null}
+          <li>
+            <Link
+              href={`/[currentRegion]/contact/`}
+              as={`/${currentRegion}/contact/`}
+            >
+              <a>Contact</a>
+            </Link>
+          </li>
         </StyledNavBar>
         {/* <ul className="float-right">
           {!user?.data ? (

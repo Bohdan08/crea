@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import {
   API_PAGE_SIZE,
@@ -33,17 +34,10 @@ const StyledChatContainer = styled.div`
   position: relative;
   margin: 0 1rem;
   height: 100%;
-  min-height: 550px;
+  min-height: 600px;
+  max-height: 600px;
+  overflow: scroll;
 `;
-
-// const SuggestToCompleteQuestionnareStyledButton = styled.button`
-//   position: absolute;
-//   width: 100%;
-//   bottom: 0;
-//   height: 100px;
-//   background: white;
-//   border-top: 1px solid grey;
-// `;
 
 const MENU_LIST = ["Overview", "Summary", "Text"];
 
@@ -82,6 +76,9 @@ const BillOverview = ({ data }) => {
     shortTitle,
   } = data;
 
+  /* Redux */
+  const { user } = useSelector((state) => state);
+  console.log(user, "user");
   const [activeMenuItem, setActiveMenuItem] = useState(MENU_LIST[0]);
 
   const router = useRouter();
@@ -93,14 +90,37 @@ const BillOverview = ({ data }) => {
     });
   }, []);
 
-  const SuggestToCompleteQuestionnare = ({ isAgainst, isSupport }) => (
-    <button
-      className={`absolute bottom-0 h-24 bg-white border-t-2  ${
-        isAgainst ? "border-red-500" : "border-green-500"
-      }`}
-    >
-      Please, complete a questionnare to leave your comment.
-    </button>
+  const SuggestToSignUp = ({ isAgainst, isSupport }) => (
+    <>
+      <div
+        className={`absolute bottom-0 h-36 bg-white border-t-2  w-full ${
+          isAgainst ? "border-red-500" : "border-green-500"
+        }`}
+      >
+        {!user || !user.data || !user.data.profileCompleted ? (
+          <div className="m-auto flex flex-col p-2">
+            Please sign up and fill out a questionnare in order to be able to
+            leave your comment.
+            <br />
+            <button
+              className="text-center bg-blue-600 text-white rounded p-2 mt-2"
+              onClick={() => {
+                router.push("/auth");
+              }}
+            >
+              Sign Up
+            </button>
+          </div>
+        ) : (
+          <div className="m-auto flex flex-col p-2">
+            <textarea className="border-2 h-16 rounded mt-2 p-2" />
+            <button className="mt-2 rounded h-8 bg-blue-600 text-white">
+              Leave a comment
+            </button>
+          </div>
+        )}
+      </div>
+    </>
   );
 
   return (
@@ -109,7 +129,8 @@ const BillOverview = ({ data }) => {
         <div className="w-3/12">
           <StyledChatContainer className="border-2 border-red-500 rounded">
             <h2 className="text-center mt-2 text-xl">Comments against</h2>
-            <SuggestToCompleteQuestionnare isAgainst />
+
+            <SuggestToSignUp isAgainst />
           </StyledChatContainer>
         </div>
         <div className="w-6/12">
@@ -227,7 +248,7 @@ const BillOverview = ({ data }) => {
         <div className="w-3/12">
           <StyledChatContainer className="border-2 border-green-500 rounded">
             <h2 className="text-center mt-2 text-xl">Comments for</h2>
-            <SuggestToCompleteQuestionnare isSupport />
+            <SuggestToSignUp isSupport />
 
             {/* <button className="absolute bottom-0 h-24 border-2 w-full">Relative</button> */}
           </StyledChatContainer>
