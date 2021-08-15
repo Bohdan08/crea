@@ -1,7 +1,26 @@
 import { Auth } from "aws-amplify";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { useRouter } from "next/router";
 import { fetchUserFromDbById } from "../redux/slices/userSlice";
+import { setRegion } from "../redux/slices/regionSlice";
+
+const CustomButton = ({ textValue, style, pathname }) => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  return (
+    <button
+      className={`cursor bg-blue-500 text-white p-2 rounded w-56 ${style}`}
+      onClick={() => {
+        dispatch(setRegion(pathname));
+        localStorage.setItem("region", pathname);
+        router.push({ pathname: `/${pathname}/` });
+      }}
+    >
+      {textValue}
+    </button>
+  );
+};
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -29,6 +48,20 @@ const Home = () => {
           <p className="pt-5 text-3xl">
             We make politics more open and accessible.
           </p>
+          <div className="mt-5">
+            {/* <button className="cursor bg-blue-500	text-white p-2 rounded w-24">
+              United States of America
+            </button> */}
+            <CustomButton textValue="United States of America" pathname="usa" />
+            <CustomButton
+              textValue="United Kingdom"
+              style="ml-5"
+              pathname="uk"
+            />
+            {/* <button className="cursor bg-blue-500	text-white p-2 rounded">
+              United Kingdom
+            </button> */}
+          </div>
         </div>
         <div className="w-1/2  m-auto">
           <p className="text-3xl text-right font-light w-96 float-right">

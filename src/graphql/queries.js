@@ -15,6 +15,7 @@ export const getUser = /* GraphQL */ `
       supportGroup
       voteLocation
       userType
+      profileCompleted
     }
   }
 `;
@@ -35,6 +36,7 @@ export const listUsers = /* GraphQL */ `
         supportGroup
         voteLocation
         userType
+        profileCompleted
       }
       nextToken
     }

@@ -13,6 +13,7 @@ export const onCreateUser = /* GraphQL */ `
       supportGroup
       voteLocation
       userType
+      profileCompleted
     }
   }
 `;
@@ -28,6 +29,7 @@ export const onUpdateUser = /* GraphQL */ `
       supportGroup
       voteLocation
       userType
+      profileCompleted
     }
   }
 `;
@@ -43,6 +45,7 @@ export const onDeleteUser = /* GraphQL */ `
       supportGroup
       voteLocation
       userType
+      profileCompleted
     }
   }
 `;

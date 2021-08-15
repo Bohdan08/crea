@@ -18,13 +18,12 @@ import { removeNullsInObject, shallowEqualObjects } from "../../shared/utils";
 import { updateUser } from "../../src/graphql/mutations";
 import {
   CancelChangesButton,
-  ErrorMessage,
-  InfoMessage,
   ProfileDropDownContainer,
   ProfileInputContainer,
   ProfileSvgWrapper,
   SaveChangesButton,
 } from "./ProfileElements";
+import { ErrorMessage, InfoMessage } from "../Shared";
 
 const StyledSuggestionsItem = styled.ul`
   height: 40px;
@@ -58,9 +57,10 @@ const UserInfoBlock = ({ header, content }) => (
 
 const PersonalInfo = () => {
   /* Redux */
-  const { user } = useSelector((state) => state);
+  const { user, region } = useSelector((state) => state);
   const dispatch = useDispatch();
 
+  console.log(region, "region");
   /* Geo Location */
   const {
     ready,
@@ -127,6 +127,12 @@ const PersonalInfo = () => {
       setEditMode(true);
     }
   }, []);
+
+  const checkIfProfileCompleted = () =>
+    user?.data &&
+    !Object.values(user?.data || {}).filter(
+      (personalInfoValue) => personalInfoValue === ""
+    ).length;
 
   /* Handlers */
   const onChangeDropDown = (userKey, value) =>
@@ -236,6 +242,7 @@ const PersonalInfo = () => {
             ...currentPersonalInfoValues,
             // temporary preference
             ["geographicPreference"]: TEMPORARY_DEFAULT_GEOGRAPHIC_LOCATION,
+            profileCompleted: checkIfProfileCompleted(),
           },
         })
       );
@@ -263,8 +270,6 @@ const PersonalInfo = () => {
       }
     }
   };
-
-  console.log(currentPersonalInfoValues, "currentPersonalInfoValues");
 
   return (
     <>

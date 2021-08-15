@@ -21,7 +21,7 @@ const StyledForm = styled.form`
 const AuthComponent = () => {
   const { user } = useSelector((store) => store);
 
-  const [uiState, setUiState] = useState(user.data ? "signedIn" : "signIn");
+  const [uiState, setUiState] = useState(user.data ? "signedIn" : "signUp");
 
   const [error, setError] = useState(null);
   const [formState, setFormState] = useState({
@@ -38,9 +38,11 @@ const AuthComponent = () => {
 
   useEffect(() => {
     if (uiState === "signedIn") {
-      route.push("/");
+      route.push("/usa/profile");
     }
   }, [uiState]);
+
+  console.log(route, "route");
 
   const onChange = ({ target: { name, value } }) =>
     setFormState({ ...formState, [name]: value });

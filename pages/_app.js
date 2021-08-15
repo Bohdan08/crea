@@ -15,6 +15,7 @@ import {
   faArrowRight,
   faThumbsUp,
   faThumbsDown,
+  faFlagCheckered,
 } from "@fortawesome/free-solid-svg-icons";
 import Header from "../components/Header";
 import { Provider } from "react-redux";
@@ -34,7 +35,8 @@ library.add(
   faEdit,
   faArrowRight,
   faThumbsUp,
-  faThumbsDown
+  faThumbsDown,
+  faFlagCheckered
 );
 
 // styles

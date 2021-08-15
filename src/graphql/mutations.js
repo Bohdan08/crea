@@ -16,6 +16,7 @@ export const createUser = /* GraphQL */ `
       supportGroup
       voteLocation
       userType
+      profileCompleted
     }
   }
 `;
@@ -36,6 +37,7 @@ export const updateUser = /* GraphQL */ `
       supportGroup
       voteLocation
       userType
+      profileCompleted
     }
   }
 `;
@@ -54,6 +56,7 @@ export const deleteUser = /* GraphQL */ `
       supportGroup
       voteLocation
       userType
+      profileCompleted
     }
   }
 `;

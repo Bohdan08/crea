@@ -5,9 +5,9 @@ import {
   ProfileSvgWrapper,
   SaveChangesButton,
   CancelChangesButton,
-  ErrorMessage,
   ProfileInputContainer,
 } from "./ProfileElements";
+import { ErrorMessage } from "../Shared";
 import { MIN_PASSWORD_LENGTH } from "../../shared/constants";
 import { updateUser } from "../../src/graphql/mutations";
 import { setUser } from "../../redux/slices/userSlice";

@@ -7,11 +7,13 @@ import styled from "styled-components";
 import router from "next/router";
 
 const todaysData = () => {
-  let date = new Date();
+  let today = new Date();
   // set midnight
-  date.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
 
-  return date.toISOString().split(".")[0] + "Z";
+  today.setDate(today.getDate() - 1);
+
+  return today.toISOString().split(".")[0] + "Z";
 };
 
 const StyledCardContainer = styled.div`
@@ -174,8 +176,10 @@ const Bills = ({ data }) => {
                 return (
                   <div key={packageId} className="bill-item py-2 my-2 w-full">
                     <Link
-                      href="bills/bill/[packageId]"
-                      as={`bills/bill/${packageId}`}
+                      /* href="bills/bill/[packageId]"
+                      as={`bills/bill/${packageId}`} */
+                      href="usa/bills/[packageId]"
+                      as={`usa/bills/${packageId}`}
                     >
                       <StyledCardContainer className="cursor-pointer relative py-4 border-2 bg-white rounded-lg text-lg">
                         <StyledFontAwesomeIconArrowRight
@@ -250,7 +254,11 @@ const Bills = ({ data }) => {
             <div className="relative -top-0.5">ERROR: {error.code}</div>
             <div className="relative -top-0.5">{error.message}</div>
           </div>
-        ) : null}
+        ) : (
+          <div className="center-element text-2xl">
+            No bills were made on {todaysData().slice(0, 10)}
+          </div>
+        )}
       </div>
     </div>
   );

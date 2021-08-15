@@ -1,11 +1,17 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const InfoMessage = ({ children, onInfoMessageHide, containerStyles }) => (
+// -top-0.5
+const InfoMessage = ({
+  children,
+  onInfoMessageHide,
+  containerStyles,
+  textStyles,
+}) => (
   <div
-    className={`bg-blue-500 text-white p-2 rounded w-full flex flex-row ${containerStyles}`}
+    className={`${containerStyles} bg-blue-500 text-white p-2 rounded flex flex-row`}
   >
     <FontAwesomeIcon className="my-auto ml-2 mr-4" icon="info" />
-    <div className="relative -top-0.5">{children}</div>
+    <div className={`${textStyles} relative`}>{children}</div>
     {onInfoMessageHide && (
       <button
         type="button"

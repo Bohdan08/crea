@@ -2,26 +2,50 @@ import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Auth } from "aws-amplify";
+// import { Auth } from "aws-amplify";
 import styled from "styled-components";
-import { resetUser } from "../redux/slices/userSlice";
+// import { resetUser } from "../redux/slices/userSlice";
+import { useEffect } from "react";
+import { setRegion } from "../redux/slices/regionSlice";
 
 const StyledNavBar = styled.ul`
   li {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
   }
 `;
 
 const Header = () => {
-  const { user } = useSelector((store) => store);
+  const { user, region } = useSelector((store) => store);
+  const { currentRegion } = region;
   const router = useRouter();
 
   const dispatch = useDispatch();
 
-  return (
+  useEffect(() => {
+    if (localStorage.getItem("region") !== currentRegion) {
+      dispatch(setRegion(localStorage.getItem("region")));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (router.pathname === "/") {
+      localStorage.removeItem("region");
+      dispatch(setRegion(""));
+    } else if (localStorage.getItem("region") !== currentRegion) {
+      dispatch(setRegion(localStorage.getItem("region")));
+    }
+  }, [router]);
+
+  const opositeRegion = currentRegion
+    ? currentRegion === "uk"
+      ? "usa"
+      : "uk"
+    : null;
+
+  return currentRegion ? (
     <header className="header py-2 px-10 flex bg-white shadow">
-      <Link href="/">
+      <Link href={`/${currentRegion}/`}>
         <a>
           <Image
             src="/images/logo.jpeg"
@@ -34,8 +58,15 @@ const Header = () => {
       </Link>
       <nav className="flex flex-row justify-between items-center text-xl font-light pl-10 w-full">
         <StyledNavBar className="flex flex-row">
-          <li>
-            <Link href="/">
+          <li
+            className={`${
+              router.pathname === `/${currentRegion}` ||
+              router.pathname.includes(`/${currentRegion}/bills`)
+                ? "border-b-2 border-gray-400"
+                : "border-b-2 border-white"
+            }`}
+          >
+            <Link href={`/${currentRegion}/`}>
               <a>Home</a>
             </Link>
           </li>
@@ -45,21 +76,59 @@ const Header = () => {
               <a>Bills</a>
             </Link>
           </li> */}
-          <li>
+          {/* <li>
             <Link href="/bills/" as="/bills/">
               <a>Bills</a>
             </Link>
-          </li>
+          </li> */}
           {user?.data && (
-            <li>
-              <Link href="/profile/" as="/profile/">
+            <li
+              className={`${
+                router.pathname.includes("profile")
+                  ? "border-b-2 border-gray-400"
+                  : "border-b-2 border-white"
+              } `}
+            >
+              <Link
+                href={`/[currentRegion]/profile/`}
+                as={`/${currentRegion}/profile/`}
+              >
                 <a>Profile</a>
               </Link>
             </li>
           )}
+
+          <li
+            className={`${
+              router.pathname.includes("contact")
+                ? "border-b-2 border-gray-400"
+                : "border-b-2 border-white"
+            }`}
+          >
+            <Link
+              href={`/[currentRegion]/contact/`}
+              as={`/${currentRegion}/contact/`}
+            >
+              <a>Contact</a>
+            </Link>
+          </li>
         </StyledNavBar>
         <ul className="float-right">
-          {!user?.data ? (
+          {opositeRegion ? (
+            <li>
+              <button
+                className="focus:outline-none"
+                onClick={() => {
+                  dispatch(setRegion(opositeRegion));
+                  localStorage.setItem("region", opositeRegion);
+                  router.push({ pathname: `/${opositeRegion}/` });
+                }}
+              >
+                {opositeRegion?.toUpperCase()}
+              </button>
+            </li>
+          ) : null}
+          {/* {!user?.data ? (
             <li className="float-right">
               <Link href="/auth/">
                 <a>Sign In</a>
@@ -78,11 +147,11 @@ const Header = () => {
                 <span className="font-light">Sign out</span>
               </button>
             </li>
-          )}
+          )} */}
         </ul>
       </nav>
     </header>
-  );
+  ) : null;
 };
 
 export default Header;
