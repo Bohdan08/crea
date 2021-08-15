@@ -43,7 +43,7 @@ const Header = () => {
       : "uk"
     : null;
 
-  return currentRegion ? (
+  return router.pathname !== "/" ? (
     <header className="header py-2 px-10 flex bg-white shadow">
       <Link href={`/${currentRegion}/`}>
         <a>

@@ -198,10 +198,10 @@ const Bills = ({ data }) => {
                                 title="Introduced"
                                 description={formatDate(dateIssued)}
                               />
-                              <InnerInfoBox
+                              {/* <InnerInfoBox
                                 title="Last Modified"
                                 description={formatDate(lastModified)}
-                              />
+                              /> */}
                               <InnerInfoBox
                                 title="Comments"
                                 description={getRandomInt(2000)}

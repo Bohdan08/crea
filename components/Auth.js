@@ -42,7 +42,6 @@ const AuthComponent = () => {
     }
   }, [uiState]);
 
-
   const onChange = ({ target: { name, value } }) =>
     setFormState({ ...formState, [name]: value });
 
@@ -74,7 +73,7 @@ const AuthComponent = () => {
       } else {
         setError(null);
         setUiState("signedIn");
-        route.push("/");
+        route.push("/usa/profile/");
       }
     } catch (err) {
       setError(err);
@@ -87,7 +86,7 @@ const AuthComponent = () => {
       dispatch(fetchUserFromDbById(userValues?.attributes?.sub));
       setError(null);
       setUiState("signedIn");
-      route.push("/");
+      route.push("/usa/profile");
     } catch (err) {
       setError(err);
     }
