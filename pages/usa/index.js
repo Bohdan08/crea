@@ -252,7 +252,11 @@ const Bills = ({ data }) => {
             <div className="relative -top-0.5">ERROR: {error.code}</div>
             <div className="relative -top-0.5">{error.message}</div>
           </div>
-        ) : null}
+        ) : (
+          <div className="center-element text-2xl">
+            No bills were made on {todaysData().slice(0, 10)}
+          </div>
+        )}
       </div>
     </div>
   );

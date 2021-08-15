@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -124,7 +125,20 @@ const BillOverview = ({ data }) => {
   );
 
   return (
-    <div className="my-12 mx-auto max-w-screen-2xl	px-10">
+    <div className="my-12 mx-auto max-w-screen-2xl px-10">
+      <div className="text-center">
+        <h2 className="text-2xl font-medium">Your vote</h2>
+        <div className="flex flex-row mt-6">
+          <div className="w-3/12">
+            <FontAwesomeIcon icon="thumbs-down" color="red" className="h-6" />
+          </div>
+          <div className="border w-6/12 rounded">something</div>
+          <div className="w-3/12">
+            {" "}
+            <FontAwesomeIcon icon="thumbs-up" color="green" className="h-6" />
+          </div>
+        </div>
+      </div>
       <div className="flex flex-row mt-6">
         <div className="w-3/12">
           <StyledChatContainer className="border-2 border-red-500 rounded">
