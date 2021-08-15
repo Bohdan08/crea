@@ -2,9 +2,9 @@ import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Auth } from "aws-amplify";
+// import { Auth } from "aws-amplify";
 import styled from "styled-components";
-import { resetUser } from "../redux/slices/userSlice";
+// import { resetUser } from "../redux/slices/userSlice";
 import { useEffect } from "react";
 import { setRegion } from "../redux/slices/regionSlice";
 
@@ -23,7 +23,6 @@ const Header = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(router, "use effect");
     if (localStorage.getItem("region") !== currentRegion) {
       dispatch(setRegion(localStorage.getItem("region")));
     }
@@ -31,13 +30,12 @@ const Header = () => {
 
   useEffect(() => {
     if (router.pathname === "/") {
-      console.log("remove items");
       localStorage.removeItem("region");
       dispatch(setRegion(""));
+    } else if (localStorage.getItem("region") !== currentRegion) {
+      dispatch(setRegion(localStorage.getItem("region")));
     }
   }, [router]);
-
-  // console.log(region.currentRegion, "region");
 
   const opositeRegion = currentRegion
     ? currentRegion === "uk"
@@ -45,8 +43,7 @@ const Header = () => {
       : "uk"
     : null;
 
-  console.log(opositeRegion, "opositeRegion", currentRegion);
-  return currentRegion && currentRegion !== "uk" ? (
+  return currentRegion ? (
     <header className="header py-2 px-10 flex bg-white shadow">
       <Link href={`/${currentRegion}/`}>
         <a>
@@ -61,7 +58,11 @@ const Header = () => {
       </Link>
       <nav className="flex flex-row justify-between items-center text-xl font-light pl-10 w-full">
         <StyledNavBar className="flex flex-row">
-          <li>
+          <li
+            className={`${
+              router.pathname === `/${currentRegion}` ? "underline" : ""
+            }`}
+          >
             <Link href={`/${currentRegion}/`}>
               <a>Home</a>
             </Link>
@@ -78,7 +79,11 @@ const Header = () => {
             </Link>
           </li> */}
           {user?.data && (
-            <li>
+            <li
+              className={`${
+                router.pathname.includes("profile") ? "underline" : ""
+              } `}
+            >
               <Link
                 href={`/[currentRegion]/profile/`}
                 as={`/${currentRegion}/profile/`}
@@ -87,14 +92,12 @@ const Header = () => {
               </Link>
             </li>
           )}
-          {opositeRegion ? (
-            <li>
-              <Link href={`/${opositeRegion}/`} as={`/${opositeRegion}/`}>
-                <a>{opositeRegion?.toUpperCase()}</a>
-              </Link>
-            </li>
-          ) : null}
-          <li>
+
+          <li
+            className={`${
+              router.pathname.includes("contact") ? "underline" : ""
+            }`}
+          >
             <Link
               href={`/[currentRegion]/contact/`}
               as={`/${currentRegion}/contact/`}
@@ -103,8 +106,22 @@ const Header = () => {
             </Link>
           </li>
         </StyledNavBar>
-        {/* <ul className="float-right">
-          {!user?.data ? (
+        <ul className="float-right">
+          {opositeRegion ? (
+            <li>
+              <button
+                className="focus:outline-none"
+                onClick={() => {
+                  dispatch(setRegion(opositeRegion));
+                  localStorage.setItem("region", opositeRegion);
+                  router.push({ pathname: `/${opositeRegion}/` });
+                }}
+              >
+                {opositeRegion?.toUpperCase()}
+              </button>
+            </li>
+          ) : null}
+          {/* {!user?.data ? (
             <li className="float-right">
               <Link href="/auth/">
                 <a>Sign In</a>
@@ -123,8 +140,8 @@ const Header = () => {
                 <span className="font-light">Sign out</span>
               </button>
             </li>
-          )}
-        </ul> */}
+          )} */}
+        </ul>
       </nav>
     </header>
   ) : null;

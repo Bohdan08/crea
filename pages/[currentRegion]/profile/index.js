@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
   ACCOUNT,
@@ -9,6 +9,8 @@ import {
 } from "../../../shared/constants";
 import Account from "../../../components/ProfileComponents/Account";
 import PersonalInfo from "../../../components/ProfileComponents/PersonalInfo";
+import { resetUser } from "../../../redux/slices/userSlice";
+import { Auth } from "aws-amplify";
 
 const StyledUserInfoContainer = styled.div`
   width: 700px;
@@ -25,6 +27,7 @@ const Profile = () => {
   /* Redux */
   const { user } = useSelector((state) => state);
 
+  const dispatch = useDispatch();
   const router = useRouter();
 
   /* Use Effects */
@@ -53,6 +56,17 @@ const Profile = () => {
                   {profileSelection}
                 </button>
               ))}
+              <button
+                className="text-2xl text-left font-light cursor-pointer my-5 pl-5"
+                type="submit"
+                onClick={() => {
+                  Auth.signOut();
+                  dispatch(resetUser());
+                  router.push("/");
+                }}
+              >
+                <span className="font-light">Sign out</span>
+              </button>
             </div>
           </StyledMenuSelectionContainer>
           <StyledUserInfoContainer className="bg-white rounded shadow-xl p-10">

@@ -229,10 +229,10 @@ const PersonalInfo = () => {
 
   const onSaveProfileChanges = () => {
     // make sure if user completed their profile properly
-    // if (validateProfileChanges()) {
-    // push changes to db
-    updateUserProfileInDB();
-    // }
+    if (validateProfileChanges()) {
+      // push changes to db
+      updateUserProfileInDB();
+    }
   };
 
   const updateUserProfileInDB = async () => {
@@ -273,9 +273,6 @@ const PersonalInfo = () => {
     }
   };
 
-  console.log(currentPersonalInfoValues, "currentPersonalInfoValues");
-
-  console.log(checkIfProfileCompleted(), "checkIfProfileCompleted");
   return (
     <>
       {infoMessageViewAwareness ? (
@@ -413,13 +410,13 @@ const PersonalInfo = () => {
             />
             <SaveChangesButton
               onClick={onSaveProfileChanges}
-              /* disabled={
+              disabled={
                 Object.entries(currentPersonalInfoValues).filter(
                   ([personalInfoKey, personalInfoValue]) =>
                     personalInfoKey !== "geographicPreference" &&
                     personalInfoValue === ""
                 ).length
-              } */
+              }
             />
           </div>
         </>
