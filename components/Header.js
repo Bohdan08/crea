@@ -10,8 +10,8 @@ import { setRegion } from "../redux/slices/regionSlice";
 
 const StyledNavBar = styled.ul`
   li {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
   }
 `;
 
@@ -60,7 +60,10 @@ const Header = () => {
         <StyledNavBar className="flex flex-row">
           <li
             className={`${
-              router.pathname === `/${currentRegion}` ? "underline" : ""
+              router.pathname === `/${currentRegion}` ||
+              router.pathname.includes(`/${currentRegion}/bills`)
+                ? "border-b-2 border-gray-400"
+                : "border-b-2 border-white"
             }`}
           >
             <Link href={`/${currentRegion}/`}>
@@ -81,7 +84,9 @@ const Header = () => {
           {user?.data && (
             <li
               className={`${
-                router.pathname.includes("profile") ? "underline" : ""
+                router.pathname.includes("profile")
+                  ? "border-b-2 border-gray-400"
+                  : "border-b-2 border-white"
               } `}
             >
               <Link
@@ -95,7 +100,9 @@ const Header = () => {
 
           <li
             className={`${
-              router.pathname.includes("contact") ? "underline" : ""
+              router.pathname.includes("contact")
+                ? "border-b-2 border-gray-400"
+                : "border-b-2 border-white"
             }`}
           >
             <Link

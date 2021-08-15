@@ -7,11 +7,13 @@ import styled from "styled-components";
 import router from "next/router";
 
 const todaysData = () => {
-  let date = new Date();
+  let today = new Date();
   // set midnight
-  date.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
 
-  return date.toISOString().split(".")[0] + "Z";
+  today.setDate(today.getDate() - 1);
+
+  return today.toISOString().split(".")[0] + "Z";
 };
 
 const StyledCardContainer = styled.div`

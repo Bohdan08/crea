@@ -57,9 +57,10 @@ const UserInfoBlock = ({ header, content }) => (
 
 const PersonalInfo = () => {
   /* Redux */
-  const { user } = useSelector((state) => state);
+  const { user, region } = useSelector((state) => state);
   const dispatch = useDispatch();
 
+  console.log(region, "region");
   /* Geo Location */
   const {
     ready,
@@ -127,14 +128,11 @@ const PersonalInfo = () => {
     }
   }, []);
 
-  const checkIfProfileCompleted = () => {
-    return (
-      user?.data &&
-      !Object.values(user?.data || {}).filter(
-        (personalInfoValue) => personalInfoValue === ""
-      ).length
-    );
-  };
+  const checkIfProfileCompleted = () =>
+    user?.data &&
+    !Object.values(user?.data || {}).filter(
+      (personalInfoValue) => personalInfoValue === ""
+    ).length;
 
   /* Handlers */
   const onChangeDropDown = (userKey, value) =>
@@ -244,7 +242,7 @@ const PersonalInfo = () => {
             ...currentPersonalInfoValues,
             // temporary preference
             ["geographicPreference"]: TEMPORARY_DEFAULT_GEOGRAPHIC_LOCATION,
-            profileCompleted: true,
+            profileCompleted: checkIfProfileCompleted(),
           },
         })
       );
