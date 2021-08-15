@@ -87,6 +87,17 @@ const BillOverview = ({ data }) => {
   const [voted, setVoted] = useState(false);
   const [votedAgainst, setVotedAgainst] = useState(false);
   const [votedFor, setVotedFor] = useState(false);
+  const [comments, setComments] = useState({
+    for: [],
+    against: [],
+  });
+
+  const [commentsValue, setCommentsValue] = useState({
+    for: "",
+    against: "",
+  });
+
+  const [name, setName] = useState("");
 
   /* Redux */
   const { user } = useSelector((state) => state);
@@ -102,40 +113,71 @@ const BillOverview = ({ data }) => {
     });
   }, []);
 
-  const SuggestToSignUp = ({ isAgainst }) => (
-    <>
-      <div
-        className={`absolute bottom-0 h-36 bg-white border-t-2  w-full ${
-          isAgainst ? "border-red-500" : "border-green-500"
-        }`}
-      >
-        {!user || !user.data || !user.data.profileCompleted ? (
-          <div className="m-auto flex flex-col items-center p-2">
-            <div>
-              Please sign up and fill out a questionnare in order to be able to
-              leave your comment.
-              <br />
+  const commentsBlock = ({ isAgainst }) => {
+    const keyComment = isAgainst ? "against" : "for";
+
+    return (
+      <>
+        <div
+          className={`absolute bottom-0 h-36 bg-white border-t-2  w-full ${
+            isAgainst ? "border-red-500" : "border-green-500"
+          }`}
+        >
+          {!user || !user.data || !user.data.profileCompleted ? (
+            <div className="m-auto flex flex-col items-center p-2">
+              <div>
+                Please sign up and fill out a questionnare in order to be able
+                to leave your comment.
+                <br />
+                <button
+                  className="text-center bg-blue-600 text-white rounded p-2 mt-2 w-full"
+                  onClick={() => {
+                    router.push("/auth");
+                  }}
+                >
+                  Sign Up
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="m-auto flex flex-col p-2">
+              <textarea
+                key={`text-area-${keyComment}`}
+                className="border-2 h-16 rounded mt-2 p-2"
+                type="text"
+                value={commentsValue[keyComment]}
+                onChange={(event) =>
+                  setCommentsValue({
+                    ...commentsValue,
+                    [keyComment]: event.target.value,
+                  })
+                }
+              />
               <button
-                className="text-center bg-blue-600 text-white rounded p-2 mt-2 w-full"
+                className="mt-2 rounded h-8 bg-blue-600 text-white"
                 onClick={() => {
-                  router.push("/auth");
+                  setComments({
+                    ...comments,
+                    [keyComment]: [
+                      ...comments[keyComment],
+                      {
+                        [user?.data?.preferredName || "user"]: commentsValue[
+                          keyComment
+                        ],
+                      },
+                    ],
+                  });
+                  setCommentsValue({ ...commentsValue, [keyComment]: "" });
                 }}
               >
-                Sign Up
+                Leave a comment
               </button>
             </div>
-          </div>
-        ) : (
-          <div className="m-auto flex flex-col p-2">
-            <textarea className="border-2 h-16 rounded mt-2 p-2" />
-            <button className="mt-2 rounded h-8 bg-blue-600 text-white">
-              Leave a comment
-            </button>
-          </div>
-        )}
-      </div>
-    </>
-  );
+          )}
+        </div>
+      </>
+    );
+  };
 
   const suggestToSignUpModal = () =>
     Swal.fire({
@@ -151,6 +193,25 @@ const BillOverview = ({ data }) => {
         router.push("/auth");
       }
     });
+
+  const CommentsSection = ({ isAgainst }) => {
+    const keyComment = isAgainst ? "against" : "for";
+
+    return (
+      <div className="overflow-y-auto	p-2 h-4/6">
+        {comments[keyComment].length
+          ? comments[keyComment].map((commentInfo) => (
+              <div className="mt-2">
+                <div className="text-base font-bold">
+                  {user?.data?.preferredName || "User"}
+                </div>
+                <div>{Object.values(commentInfo)[0]}</div>
+              </div>
+            ))
+          : ""}
+      </div>
+    );
+  };
 
   return (
     <div className="my-12 mx-auto max-w-screen-2xl px-10">
@@ -217,7 +278,6 @@ const BillOverview = ({ data }) => {
             <button
               onClick={() => {
                 // suggest to sign up if profile is not completed
-
                 if (!user || !user.data || !user.data.profileCompleted) {
                   suggestToSignUpModal();
                 } else {
@@ -260,8 +320,8 @@ const BillOverview = ({ data }) => {
         <div className="w-3/12">
           <StyledChatContainer className="border-2 border-red-500 rounded">
             <h2 className="text-center mt-2 text-xl">Comments against</h2>
-
-            <SuggestToSignUp isAgainst />
+            <CommentsSection isAgainst />
+            {commentsBlock({ isAgainst: true })}
           </StyledChatContainer>
         </div>
         <div className="w-6/12">
@@ -379,9 +439,10 @@ const BillOverview = ({ data }) => {
         <div className="w-3/12">
           <StyledChatContainer className="border-2 border-green-500 rounded">
             <h2 className="text-center mt-2 text-xl">Comments for</h2>
-            <SuggestToSignUp isSupport />
 
-            {/* <button className="absolute bottom-0 h-24 border-2 w-full">Relative</button> */}
+            <CommentsSection isSupport />
+
+            {commentsBlock({ isAgainst: false })}
           </StyledChatContainer>
         </div>
       </div>
