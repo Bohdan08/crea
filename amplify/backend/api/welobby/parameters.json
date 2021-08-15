@@ -1,0 +1,11 @@
+{
+  "AppSyncApiName": "welobby",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authwelobby8f2de8bc8f2de8bc",
+      "Outputs.UserPoolId"
+    ]
+  }
+}

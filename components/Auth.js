@@ -42,7 +42,6 @@ const AuthComponent = () => {
     }
   }, [uiState]);
 
-  console.log(route, "route");
 
   const onChange = ({ target: { name, value } }) =>
     setFormState({ ...formState, [name]: value });
