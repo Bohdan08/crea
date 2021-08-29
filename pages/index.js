@@ -1,10 +1,26 @@
-import { Auth } from "aws-amplify";
+import Amplify, { Auth, Storage } from "aws-amplify";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { fetchUserFromDbById } from "../redux/slices/userSlice";
 import { setRegion } from "../redux/slices/regionSlice";
 
+// Storage.configure()
+
+// Amplify.configure({
+//   Auth: {
+//     identityPoolId: "ca-central-1:107a42cf-91fd-444a-ae6b-ffa5f7ac1044", //REQUIRED - Amazon Cognito Identity Pool ID
+//     region: "ca-central-1", // REQUIRED - Amazon Cognito Region
+//     userPoolId: "ca-central-1_FmobeOJCo", //OPTIONAL - Amazon Cognito User Pool ID
+//     userPoolWebClientId: "22i2scff242il7m6o6ctp0ivoj", //OPTIONAL - Amazon Cognito Web Client ID
+//   },
+//   Storage: {
+//     AWSS3: {
+//       bucket: "welobby-content", //REQUIRED -  Amazon S3 bucket name
+//       region: "us-east-1", //OPTIONAL -  Amazon service region
+//     },
+//   },
+// });
 const CustomButton = ({ textValue, style, pathname }) => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -22,7 +38,7 @@ const CustomButton = ({ textValue, style, pathname }) => {
   );
 };
 
-const Home = () => {
+const Home = ({ contentData }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -75,7 +91,7 @@ const Home = () => {
             <div className="m-aut">
               <p className="text-3xl text-center pb-3">Our Vision/Mission</p>
               <p className="text-lg">
-                In a democracy the elected officials enact the will of the
+                {/* In a democracy the elected officials enact the will of the
                 people. In other words we, the voters, collectively are the
                 boss. However, it turns out that in our hugely complex and
                 competitive political systems powered by market economy we are
@@ -130,7 +146,8 @@ const Home = () => {
                 this difference will produce a much more powerful and effective
                 direction. You don’t need any expert knowledge to take part,
                 anyone is welcome to join the discussion. Start by answering a
-                few questions and take a seat at the table!
+                few questions and take a seat at the table! */}
+                {contentData}
               </p>
             </div>
           </div>
@@ -139,5 +156,18 @@ const Home = () => {
     </div>
   );
 };
+
+export async function getStaticProps() {
+  const result = await Storage.get(
+    `${process.env.HOME_PAGE_CONTENT_TEXT_FILE_NAME}.txt`,
+    {
+      download: true,
+    }
+  ).catch((error) => new Error(error));
+
+  return {
+    props: { contentData: result?.Body || "No Text Found" }, // will be passed to the page component as props
+  };
+}
 
 export default Home;

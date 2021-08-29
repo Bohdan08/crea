@@ -2,6 +2,7 @@ module.exports = {
   env: {
     GEO_LOCATION_API: process.env.GEO_LOCATION_API,
     GOV_US_API_KEY: process.env.GOV_US_API_KEY,
+    HOME_PAGE_CONTENT_TEXT_FILE_NAME: process.env.homeContent,
     AWS_PROJECT_REGION: process.env.AWS_PROJECT_REGION,
     AWS_COGNITO_IDENTITY_POOL_ID: process.env.AWS_COGNITO_IDENTITY_POOL_ID,
     AWS_COGNITO_REGION: process.env.AWS_COGNITO_REGION,

@@ -56,5 +56,11 @@
         }
       }
     }
+  },
+  "storage": {
+    "welobbyContent": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation"
+    }
   }
 }

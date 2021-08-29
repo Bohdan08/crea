@@ -1,6 +1,6 @@
 {
     "identityPoolName": "welobby8f2de8bc_identitypool_8f2de8bc",
-    "allowUnauthenticatedIdentities": false,
+    "allowUnauthenticatedIdentities": true,
     "resourceNameTruncated": "welobb8f2de8bc",
     "userPoolName": "welobby8f2de8bc_userpool_8f2de8bc",
     "autoVerifiedAttributes": [
