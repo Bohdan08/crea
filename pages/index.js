@@ -5,22 +5,6 @@ import { useRouter } from "next/router";
 import { fetchUserFromDbById } from "../redux/slices/userSlice";
 import { setRegion } from "../redux/slices/regionSlice";
 
-// Storage.configure()
-
-// Amplify.configure({
-//   Auth: {
-//     identityPoolId: "ca-central-1:107a42cf-91fd-444a-ae6b-ffa5f7ac1044", //REQUIRED - Amazon Cognito Identity Pool ID
-//     region: "ca-central-1", // REQUIRED - Amazon Cognito Region
-//     userPoolId: "ca-central-1_FmobeOJCo", //OPTIONAL - Amazon Cognito User Pool ID
-//     userPoolWebClientId: "22i2scff242il7m6o6ctp0ivoj", //OPTIONAL - Amazon Cognito Web Client ID
-//   },
-//   Storage: {
-//     AWSS3: {
-//       bucket: "welobby-content", //REQUIRED -  Amazon S3 bucket name
-//       region: "us-east-1", //OPTIONAL -  Amazon service region
-//     },
-//   },
-// });
 const CustomButton = ({ textValue, style, pathname }) => {
   const dispatch = useDispatch();
   const router = useRouter();
