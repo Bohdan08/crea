@@ -142,15 +142,17 @@ const Home = ({ contentData }) => {
 };
 
 export async function getStaticProps() {
+  let errorText = "";
+
   const result = await Storage.get(
     `${process.env.HOME_PAGE_CONTENT_TEXT_FILE_NAME}.txt`,
     {
       download: true,
     }
-  ).catch((error) => new Error(error));
+  ).catch((error) => (errorText = error.response.statusText));
 
   return {
-    props: { contentData: result?.Body || "No Text Found" }, // will be passed to the page component as props
+    props: { contentData: result?.Body || errorText }, // will be passed to the page component as props
   };
 }
 
