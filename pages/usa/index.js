@@ -44,6 +44,7 @@ const getRandomInt = (max) => Math.floor(Math.random() * max).toLocaleString();
 const formatDate = (dateStr) => new Date(dateStr).toString().slice(4, 15);
 
 const Bills = ({ data }) => {
+  console.log(data, "datadata");
   const { count, nextPage, packages, previousPage, error } = data || {};
 
   const [billsData, setBillsData] = useState([]);
